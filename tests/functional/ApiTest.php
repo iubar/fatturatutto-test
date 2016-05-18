@@ -22,13 +22,17 @@ class ApiTest extends RestApiRoot {
     // seconds
     const TIMEOUT = 4;
 
-    const TWITTER_LIMIT = 'twitter?limit=';
+    const TWITTER = 'twitter';
 
     const CONTENT_TYPE = 'Content-Type';
 
     const APP_JSON_CT = 'application/json';
 
     const OK_STATUS_CODE = 200;
+
+    const LENGTH = 100;
+
+    const RSS = 'rss';
 
     protected $client = null;
 
@@ -45,14 +49,17 @@ class ApiTest extends RestApiRoot {
     }
 
     /**
-     * Login request test
+     * Test Twitter api
      */
     public function testTwitterRequest() {
         $response = null;
         try {
-            $request = new Request(self::GET, self::TWITTER_LIMIT . self::ELEM_LIMIT);
+            $request = new Request(self::GET, self::TWITTER);
             $response = $this->client->send($request, [
-                'timeout' => self::TIMEOUT
+                'timeout' => self::TIMEOUT,
+                'query' => [
+                    'limit' => self::ELEM_LIMIT
+                ]
             ]);
         } catch (RequestException $e) {
             $this->handleException($e);
@@ -72,31 +79,29 @@ class ApiTest extends RestApiRoot {
             $this->handleAssertionException($e);
         }
         
-        /*EXAMPLE
-         * $this->client->request(self::GET, self::APP_HOME.'twitter', [
-         * 'query' => [
-         * 'limit' => 3
-         * ]
-         * ]);
-         *
+        /*
          * foreach ($response->getHeaders() as $name => $values) {
          * echo $name . ': ' . implode(', ', $values) . "\r\n";
          * }
          */
     }
 
+    /**
+     * Test rss api
+     */
     public function testRssRequest() {
         $response = null;
         try {
-            $request = new Request(self::GET, self::APP_HOME . 'rss');
+            $request = new Request(self::GET, self::APP_HOME . self::RSS);
             $response = $this->client->send($request, [
                 'timeout' => self::TIMEOUT,
                 'query' => [
                     'limit' => self::ELEM_LIMIT,
-                    'length' => 100
-                ]                
+                    'length' => self::LENGTH
+                ]
             ]);
-            echo "PROVA   " . PHP_EOL . $response->getStatusCode() . $response->getBody();
-        } catch (Exception $e) {}
+        } catch (RequestException $e) {
+            $this->handleException($e);
+        }
     }
 }

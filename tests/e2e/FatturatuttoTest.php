@@ -246,29 +246,28 @@ class FatturatuttoTest extends E2eRoot {
             $this->handleAssertionException($e);
         }
     }
-    
-    private function check_dialog(){
+
+    private function check_dialog() {
         $wd = $this->getWd();
-        //ngdialog1
+        // ngdialog1
         try {
-            if($wd->findElement(WebDriverBy::id('ngdialog1'))){
-            ////*[@id="ngdialog1"]/div[2]/div/p/a
+            if ($wd->findElement(WebDriverBy::id('ngdialog1'))) {
+                // //*[@id="ngdialog1"]/div[2]/div/p/a
                 $elem = $wd->findElement(WebDriverBy::xpath('//*[@id="ngdialog1"]/div[2]/div/p/a'));
                 $elem->click();
-                ///html/body/div[2]/div[2]
+                // /html/body/div[2]/div[2]
                 
                 // if(se "Impostazioni" non è cliccabile){
                 // 1) verificare la presenza di una finestra di dialogo
                 // 2) se la finestra non è presente, allora errore "situazione imprevista"
                 // 3) se finestra presente, faccio clic e attesa implicita
-                //}
+                // }
                 // clic su "Impostazioni
                 
                 if (condition) {
                     ;
                 }
-            }            
-        } catch (Exception $e) {
-        }        
+            }
+        } catch (Exception $e) {}
     }
 }
