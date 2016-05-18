@@ -3,7 +3,7 @@
 	bootstrap="./tests/vendor/autoload.php" verbose="true" colors="true">
 	<testsuites>
 		<testsuite name="Fatturatutto">
-			<!--<file>./tests/e2e/FatturatuttoTest.php</file>-->
+			<file>./tests/e2e/FatturatuttoTest.php</file>
 			<file>./tests/functional/ApiTest.php</file>
 			<!-- <directory>./tests/e2e</directory> -->
 		</testsuite>
