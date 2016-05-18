@@ -1,0 +1,6 @@
+{
+    "require": {
+        "facebook/webdriver": "*",
+        "guzzlehttp/guzzle": "~6.0"
+    }
+}
