@@ -1,16 +1,16 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
-	bootstrap="./tests/vendor/autoload.php" verbose="true" colors="true">
+	bootstrap="../vendor/autoload.php" verbose="true" colors="true">
 	<testsuites>
 		<testsuite name="Fatturatutto">
-			<file>./tests/e2e/FatturatuttoTest.php</file>
-			<file>./tests/functional/ApiTest.php</file>
+			<file>../e2e/FatturatuttoTest.php</file>
 			<!-- <directory>./tests/e2e</directory> -->
 		</testsuite>
 	</testsuites>
 
 	<php>
-		<const name="BROWSER" value="chrome" />
+		<const name="BROWSER" value="phantomjs" />
+		<const name="SCREENSHOTS_PATH" value="../../logs/screenshots/" />
 	</php>
 
 	<logging>
@@ -19,9 +19,10 @@
 		<!-- <log type="coverage-clover" target="/tmp/coverage.xml"/> -->
 		<!-- <log type="coverage-php" target="/tmp/coverage.serialized"/> -->
 		<!-- <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/> -->
-		<log type="json" target="logs/logfile.json" />
-		<log type="tap" target="logs/logfile.tap" />
-		<log type="junit" target="logs/logfile.xml" logIncompleteSkipped="false" />
+		<log type="json" target="../../logs/logfile.json" />
+		<log type="tap" target="../../logs/logfile.tap" />
+		<log type="junit" target="../../logs/logfile.xml"
+			logIncompleteSkipped="false" />
 		<!-- <log type="testdox-html" target="/tmp/testdox.html"/> -->
 		<!-- <log type="testdox-text" target="/tmp/testdox.txt"/> -->
 	</logging>
