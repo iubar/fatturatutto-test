@@ -11,15 +11,21 @@ use GuzzleHttp\Exception\RequestException;
  */
 class RestApiRoot extends PHPUnit_Framework_TestCase {
 
-    /**
-     * Handle the PHPUnit_Framework_ExpectationFailedException by raise the exception
-     *
-     * @param \PHPUnit_Framework_ExpectationFailedException $e the exception
-     * @throws \PHPUnit_Framework_ExpectationFailedException raise the exception
-     */
-    protected function handleAssertionException(\PHPUnit_Framework_ExpectationFailedException $e) {
+    protected function handleAssertionException(\Exception $e) {
         echo PHP_EOL . "Assertion failed" . PHP_EOL;
-        throw new \PHPUnit_Framework_ExpectationFailedException($e);
+    }
+    
+    // TODO classe padre
+    /**
+     * This method is called when a test method did not execute successfully.
+     *
+     * @param Exception|Throwable $e
+     *
+     * @throws Exception|Throwable
+     */
+    public function onNotSuccessfulTest(\Exception $e) {
+        $this->handleAssertionException($e);
+        parent::onNotSuccessfulTest($e); // rilancia un eccezione del tipo PHPUnit_Framework_ExpectationFailedException
     }
 
     /**
