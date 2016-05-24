@@ -1,3 +1,4 @@
+
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
 	bootstrap="../vendor/autoload.php" verbose="true" colors="true">
@@ -11,7 +12,7 @@
 	<php>
 		<const name="BROWSER" value="chrome" />
 		<const name="SCREENSHOTS_PATH" value="../../logs/screenshots/" />
-		<const name="SERVER" value="http://localhost:4444/wd/hub"/>
+		<const name="SERVER" value="ondemand.saucelabs.com:80"/>
 	</php>
 
 	<logging>

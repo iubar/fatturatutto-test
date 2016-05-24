@@ -241,6 +241,7 @@ class FatturatuttoTest extends E2e {
             $elem = $wd->findElement(WebDriverBy::id($id));
             $this->assertNotNull($elem);
             $this->assertContains($expected_title, $elem->getText());
+            $this->quitselenium();
         } catch (WebDriverException $e) {
             $this->handleWebdriverException($e);
         }

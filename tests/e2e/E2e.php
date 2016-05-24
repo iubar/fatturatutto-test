@@ -32,7 +32,7 @@ class E2e extends TestPhpUnit {
     const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer';
 
     const START = 'start';
-
+    
     protected static $screenshots = array();
 
     protected static $webDriver;
@@ -67,7 +67,7 @@ class E2e extends TestPhpUnit {
         }
         
         // create the WebDriver
-        self::$webDriver = RemoteWebDriver::create('http://localhost:4444/wd/hub', $capabilities); // This is the default
+        self::$webDriver = RemoteWebDriver::create(SERVER, $capabilities); // This is the default
     }
 
     /**
