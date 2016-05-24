@@ -133,11 +133,9 @@ class ApiTest extends RestApi {
     public function testContact() {
         $response = null;
         try {
-            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
-            $user = $ini_array['fatturatuttoUser']['username'];
             $array = array(
                 'from_name' => 'Matteo',
-                'from_email' => $user,
+                'from_email' => 'postmaster@fatturatutto.it',
                 'from_domain' => 'fatturatutto.it',
                 'subject' => 'Prova API',
                 'message' => 'Ciao'
@@ -155,10 +153,8 @@ class ApiTest extends RestApi {
     public function testMailingListSubscribe() {
         $response = null;
         try {
-            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
-            $user = $ini_array['realUser']['username'];
             $array = array(
-                'email' => $user,
+                'email' => getenv('USERNAME'),
                 'nome' => 'Matteo',
                 'cognome' => 'Prova API',
                 'idprofessione' => '1',
@@ -177,10 +173,8 @@ class ApiTest extends RestApi {
     public function testMailingListEdit() {
         $response = null;
         try {
-            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
-            $user = $ini_array['realUser']['username'];
             $array = array(
-                'email' => $user,
+                'email' => getenv('USERNAME'),
                 'nome' => 'Matteo',
                 'cognome' => 'Prova API',
                 'idprofessione' => '2',
@@ -200,10 +194,9 @@ class ApiTest extends RestApi {
     public function testMailingListUnsubscribe() {
         $response = null;
         try {
-            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
-            $user = $ini_array['realUser']['username'];
+            
             $array = array(
-                'email' => $user,
+                'email' => getenv('USERNAME'),
                 'nome' => 'Matteo',
                 'cognome' => 'Prova API',
                 'idprofessione' => '2',

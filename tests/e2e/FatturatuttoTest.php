@@ -81,10 +81,8 @@ class FatturatuttoTest extends E2e {
                                                         
             // 1) Wrong login
             
-            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
-            $user = $ini_array['wrongUser']['username'];
-            $password = $ini_array['wrongUser']['password'];
-            $this->login($user, $password);
+            $user = 'prova';
+            $this->login($user, $user);
             
             // Verify the error msg show
             $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
@@ -98,8 +96,8 @@ class FatturatuttoTest extends E2e {
             
             // 2) Real login
             
-            $user = $ini_array['realUser']['username'];
-            $password = $ini_array['realUser']['password'];
+            $user = getEnv('USERNAME');
+            $password = getEnv('PASSWORD');
             $this->login($user, $password);
             
             // Verify to be enter and that welcome msg is show
