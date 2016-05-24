@@ -23,10 +23,9 @@ class E2e extends TestPhpUnit {
     // milliseconds
     const DEFAULT_WAIT_INTERVAL = 1000;
 
+    // Browser
     const PHANTOMJS = 'phantomjs';
-
     const CHROME = 'chrome';
-
     const MARIONETTE = 'marionette';
 
     const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer';
@@ -70,6 +69,12 @@ class E2e extends TestPhpUnit {
         
         // create the WebDriver
         self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities); // This is the default
+        
+        // Window size
+	// self::$webDriver->manage()->window()->maximize();
+ 	// $window = new WebDriverDimension(1024, 768);
+ 	// $this->webDriver->manage()->window()->setSize($window)
+
     }
 
     /**
