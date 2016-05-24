@@ -7,8 +7,8 @@ env:
     - SCREENSHOTS_PATH=""
   matrix:
     - BROWSER="chrome"
-    - BROWSER="marionette"
-    - BROWSER="phantomjs"
+    #- BROWSER="marionette"
+    #- BROWSER="phantomjs"
 before_script:
   # - composer self-update
   - cd tests
