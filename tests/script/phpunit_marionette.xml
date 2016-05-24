@@ -11,6 +11,7 @@
 	<php>
 		<const name="BROWSER" value="marionette" />
 		<const name="SCREENSHOTS_PATH" value="../../logs/screenshots/" />
+		<const name="SERVER" value="http://localhost:4444/wd/hub"/>
 	</php>
 
 	<logging>
