@@ -12,7 +12,7 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
  * @author Matteo
  *        
  */
-class E2eRoot extends PHPUnit_Framework_TestCase {
+class E2eRoot extends TestPhpUnit {
 
     const TAKE_A_SCREENSHOT = true;
     
@@ -127,18 +127,6 @@ class E2eRoot extends PHPUnit_Framework_TestCase {
         $screenshots[] = $screenshot;
         
         return $screenshot;
-    }
-
-    /**
-     * This method is called when a test method did not execute successfully
-     *
-     * @param Exception|Throwable $e the exception
-     *       
-     * @throws Exception|Throwable throws a PHPUnit_Framework_ExpectationFailedException
-     */
-    public function onNotSuccessfulTest(\Exception $e) {
-        $this->handleAssertionException($e);
-        parent::onNotSuccessfulTest($e);
     }
 
     /**
