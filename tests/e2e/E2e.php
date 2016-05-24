@@ -185,6 +185,17 @@ class E2e extends TestPhpUnit {
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath($xpath)));
     }
 
+	public function waitForTag($tag, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+		$this->getWd()->wait ($timeout, $interval)->until (
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::tagName($tag))
+				);
+	}
+	public function waitForCss($css, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+		$this->getWd()->wait ($timeout, $interval)->until (
+				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::cssSelector($css))
+				);
+	}
+	
     /**
      * Wait at most $timeout seconds until at least one result is shown
      *
@@ -197,6 +208,23 @@ class E2e extends TestPhpUnit {
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::partialLinkText($partial_link_text)));
     }
 
+	/**
+	 * waitForAjax : wait for all ajax request to close
+	 * 
+	 * @param integer $timeout timeout in seconds
+	 * @param integer $interval interval in miliseconds
+	 * @return void
+	 */
+	public function waitForAjax($timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+		$this->getWd()->wait($timeout, $interval)->until(function () {
+			// jQuery: "jQuery.active" or $.active
+			// Prototype: "Ajax.activeRequestCount"
+			// Dojo: "dojo.io.XMLHTTPTransport.inFlight.length"
+			$condition = 'return ($.active == 0);';
+			return $this->getWd()->executeScript ($condition);
+		} );
+	}
+	
     /**
      * Assert that an element was not found
      *
