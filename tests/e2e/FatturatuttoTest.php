@@ -119,6 +119,9 @@ class FatturatuttoTest extends E2eRoot {
         }
     }
 
+    /**
+     * Test the aside navigation bar
+     */
     public function testAsideNavigationBar() {
         try {
             $wd = $this->getWd();
@@ -147,6 +150,9 @@ class FatturatuttoTest extends E2eRoot {
         }
     }
 
+    /**
+     * Test 'impostazioni' section in the aside navigation bar
+     */
     public function testImpostazioni() {
         try {
             $wd = $this->getWd();
@@ -168,8 +174,6 @@ class FatturatuttoTest extends E2eRoot {
             $imp_generali->click();
         } catch (WebDriverException $e) {
             $this->handleWebdriverException($e);
-        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->handleAssertionException($e);
         }
     }
 
@@ -220,15 +224,13 @@ class FatturatuttoTest extends E2eRoot {
         } catch (WebDriverException $e) {
             $this->handleWebdriverException($e);
         }
-        try {
-            $this->assertEquals($expected_url, $url);
-            $this->assertContains($expected_title, $title);
-        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->handleAssertionException($e);
-        }
+        
+        $this->assertEquals($expected_url, $url);
+        $this->assertContains($expected_title, $title);
     }
 
     /**
+     * Checking that every elem of the navigation bar is present
      *
      * @param string $id the id of the elem
      * @param string $expected_title the title of the elem
@@ -242,8 +244,6 @@ class FatturatuttoTest extends E2eRoot {
             $this->assertContains($expected_title, $elem->getText());
         } catch (WebDriverException $e) {
             $this->handleWebdriverException($e);
-        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->handleAssertionException($e);
         }
     }
 
@@ -270,4 +270,11 @@ class FatturatuttoTest extends E2eRoot {
             }
         } catch (Exception $e) {}
     }
+    
+    // TODO
+    /*
+     * CONSOLE
+     * $errors = $this->getWd()->manage()->getLog('browser');
+     * $this->assertEquals(0, count($erros), 'Errori sulla console:', $this->getWd()->getCurrentURL());
+     */
 }
