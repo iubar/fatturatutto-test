@@ -70,6 +70,10 @@ class E2e extends TestPhpUnit {
         // create the WebDriver
         self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities); // This is the default
         
+        // set some timeouts
+       	self::$webDriver->manage()->timeouts()->pageLoadTimeout(120);  // TODO: tarare il valore
+	self::$webDriver->manage()->timeouts()->setScriptTimeout(240); // TODO: tarare il valore
+			
         // Window size
 	// self::$webDriver->manage()->window()->maximize();
  	// $window = new WebDriverDimension(1024, 768);
