@@ -2,8 +2,7 @@
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\Exception\WebDriverException;
 
-// require_once ('../../vendor/autoload.php');
-require_once ('E2eRoot.php');
+require_once ('E2e.php');
 
 /**
  * Test of www.fatturatutto.it website
@@ -11,7 +10,7 @@ require_once ('E2eRoot.php');
  * @author Matteo
  *        
  */
-class FatturatuttoTest extends E2eRoot {
+class FatturatuttoTest extends E2e {
 
     const SITE_HOME = "http://www.fatturatutto.it/";
 

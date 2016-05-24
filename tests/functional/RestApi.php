@@ -11,7 +11,7 @@ require_once ('..\TestPhpUnit.php');
  * @author Matteo
  *        
  */
-class RestApiRoot extends TestPhpUnit {
+class RestApi extends TestPhpUnit {
 
     /**
      * Write that an exception fail

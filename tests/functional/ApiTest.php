@@ -3,7 +3,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
 
-require_once ('RestApiRoot.php');
+require_once ('RestApi.php');
 
 /**
  * API Test
@@ -11,7 +11,7 @@ require_once ('RestApiRoot.php');
  * @author Matteo
  *        
  */
-class ApiTest extends RestApiRoot {
+class ApiTest extends RestApi {
 
     const APP_HOME = "http://www.iubar.it/extranet/api/";
 

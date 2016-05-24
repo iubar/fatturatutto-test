@@ -1,5 +1,4 @@
 <?php
-use Facebook\WebDriver\Remote\WebDriverCapabilityType;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
@@ -14,7 +13,7 @@ require_once ('..\TestPhpUnit.php');
  * @author Matteo
  *        
  */
-class E2eRoot extends TestPhpUnit {
+class E2e extends TestPhpUnit {
 
     const TAKE_A_SCREENSHOT = true;
     
@@ -31,6 +30,8 @@ class E2eRoot extends TestPhpUnit {
     const MARIONETTE = 'marionette';
 
     const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer';
+
+    const START = 'start';
 
     protected static $screenshots = array();
 
@@ -83,7 +84,7 @@ class E2eRoot extends TestPhpUnit {
                 echo "\t" . $screenshot . PHP_EOL;
             }
             $first_screenshot = self::$screenshots[0];
-            $this->startShell("start chrome " . $first_screenshot);
+            $this->startShell(self::START . self::CHROME . $first_screenshot);
         }
     }
 
@@ -255,7 +256,7 @@ class E2eRoot extends TestPhpUnit {
      * Shutdown Selenium Server
      */
     protected function quitselenium() {
-        $this->startShell("start " . self::CHROME . self::SELENIUM_SHUTDOWN_URL);
+        $this->startShell(self::START . self::CHROME . self::SELENIUM_SHUTDOWN_URL);
     }
 
     /**
