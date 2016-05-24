@@ -4,6 +4,7 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\Exception\WebDriverException;
+use Facebook\WebDriver\Remote\DesiredCapabilities;
 
 /**
  * PHPUnit_Framework_TestCase Develop
@@ -14,90 +15,130 @@ use Facebook\WebDriver\Exception\WebDriverException;
 class E2eRoot extends PHPUnit_Framework_TestCase {
 
     const TAKE_A_SCREENSHOT = true;
-
+    
+    // seconds
     const DEFAULT_WAIT_TIMEOUT = 15;
-
+    
+    // milliseconds
     const DEFAULT_WAIT_INTERVAL = 1000;
 
-    const SCREENS_PATH = './logs/screenshots/';
+    const PHANTOMJS = 'phantomjs';
 
-    const BROWSER = 'chrome';
+    const CHROME = 'chrome';
 
-    /**
-     *
-     * @var \RemoteWebDriver
-     */
+    const MARIONETTE = 'marionette';
+
+    const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer';
+
+    protected static $screenshots = array();
+
     protected static $webDriver;
 
     /**
-     * Start WebDriver
+     * Start the WebDriver
+     *
+     * @throws \InvalidArgumentException if a wrong browser is given
      */
     public static function setUpBeforeClass() {
+        // check if you can take screenshots and path exist
         if (self::TAKE_A_SCREENSHOT) {
-            if (! is_writable(self::SCREENS_PATH)) {
-                die("ERRORE. percorso non scrivibile: " . self::SCREENS_PATH . PHP_EOL);
+            if (! is_writable(SCREENSHOTS_PATH)) {
+                die("ERRORE. percorso non scrivibile: " . SCREENSHOTS_PATH . PHP_EOL);
             }
         }
-        $capabilities = array(
-            WebDriverCapabilityType::BROWSER_NAME => self::BROWSER
-        );
+        
+        // set capabilities according to the browers
+        switch (BROWSER) {
+            case self::PHANTOMJS:
+                $capabilities = DesiredCapabilities::phantomjs();
+                break;
+            case self::CHROME:
+                $capabilities = DesiredCapabilities::chrome();
+                break;
+            case self::MARIONETTE:
+                $capabilities = DesiredCapabilities::firefox();
+                $capabilities->setCapability(self::MARIONETTE, true);
+                break;
+            default:
+                throw new \InvalidArgumentException("parametro " . BROWSER . " non previsto");
+        }
+        
+        // create the WebDriver
         self::$webDriver = RemoteWebDriver::create('http://localhost:4444/wd/hub', $capabilities); // This is the default
     }
 
     /**
-     * Close WebDriver
+     * Close the WebDriver and show the screenshot in the browser if there is
      */
     public static function tearDownAfterClass() {
         self::closeAllWindows();
         self::$webDriver->quit();
+        
+        // if there is at least a screenshot show it in the browser
+        if (count(self::$screenshots) > 0) {
+            echo "Screnshots taken: " . PHP_EOL;
+            foreach (self::$screenshots as $screenshot) {
+                echo "\t" . $screenshot . PHP_EOL;
+            }
+            $first_screenshot = self::$screenshots[0];
+            $this->startShell("start chrome " . $first_screenshot);
+        }
     }
 
     /**
      * Take a screenshot of the webpage
      *
      * @param string $element the element to capture
-     * @throws Exception if the folder where to save doesn't exist
+     * @throws Exception if the screenshot doesn't exist
      * @return string the screenshot
      */
-    public function TakeScreenshot($element = null) {
+    public function takeScreenshot($element = null) {
         // The path where save the screenshot
-        $screenshot = self::SCREENS_PATH . time() . ".png";
+        $screenshot = SCREENSHOTS_PATH . time() . ".png";
         
         $this->getWd()->takeScreenshot($screenshot);
+        
         if (! file_exists($screenshot)) {
-            throw new Exception('Could not save screenshot');
+            throw new Exception('Could not save screenshot: ' . $screenshot);
         }
         
-        // To capture the full screen
-        if (! (bool) $element) {
-            return $screenshot;
+        if ($element) {
+            
+            $element_width = $element->getSize()->getWidth();
+            $element_height = $element->getSize()->getHeight();
+            
+            $element_src_x = $element->getLocation()->getX();
+            $element_src_y = $element->getLocation()->getY();
+            
+            // Create image instances
+            $src = imagecreatefrompng($screenshot);
+            $dest = imagecreatetruecolor($element_width, $element_height);
+            
+            // Copy
+            imagecopy($dest, $src, 0, 0, $element_src_x, $element_src_y, $element_width, $element_height);
+            
+            imagepng($dest, $screenshot); // overwrite the full screenshot
+            
+            if (! file_exists($screenshot)) {
+                throw new Exception('Could not save the cropped screenshot' . $screenshot);
+            }
         }
         
-        // To capture an element
-        $element_screenshot = self::SCREENS_PATH . time() . ".png";
+        $screenshots[] = $screenshot;
         
-        $element_width = $element->getSize()->getWidth();
-        $element_height = $element->getSize()->getHeight();
-        
-        $element_src_x = $element->getLocation()->getX();
-        $element_src_y = $element->getLocation()->getY();
-        
-        // Create image instances
-        $src = imagecreatefrompng($screenshot);
-        $dest = imagecreatetruecolor($element_width, $element_height);
-        
-        // Copy
-        imagecopy($dest, $src, 0, 0, $element_src_x, $element_src_y, $element_width, $element_height);
-        
-        imagepng($dest, $element_screenshot);
-        
-        // unlink($screenshot); // unlink function might be restricted in mac os x.
-        
-        if (! file_exists($element_screenshot)) {
-            throw new Exception('Could not save element screenshot');
-        }
-        
-        return $element_screenshot;
+        return $screenshot;
+    }
+
+    /**
+     * This method is called when a test method did not execute successfully
+     *
+     * @param Exception|Throwable $e the exception
+     *       
+     * @throws Exception|Throwable throws a PHPUnit_Framework_ExpectationFailedException
+     */
+    public function onNotSuccessfulTest(\Exception $e) {
+        $this->handleAssertionException($e);
+        parent::onNotSuccessfulTest($e);
     }
 
     /**
@@ -196,18 +237,16 @@ class E2eRoot extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Handle the PHPUnit_Framework_ExpectationFailedException taking a screenshot
+     * Make a screenshot if the assertion fail
      *
-     * @param \PHPUnit_Framework_ExpectationFailedException $e the exception
-     * @throws \PHPUnit_Framework_ExpectationFailedException raise the exception
+     * @param \Exception $e the exception
      */
-    protected function handleAssertionException(\PHPUnit_Framework_ExpectationFailedException $e) {
+    protected function handleAssertionException(\Exception $e) {
         echo PHP_EOL;
         if (self::TAKE_A_SCREENSHOT) {
             echo "Assertion failed: taking a screen shot..." . PHP_EOL;
-            $this->TakeScreenshot();
+            $this->takeScreenshot();
         }
-        throw new \PHPUnit_Framework_ExpectationFailedException($e);
     }
 
     /**
@@ -218,7 +257,23 @@ class E2eRoot extends PHPUnit_Framework_TestCase {
     protected function handleWebdriverException(WebDriverException $e) {
         if (self::TAKE_A_SCREENSHOT) {
             echo "Assertion failed: taking a screen shot..." . PHP_EOL;
-            $this->TakeScreenshot();
+            $this->takeScreenshot();
         }
+    }
+
+    /**
+     * Shutdown Selenium Server
+     */
+    protected function quitselenium() {
+        $this->startShell("start " . self::CHROME . self::SELENIUM_SHUTDOWN_URL);
+    }
+
+    /**
+     * Start a shell and execute the command
+     *
+     * @param string $cmd the command to execute
+     */
+    private function startShell($cmd) {
+        $this->shell_exec($cmd);
     }
 }
