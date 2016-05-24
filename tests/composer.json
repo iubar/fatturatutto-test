@@ -3,7 +3,6 @@
         "facebook/webdriver": "*",
         "guzzlehttp/guzzle": "~6.0"
     },
-    
      "require": {
      	"php": ">=5.5.0"
      }
