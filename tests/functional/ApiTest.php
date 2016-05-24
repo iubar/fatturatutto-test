@@ -34,6 +34,19 @@ class ApiTest extends RestApiRoot {
 
     const RSS = 'rss';
 
+    const CONTACT = 'contact';
+
+    const MAILING_LIST = 'mailing-list/';
+
+    const SUBSCRIBE = 'subscribe';
+
+    const EDIT = 'edit';
+
+    const UNSUBSCRIBE = 'unsubscribe';
+    
+    // momentanea da cancellare e mettere nella classe padre
+    const PRIVATE_LOGIN_DATA = "C:/Users/Matteo/Desktop/protected_folder/users.ini";
+
     protected $client = null;
 
     /**
@@ -51,33 +64,43 @@ class ApiTest extends RestApiRoot {
     /**
      * Test Twitter api
      */
-    public function testTwitterRequest() {
+    public function testTwitter() {
         $response = null;
         try {
-            $request = new Request(self::GET, self::TWITTER);
-            $response = $this->client->send($request, [
-                'timeout' => self::TIMEOUT,
-                'query' => [
-                    'limit' => self::ELEM_LIMIT
-                ]
-            ]);
+            /*
+             * $request = new Request(self::GET, self::TWITTER);
+             * $array = array(
+             * 'limit' => self::ELEM_LIMIT
+             * );
+             * $response = $this->client->send($request, [
+             * 'timeout' => self::TIMEOUT,
+             * 'query' => $array
+             * ]);
+             */
+            $array = array(
+                'limit' => self::ELEM_LIMIT
+            );
+            $response = $this->sendRequest(self::GET, self::TWITTER, $array, self::TIMEOUT);
+            // echo PHP_EOL.$response->getBody();
         } catch (RequestException $e) {
             $this->handleException($e);
         }
         
-        try {
-            // Response
-            $this->assertContains(self::APP_JSON_CT, $response->getHeader(self::CONTENT_TYPE)[0]);
-            $this->assertEquals(self::OK_STATUS_CODE, $response->getStatusCode());
-            
-            // Data
-            $data = json_decode($response->getBody(), true);
-            $this->assertEquals(self::ELEM_LIMIT, count($data));
-            $first_obj = $data[0];
-            $this->assertArrayHasKey('short_text', $first_obj);
-        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->handleAssertionException($e);
-        }
+        /*
+         * // Response
+         * $this->assertContains(self::APP_JSON_CT, $response->getHeader(self::CONTENT_TYPE)[0]);
+         * $this->assertEquals(self::OK_STATUS_CODE, $response->getStatusCode());
+         */
+        
+        $data = $this->checkResponse($response);
+        
+        /*
+         * // Data
+         * $data = json_decode($response->getBody(), true);
+         */
+        $this->assertEquals(self::ELEM_LIMIT, count($data));
+        $first_obj = $data[0];
+        $this->assertArrayHasKey('short_text', $first_obj);
         
         /*
          * foreach ($response->getHeaders() as $name => $values) {
@@ -89,19 +112,147 @@ class ApiTest extends RestApiRoot {
     /**
      * Test rss api
      */
-    public function testRssRequest() {
+    public function testRss() {
         $response = null;
         try {
-            $request = new Request(self::GET, self::APP_HOME . self::RSS);
+            $array = array(
+                'limit' => self::ELEM_LIMIT,
+                'length' => self::LENGTH
+            );
+            $response = $this->sendRequest(self::GET, self::RSS, $array, self::TIMEOUT);
+            // echo PHP_EOL.$response->getBody();
+        } catch (RequestException $e) {
+            $this->handleException($e);
+        }
+        $data = $this->checkResponse($response);
+    }
+
+    /**
+     * Test contact api
+     */
+    public function testContact() {
+        $response = null;
+        try {
+            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
+            $user = $ini_array['fatturatuttoUser']['username'];
+            $array = array(
+                'from_name' => 'Matteo',
+                'from_email' => $user,
+                'from_domain' => 'fatturatutto.it',
+                'subject' => 'Prova API',
+                'message' => 'Ciao'
+            );
+            $response = $this->sendRequest(self::GET, self::CONTACT, $array, self::TIMEOUT + 10);
+        } catch (RequestException $e) {
+            $this->handleException($e);
+        }
+        $data = $this->checkResponse($response);
+    }
+
+    /**
+     * Test subscribe into the mailing list
+     */
+    public function testMailingListSubscribe() {
+        $response = null;
+        try {
+            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
+            $user = $ini_array['realUser']['username'];
+            $array = array(
+                'email' => $user,
+                'nome' => 'Matteo',
+                'cognome' => 'Prova API',
+                'idprofessione' => '1',
+                'list_id' => '1'
+            );
+            $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::SUBSCRIBE, $array, self::TIMEOUT);
+        } catch (RequestException $e) {
+            $this->handleException($e);
+        }
+        $data = $this->checkResponse($response);
+    }
+
+    /**
+     * Test edit from the mailing list
+     */
+    public function testMailingListEdit() {
+        $response = null;
+        try {
+            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
+            $user = $ini_array['realUser']['username'];
+            $array = array(
+                'email' => $user,
+                'nome' => 'Matteo',
+                'cognome' => 'Prova API',
+                'idprofessione' => '2',
+                'list_id' => '2'
+            );
+            $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::EDIT, $array, self::TIMEOUT);
+            // echo PHP_EOL.$response->getBody();
+        } catch (RequestException $e) {
+            $this->handleException($e);
+        }
+        $data = $this->checkResponse($response);
+    }
+
+    /**
+     * Test unsubscribe from the mailing list
+     */
+    public function testMailingListUnsubscribe() {
+        $response = null;
+        try {
+            $ini_array = parse_ini_file(self::PRIVATE_LOGIN_DATA, true); // Open file 'users.ini' where login data are
+            $user = $ini_array['realUser']['username'];
+            $array = array(
+                'email' => $user,
+                'nome' => 'Matteo',
+                'cognome' => 'Prova API',
+                'idprofessione' => '2',
+                'list_id' => '2'
+            );
+            $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::EDIT, $array, self::TIMEOUT);
+            // echo PHP_EOL.$response->getBody();
+        } catch (RequestException $e) {
+            $this->handleException($e);
+        }
+        $data = $this->checkResponse($response);
+    }
+
+    /**
+     * Send a request
+     *
+     * @param string $method the method
+     * @param string $partial_uri the partial uri
+     * @param string $array the query
+     * @param int $timeout the timeout
+     * @return string the response
+     */
+    private function sendRequest($method, $partial_uri, $array, $timeout) {
+        try {
+            $request = new Request($method, $partial_uri);
             $response = $this->client->send($request, [
-                'timeout' => self::TIMEOUT,
-                'query' => [
-                    'limit' => self::ELEM_LIMIT,
-                    'length' => self::LENGTH
-                ]
+                'timeout' => $timeout,
+                'query' => $array
             ]);
         } catch (RequestException $e) {
             $this->handleException($e);
         }
+        return $response;
+    }
+
+    /**
+     * Check the status code and the content type of the response
+     *
+     * @param string $response the response
+     * @return string a PHP variable of the JSON string of the response
+     */
+    private function checkResponse($response) {
+        // Response
+        $this->assertContains(self::APP_JSON_CT, $response->getHeader(self::CONTENT_TYPE)[0]);
+        $this->assertEquals(self::OK_STATUS_CODE, $response->getStatusCode());
+        
+        // Data
+        $data = json_decode($response->getBody(), true);
+        
+        return $data;
     }
 }
