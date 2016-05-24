@@ -43,15 +43,17 @@ class E2e extends TestPhpUnit {
      * @throws \InvalidArgumentException if a wrong browser is given
      */
     public static function setUpBeforeClass() {
-        // check if you can take screenshots and path exist
+        // check if you can take screenshots and path exist       
         if (self::TAKE_A_SCREENSHOT) {
-            if (! is_writable(SCREENSHOTS_PATH)) {
-                die("ERRORE. percorso non scrivibile: " . SCREENSHOTS_PATH . PHP_EOL);
+            $screenshots_path = getEnv('SCREENSHOTS_PATH');
+            die($screenshots_path);
+            if ( $screenshots_path && !is_writable( $screenshots_path)) {
+                die("ERRORE. percorso non scrivibile: " .  $screenshots_path . PHP_EOL);
             }
         }
         
         // set capabilities according to the browers
-        switch (BROWSER) {
+        switch (getEnv('BROWSER')) {
             case self::PHANTOMJS:
                 $capabilities = DesiredCapabilities::phantomjs();
                 break;
@@ -67,7 +69,7 @@ class E2e extends TestPhpUnit {
         }
         
         // create the WebDriver
-        self::$webDriver = RemoteWebDriver::create(SERVER, $capabilities); // This is the default
+        self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities); // This is the default
     }
 
     /**
@@ -96,8 +98,10 @@ class E2e extends TestPhpUnit {
      * @return string the screenshot
      */
     public function takeScreenshot($element = null) {
+        $screenshots_path = getEnv('SCREENSHOTS_PATH');
+        if ($screenshots_path){
         // The path where save the screenshot
-        $screenshot = SCREENSHOTS_PATH . time() . ".png";
+        $screenshot =  $screenshots_path . time() . ".png";
         
         $this->getWd()->takeScreenshot($screenshot);
         
@@ -127,9 +131,8 @@ class E2e extends TestPhpUnit {
             }
         }
         
-        $screenshots[] = $screenshot;
-        
-        return $screenshot;
+        self::$screenshots[] = $screenshot;
+        }       
     }
 
     /**

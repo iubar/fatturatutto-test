@@ -1,6 +1,7 @@
 REM start selenium
 start C:\Users\Matteo\Desktop\selenium\start_selenium_chrome.bat
 
+call setenv.bat
 call phpunit -c phpunit_chrome.xml
 
 REM stop selenium
