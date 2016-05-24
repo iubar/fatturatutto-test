@@ -6,6 +6,8 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 
+require_once ('..\TestPhpUnit.php');
+
 /**
  * PHPUnit_Framework_TestCase Develop
  *
