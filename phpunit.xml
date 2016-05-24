@@ -11,7 +11,7 @@
 		<!-- Specify the path to a service configuration file -->
 		<!-- <server name="CONFIG" value="test_services.json" /> -->
 		<!-- Or, specify each require parameter individually -->
-		<!-- <server name="GITHUB_USER" value="borgogelli" /> -->
+		<!-- <server name="GITHUB_USER" value="" /> -->
 		<!-- You can then extract the server variables in your bootstrap.php file 
 			by grabbing them from the $_SERVER superglobal: $apiUser = $_SERVER['API_USER']; -->
 	</php>
