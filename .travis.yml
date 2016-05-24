@@ -2,6 +2,10 @@ language: php
 php:
 - 5.5
 - 5.6
+env:
+- BROWSER="chrome"
+- SERVER="http://ondemand.saucelabs.com:80"
+- SCREENSHOTS_PATH=""
 before_script:
   # - composer self-update
   - cd tests
