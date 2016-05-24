@@ -2,16 +2,13 @@ language: php
 php:
 - 5.5
 env:
-- BROWSER="chrome"
-- SERVER="http://ondemand.saucelabs.com:80"
-- SCREENSHOTS_PATH=""
-
   global:
-    - CAMPFIRE_TOKEN=abc123
-    - TIMEOUT=1000
+    - SERVER="http://ondemand.saucelabs.com:80"
+    - SCREENSHOTS_PATH=""
   matrix:
-    - USE_NETWORK=true
-      - USE_NETWORK=false
+    - BROWSER="chrome"
+    - BROWSER="marionette"
+    - BROWSER="phantomjs"
 before_script:
   # - composer self-update
   - cd tests
