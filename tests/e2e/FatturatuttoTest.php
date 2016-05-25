@@ -81,7 +81,7 @@ class FatturatuttoTest extends E2e {
                                                         
             // 1) Wrong login
             
-            $user = 'prova';
+            $user = 'prova@prova';
             $this->login($user, $user);
             
             // Verify the error msg show
