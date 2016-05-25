@@ -7,17 +7,19 @@ env:
     - SCREENSHOTS_PATH=""
   matrix:
     - BROWSER="chrome"
-    - BROWSER="marionette"
-    - BROWSER="phantomjs"
+    #- BROWSER="marionette"
+    #- BROWSER="phantomjs"
 before_script:
   # - composer self-update
   - cd tests
   - composer install --prefer-source --no-interaction --dev
-script: phpunit --configuration ./tests/script/phpunit_chrome_saucelabs.xml
+  - cd ..
+script: phpunit
 notifications:
   email:
     recipients:
       - borgogelli@iubar.it
     on_success: change # default: change
     on_failure: always # default: always
+  webhooks: http://95.224.129.129:81/notification?secret=${WH_TOKEN}
 

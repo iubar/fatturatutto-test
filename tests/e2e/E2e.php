@@ -23,10 +23,9 @@ class E2e extends TestPhpUnit {
     // milliseconds
     const DEFAULT_WAIT_INTERVAL = 1000;
 
+    // Browser
     const PHANTOMJS = 'phantomjs';
-
     const CHROME = 'chrome';
-
     const MARIONETTE = 'marionette';
 
     const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer';
@@ -69,7 +68,20 @@ class E2e extends TestPhpUnit {
         }
         
         // create the WebDriver
-        self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities); // This is the default
+        $connection_timeout_in_ms = 10 * 1000; 	// TODO: tarare il valore
+	$request_timeout_in_ms = 200 * 1000; 	// TODO: tarare il valore
+		
+        self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
+        
+        // set some timeouts
+       	self::$webDriver->manage()->timeouts()->pageLoadTimeout(120);  // TODO: tarare il valore
+	self::$webDriver->manage()->timeouts()->setScriptTimeout(240); // TODO: tarare il valore
+			
+        // Window size
+	// self::$webDriver->manage()->window()->maximize();
+ 	// $window = new WebDriverDimension(1024, 768);
+ 	// $this->webDriver->manage()->window()->setSize($window)
+
     }
 
     /**
