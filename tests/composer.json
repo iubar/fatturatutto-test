@@ -3,5 +3,12 @@
         "php": ">=5.5.0",
         "facebook/webdriver": "*",
         "guzzlehttp/guzzle": "~6.0"
-     }
+    },
+     
+    "autoload": {
+    	"psr-4": {
+    		"Fatturatutto\\": "tests/Fatturatutto/",
+            "Iubar\\": "tests/Iubar/"
+        }
+     }     
 }
