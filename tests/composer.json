@@ -8,7 +8,7 @@
     "autoload": {
     	"psr-4": {
     		"Fatturatutto\\": "tests/Fatturatutto/",
-            "Iubar\\": "tests/Iubar/"
+            "Iubar\\": "Iubar/"
         }
      }     
 }
