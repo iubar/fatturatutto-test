@@ -30,6 +30,9 @@
 		<testsuite name="Fatturatutto">
 			<file>../e2e/FatturatuttoTest.php</file>
 		</testsuite>
+        	<!-- <testsuite name="All Tests"> -->
+            		<!-- <directory suffix=".php">./tests/</directory> -->
+        	<!-- </testsuite> -->		
 	</testsuites>
 
 	<php>
