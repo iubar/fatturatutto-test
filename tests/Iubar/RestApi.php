@@ -1,9 +1,10 @@
 <?php
+namespace Iubar;
+
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
 
-require_once ('..\TestPhpUnit.php');
 
 /**
  * PHPUnit_Framework_TestCase Develop

@@ -1,11 +1,12 @@
 <?php
+namespace Iubar;
+
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 
-require_once ('..\TestPhpUnit.php');
 
 /**
  * PHPUnit_Framework_TestCase Develop
@@ -22,16 +23,19 @@ class E2e extends TestPhpUnit {
     
     // milliseconds
     const DEFAULT_WAIT_INTERVAL = 1000;
-
+    
     // Browser
     const PHANTOMJS = 'phantomjs';
+
     const CHROME = 'chrome';
+
     const MARIONETTE = 'marionette';
 
     const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer';
-
+ // FIXME: ...
+                                                                                                         
     const START = 'start';
-    
+
     protected static $screenshots = array();
 
     protected static $webDriver;
@@ -42,11 +46,11 @@ class E2e extends TestPhpUnit {
      * @throws \InvalidArgumentException if a wrong browser is given
      */
     public static function setUpBeforeClass() {
-        // check if you can take screenshots and path exist       
+        // check if you can take screenshots and path exist
         if (self::TAKE_A_SCREENSHOT) {
-            $screenshots_path = getEnv('SCREENSHOTS_PATH');            
-            if ( $screenshots_path && !is_writable( $screenshots_path)) {
-                die("ERRORE. percorso non scrivibile: " .  $screenshots_path . PHP_EOL);
+            $screenshots_path = getEnv('SCREENSHOTS_PATH');
+            if ($screenshots_path && ! is_writable($screenshots_path)) {
+                die("ERRORE. percorso non scrivibile: " . $screenshots_path . PHP_EOL);
             }
         }
         
@@ -67,20 +71,23 @@ class E2e extends TestPhpUnit {
         }
         
         // create the WebDriver
-        $connection_timeout_in_ms = 10 * 1000; 	// TODO: tarare il valore
-	$request_timeout_in_ms = 200 * 1000; 	// TODO: tarare il valore
-		
-        self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
+        $connection_timeout_in_ms = 10 * 1000; // TODO: tarare il valore
+        $request_timeout_in_ms = 200 * 1000; // TODO: tarare il valore
         
+        self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
+                                                                                                                                        
         // set some timeouts
-       	self::$webDriver->manage()->timeouts()->pageLoadTimeout(120);  // TODO: tarare il valore
-	self::$webDriver->manage()->timeouts()->setScriptTimeout(240); // TODO: tarare il valore
-			
+        self::$webDriver->manage()
+            ->timeouts()
+            ->pageLoadTimeout(120); // TODO: tarare il valore
+        self::$webDriver->manage()
+            ->timeouts()
+            ->setScriptTimeout(240); // TODO: tarare il valore
+                                                                               
         // Window size
-	// self::$webDriver->manage()->window()->maximize();
- 	// $window = new WebDriverDimension(1024, 768);
- 	// $this->webDriver->manage()->window()->setSize($window)
-
+                                                                               // self::$webDriver->manage()->window()->maximize();
+                                                                               // $window = new WebDriverDimension(1024, 768);
+                                                                               // $this->webDriver->manage()->window()->setSize($window)
     }
 
     /**
@@ -110,40 +117,40 @@ class E2e extends TestPhpUnit {
      */
     public function takeScreenshot($element = null) {
         $screenshots_path = getEnv('SCREENSHOTS_PATH');
-        if ($screenshots_path){
-        // The path where save the screenshot
-        $screenshot =  $screenshots_path . time() . ".png";
-        
-        $this->getWd()->takeScreenshot($screenshot);
-        
-        if (! file_exists($screenshot)) {
-            throw new Exception('Could not save screenshot: ' . $screenshot);
-        }
-        
-        if ($element) {
+        if ($screenshots_path) {
+            // The path where save the screenshot
+            $screenshot = $screenshots_path . time() . ".png";
             
-            $element_width = $element->getSize()->getWidth();
-            $element_height = $element->getSize()->getHeight();
-            
-            $element_src_x = $element->getLocation()->getX();
-            $element_src_y = $element->getLocation()->getY();
-            
-            // Create image instances
-            $src = imagecreatefrompng($screenshot);
-            $dest = imagecreatetruecolor($element_width, $element_height);
-            
-            // Copy
-            imagecopy($dest, $src, 0, 0, $element_src_x, $element_src_y, $element_width, $element_height);
-            
-            imagepng($dest, $screenshot); // overwrite the full screenshot
+            $this->getWd()->takeScreenshot($screenshot);
             
             if (! file_exists($screenshot)) {
-                throw new Exception('Could not save the cropped screenshot' . $screenshot);
+                throw new Exception('Could not save screenshot: ' . $screenshot);
             }
+            
+            if ($element) {
+                
+                $element_width = $element->getSize()->getWidth();
+                $element_height = $element->getSize()->getHeight();
+                
+                $element_src_x = $element->getLocation()->getX();
+                $element_src_y = $element->getLocation()->getY();
+                
+                // Create image instances
+                $src = imagecreatefrompng($screenshot);
+                $dest = imagecreatetruecolor($element_width, $element_height);
+                
+                // Copy
+                imagecopy($dest, $src, 0, 0, $element_src_x, $element_src_y, $element_width, $element_height);
+                
+                imagepng($dest, $screenshot); // overwrite the full screenshot
+                
+                if (! file_exists($screenshot)) {
+                    throw new Exception('Could not save the cropped screenshot' . $screenshot);
+                }
+            }
+            
+            self::$screenshots[] = $screenshot;
         }
-        
-        self::$screenshots[] = $screenshot;
-        }       
     }
 
     /**
@@ -196,17 +203,18 @@ class E2e extends TestPhpUnit {
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath($xpath)));
     }
 
-	public function waitForTag($tag, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
-		$this->getWd()->wait ($timeout, $interval)->until (
-				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::tagName($tag))
-				);
-	}
-	public function waitForCss($css, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
-		$this->getWd()->wait ($timeout, $interval)->until (
-				WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::cssSelector($css))
-				);
-	}
-	
+    public function waitForTag($tag, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+        $this->getWd()
+            ->wait($timeout, $interval)
+            ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::tagName($tag)));
+    }
+
+    public function waitForCss($css, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+        $this->getWd()
+            ->wait($timeout, $interval)
+            ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::cssSelector($css)));
+    }
+
     /**
      * Wait at most $timeout seconds until at least one result is shown
      *
@@ -219,23 +227,26 @@ class E2e extends TestPhpUnit {
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::partialLinkText($partial_link_text)));
     }
 
-	/**
-	 * waitForAjax : wait for all ajax request to close
-	 * 
-	 * @param integer $timeout timeout in seconds
-	 * @param integer $interval interval in miliseconds
-	 * @return void
-	 */
-	public function waitForAjax($timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
-		$this->getWd()->wait($timeout, $interval)->until(function () {
-			// jQuery: "jQuery.active" or $.active
-			// Prototype: "Ajax.activeRequestCount"
-			// Dojo: "dojo.io.XMLHTTPTransport.inFlight.length"
-			$condition = 'return ($.active == 0);';
-			return $this->getWd()->executeScript ($condition);
-		} );
-	}
-	
+    /**
+     * waitForAjax : wait for all ajax request to close
+     *
+     * @param integer $timeout timeout in seconds
+     * @param integer $interval interval in miliseconds
+     * @return void
+     */
+    public function waitForAjax($timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+        $this->getWd()
+            ->wait($timeout, $interval)
+            ->until(function () {
+            // jQuery: "jQuery.active" or $.active
+            // Prototype: "Ajax.activeRequestCount"
+            // Dojo: "dojo.io.XMLHTTPTransport.inFlight.length"
+            $condition = 'return ($.active == 0);';
+            return $this->getWd()
+                ->executeScript($condition);
+        });
+    }
+
     /**
      * Assert that an element was not found
      *

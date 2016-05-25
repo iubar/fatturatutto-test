@@ -1,9 +1,10 @@
 <?php
+namespace Fatturatutto\Functions;
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
-
-require_once ('RestApi.php');
+use Iubar\RestApi;
 
 /**
  * API Test

@@ -1,8 +1,9 @@
 <?php
+namespace Fatturatutto\E2e;
+
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\Exception\WebDriverException;
-
-require_once ('E2e.php');
+use Iubar\E2e;
 
 /**
  * Test of www.fatturatutto.it website
@@ -30,7 +31,7 @@ class FatturatuttoTest extends E2e {
 
     const BENVENUTO_MSG = "Benvenuto su FatturaTutto";
 
-    const PRIVATE_LOGIN_DATA = "C:/Users/Matteo/Desktop/protected_folder/users.ini";
+    const PRIVATE_LOGIN_DATA = "C:/Users/Matteo/Desktop/protected_folder/users.ini"; // FIXME> ...
 
     /**
      * SiteHome and AppHome test and click on button 'Inizia, è gratis'

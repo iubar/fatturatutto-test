@@ -1,6 +1,8 @@
 <?php
 
-class TestPhpUnit extends PHPUnit_Framework_TestCase {
+namespace Iubar;
+
+class TestPhpUnit extends \PHPUnit_Framework_TestCase {
 
     /**
      * This method is called when a test method did not execute successfully
