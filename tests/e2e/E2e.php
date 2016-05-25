@@ -44,8 +44,7 @@ class E2e extends TestPhpUnit {
     public static function setUpBeforeClass() {
         // check if you can take screenshots and path exist       
         if (self::TAKE_A_SCREENSHOT) {
-            $screenshots_path = getEnv('SCREENSHOTS_PATH');
-            die($screenshots_path);
+            $screenshots_path = getEnv('SCREENSHOTS_PATH');            
             if ( $screenshots_path && !is_writable( $screenshots_path)) {
                 die("ERRORE. percorso non scrivibile: " .  $screenshots_path . PHP_EOL);
             }
