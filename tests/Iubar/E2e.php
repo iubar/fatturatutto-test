@@ -57,17 +57,22 @@ class E2e extends TestPhpUnit {
         // set capabilities according to the browers
         switch (getEnv('BROWSER')) {
             case self::PHANTOMJS:
+                echo "Inizializing PhantomJs browser..." . PHP_EOL;
                 $capabilities = DesiredCapabilities::phantomjs();
                 break;
             case self::CHROME:
+                echo "Inizializing Chrome browser..." . PHP_EOL;
                 $capabilities = DesiredCapabilities::chrome();
                 break;
             case self::MARIONETTE:
+                echo "Inizializing Marionette browser..." . PHP_EOL;
                 $capabilities = DesiredCapabilities::firefox();
                 $capabilities->setCapability(self::MARIONETTE, true);
                 break;
             default:
-                throw new \InvalidArgumentException("parametro " . BROWSER . " non previsto");
+                $error = "Browser '" . getEnv('BROWSER') . "' not supported.";                
+               // throw new \InvalidArgumentException($error);
+               die("ERROR: " . $error . PHP_EOL);
         }
         
         // create the WebDriver
