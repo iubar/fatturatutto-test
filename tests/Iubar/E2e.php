@@ -78,7 +78,13 @@ class E2e extends TestPhpUnit {
         $connection_timeout_in_ms = 10 * 1000; // TODO: tarare il valore
         $request_timeout_in_ms = 200 * 1000; // TODO: tarare il valore
         
-        self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
+        try {
+            self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
+        } catch (\Exception $e) {
+            $error = "Exception: " . $e->getMessage();
+            die($error . PHP_EOL);
+        }
+        
                                                                                                                                         
         // set some timeouts
         self::$webDriver->manage()

@@ -30,9 +30,7 @@ class FatturatuttoTest extends E2e {
     const ERR_DATI_MSG = "Email o password errati";
 
     const BENVENUTO_MSG = "Benvenuto su FatturaTutto";
-
-    const PRIVATE_LOGIN_DATA = "C:/Users/Matteo/Desktop/protected_folder/users.ini"; // FIXME> ...
-
+    
     /**
      * SiteHome and AppHome test and click on button 'Inizia, è gratis'
      */
@@ -101,13 +99,10 @@ class FatturatuttoTest extends E2e {
             $password = getEnv('FT_PASSWORD');
             $this->login($user, $password);
             
-            // Verify to be enter and that welcome msg is show
-            $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]/h2';
-            if (! isset($welcome_msg)) {
-                $this->waitForXpath($welcome_msg); // Wait until the element is visible
-                $correctData = $wd->findElement(WebDriverBy::xpath($welcome_msg));
-                $this->assertNotNull($correctData);
-                $this->assertContains(self::BENVENUTO_MSG, $correctData->getText());
+            // Verify to be enter and that welcome msg is show 
+            $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; //TODO
+            if (! isset($welcome_msg)) { //se esiste compilo i campi
+                
             }
             
             // checking that we are in the right page
