@@ -76,16 +76,15 @@ class E2e extends TestPhpUnit {
             default:
                 $error = "Browser '" . getEnv('BROWSER') . "' not supported.";
                 die("ERROR: " . $error . PHP_EOL);
-        }
-        
+        }        
         if(getEnv('TRAVIS')){
             echo "Travis detected..." . PHP_EOL;
-            $capabilities->setCapability( 'tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
+            $capabilities->setCapability('tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
         }
         
         // create the WebDriver
-        $connection_timeout_in_ms = 10 * 1000; // TODO: tarare il valore
-        $request_timeout_in_ms = 200 * 1000; // TODO: tarare il valore
+        $connection_timeout_in_ms = 10 * 1000;  // Set the maximum time of a request
+        $request_timeout_in_ms = 20 * 1000;     // Set the maximum time of a request
         
         try {
             self::$webDriver = RemoteWebDriver::create($server, $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
@@ -93,20 +92,17 @@ class E2e extends TestPhpUnit {
             $error = "Exception: " . $e->getMessage();
             die($error . PHP_EOL);
         }
-        
                                                                                                                                         
         // set some timeouts
         self::$webDriver->manage()
-            ->timeouts()
-            ->pageLoadTimeout(120); // TODO: tarare il valore
+            ->timeouts()->pageLoadTimeout(60);  // Set the amount of time (in seconds) to wait for a page load to complete before throwing an error
         self::$webDriver->manage()
-            ->timeouts()
-            ->setScriptTimeout(240); // TODO: tarare il valore
+            ->timeouts()->setScriptTimeout(240); // Set the amount of time (in seconds) to wait for an asynchronous script to finish execution before throwing an error.
                                                                                
         // Window size
-                                                                               // self::$webDriver->manage()->window()->maximize();
-                                                                               // $window = new WebDriverDimension(1024, 768);
-                                                                               // $this->webDriver->manage()->window()->setSize($window)
+          // self::$webDriver->manage()->window()->maximize();
+          // $window = new WebDriverDimension(1024, 768);
+          // $this->webDriver->manage()->window()->setSize($window)
     }
 
     /**
