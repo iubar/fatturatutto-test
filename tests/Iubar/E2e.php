@@ -57,22 +57,21 @@ class E2e extends TestPhpUnit {
         // set capabilities according to the browers
         switch (getEnv('BROWSER')) {
             case self::PHANTOMJS:
-                echo "Inizializing PhantomJs browser..." . PHP_EOL;
+                echo "Inizializing PhantomJs browser" . PHP_EOL;
                 $capabilities = DesiredCapabilities::phantomjs();
                 break;
             case self::CHROME:
-                echo "Inizializing Chrome browser..." . PHP_EOL;
+                echo "Inizializing Chrome browser" . PHP_EOL;
                 $capabilities = DesiredCapabilities::chrome();
                 break;
             case self::MARIONETTE:
-                echo "Inizializing Marionette browser..." . PHP_EOL;
+                echo "Inizializing Marionette browser" . PHP_EOL;
                 $capabilities = DesiredCapabilities::firefox();
                 $capabilities->setCapability(self::MARIONETTE, true);
                 break;
             default:
-                $error = "Browser '" . getEnv('BROWSER') . "' not supported.";                
-               // throw new \InvalidArgumentException($error);
-               die("ERROR: " . $error . PHP_EOL);
+                $error = "Browser '" . getEnv('BROWSER') . "' not supported.";
+                die("ERROR: " . $error . PHP_EOL);
         }
         
         // create the WebDriver
@@ -104,12 +103,9 @@ class E2e extends TestPhpUnit {
         
         // if there is at least a screenshot show it in the browser
         if (count(self::$screenshots) > 0) {
-            echo "Screnshots taken: " . PHP_EOL;
-            foreach (self::$screenshots as $screenshot) {
-                echo "\t" . $screenshot . PHP_EOL;
-            }
+            echo "Taken ".count(self::$screenshots). " screenshots" . PHP_EOL;
             $first_screenshot = self::$screenshots[0];
-            $this->startShell(self::START . self::CHROME . $first_screenshot);
+            self::startShell(self::START ." ". self::CHROME ." ". $first_screenshot);
         }
     }
 
@@ -322,7 +318,7 @@ class E2e extends TestPhpUnit {
      *
      * @param string $cmd the command to execute
      */
-    private function startShell($cmd) {
-        $this->shell_exec($cmd);
+    protected static function startShell($cmd) {
+        shell_exec($cmd);
     }
 }
