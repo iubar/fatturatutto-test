@@ -15,7 +15,7 @@ before_script:
   - cd tests
   - composer install --prefer-source --no-interaction --dev
   - cd ..
-  # Download and run Selenium
+  # Download and run Selenium (+ https://github.com/jarib/selenium-travis)
   # - "wget http://selenium-release.storage.googleapis.com/2.43/selenium-server-standalone-2.43.1.jar"
   # - "java -jar selenium-server-standalone-2.43.1.jar > /dev/null &"  
   # Use xvfb 
