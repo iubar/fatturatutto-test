@@ -3,7 +3,7 @@ php:
 - 5.5
 env:
   global:
-    - SERVER="http://ondemand.saucelabs.com:80"
+    - SERVER="ondemand.saucelabs.com"
     - SCREENSHOTS_PATH=""
   matrix:
     - BROWSER="chrome"
