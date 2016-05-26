@@ -15,6 +15,9 @@ before_script:
   - composer install --prefer-source --no-interaction --dev
   - cd ..
 script: phpunit
+addons:
+  sauce_connect:
+     sauce_connect: true
 notifications:
   email:
     recipients:
