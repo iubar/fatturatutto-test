@@ -97,8 +97,8 @@ class FatturatuttoTest extends E2e {
             
             // 2) Real login
             
-            $user = getEnv('USERNAME');
-            $password = getEnv('PASSWORD');
+            $user = getEnv('FT_USERNAME');
+            $password = getEnv('FT_PASSWORD');
             $this->login($user, $password);
             
             // Verify to be enter and that welcome msg is show

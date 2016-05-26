@@ -155,7 +155,7 @@ class ApiTest extends RestApi {
         $response = null;
         try {
             $array = array(
-                'email' => getenv('USERNAME'),
+                'email' => getenv('FT_USERNAME'),
                 'nome' => 'Matteo',
                 'cognome' => 'Prova API',
                 'idprofessione' => '1',
@@ -175,7 +175,7 @@ class ApiTest extends RestApi {
         $response = null;
         try {
             $array = array(
-                'email' => getenv('USERNAME'),
+                'email' => getenv('FT_USERNAME'),
                 'nome' => 'Matteo',
                 'cognome' => 'Prova API',
                 'idprofessione' => '2',
@@ -197,7 +197,7 @@ class ApiTest extends RestApi {
         try {
             
             $array = array(
-                'email' => getenv('USERNAME'),
+                'email' => getenv('FT_USERNAME'),
                 'nome' => 'Matteo',
                 'cognome' => 'Prova API',
                 'idprofessione' => '2',
