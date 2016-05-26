@@ -24,7 +24,7 @@ addons:
 notifications:
   email:
     recipients:
-      - "${EMAIL_BORGO}"
+      - ${EMAIL_BORGO}
     on_success: change # default: change
     on_failure: always # default: always
   webhooks: http://95.224.129.129:81/notification?secret=${WH_TOKEN}
