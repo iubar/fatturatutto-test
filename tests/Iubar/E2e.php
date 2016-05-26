@@ -7,7 +7,6 @@ use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 
-
 /**
  * PHPUnit_Framework_TestCase Develop
  *
@@ -31,8 +30,8 @@ class E2e extends TestPhpUnit {
 
     const MARIONETTE = 'marionette';
 
-    const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444'; // FIXME: ...
-                                                                                                         
+    const SELENIUM_SHUTDOWN_URL = null;
+ // FIXME: ...
     const START = 'start';
 
     protected static $screenshots = array();
@@ -42,12 +41,15 @@ class E2e extends TestPhpUnit {
     /**
      * Start the WebDriver
      *
-     * @throws \InvalidArgumentException if a wrong browser is given
+     * @global string BROWSER
+     * @global string TRAVIS
+     *        
      */
     public static function setUpBeforeClass() {
         
-      
-        
+        // Usage with SauceLabs:
+        // set on Travis: SAUCE_USERNAME and SAUCE_ACCESS_KEY
+        // set on .tavis.yml and env.bat: SERVER (hostname + port, without protocol);
         
         
         // check if you can take screenshots and path exist
@@ -57,6 +59,8 @@ class E2e extends TestPhpUnit {
                 die("ERRORE percorso non scrivibile: " . $screenshots_path . PHP_EOL);
             }
         }
+        
+        $capabilities = null;
         
         // set capabilities according to the browers
         switch (getEnv('BROWSER')) {
@@ -79,25 +83,24 @@ class E2e extends TestPhpUnit {
         }
         
         $server_root = null;
-        $server = null;        
-        if(getEnv('TRAVIS')){
+        $server = null;
+        // create the WebDriver
+        $connection_timeout_in_ms = 10 * 1000; // Set the maximum time of a request
+        $request_timeout_in_ms = 20 * 1000; // Set the maximum time of a request
+        
+        if (getEnv('TRAVIS')) {
             echo "Travis detected..." . PHP_EOL;
             $username = getEnv('SAUCE_USERNAME');
             $access_key = getEnv('SAUCE_ACCESS_KEY');
             $server_root = "http://" . $username . ":" . $access_key . "@" . getEnv('SERVER');
             $server = $server_root . "/wd/hub";
             $capabilities->setCapability('tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
-            
-        }else{
+        } else {
             $server_root = "http://" . getEnv('SERVER');
             $server = $server_root . "/wd/hub";
         }
-        // self:: ..... = $server_root .  "/selenium-server/driver/?cmd=shutDownSeleniumServer';
+        // self::SELENIUM_SHUTDOWN_URL = $server_root . "/selenium-server/driver/?cmd=shutDownSeleniumServer';
         echo "Server: " . $server . PHP_EOL;
-        
-        // create the WebDriver
-        $connection_timeout_in_ms = 10 * 1000;  // Set the maximum time of a request
-        $request_timeout_in_ms = 20 * 1000;     // Set the maximum time of a request
         
         try {
             self::$webDriver = RemoteWebDriver::create($server, $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
@@ -105,17 +108,19 @@ class E2e extends TestPhpUnit {
             $error = "Exception: " . $e->getMessage();
             die($error . PHP_EOL);
         }
-                                                                                                                                        
+        
         // set some timeouts
         self::$webDriver->manage()
-            ->timeouts()->pageLoadTimeout(60);  // Set the amount of time (in seconds) to wait for a page load to complete before throwing an error
+            ->timeouts()
+            ->pageLoadTimeout(60); // Set the amount of time (in seconds) to wait for a page load to complete before throwing an error
         self::$webDriver->manage()
-            ->timeouts()->setScriptTimeout(240); // Set the amount of time (in seconds) to wait for an asynchronous script to finish execution before throwing an error.
-                                                                               
+            ->timeouts()
+            ->setScriptTimeout(240); // Set the amount of time (in seconds) to wait for an asynchronous script to finish execution before throwing an error.
+                                                     
         // Window size
-          // self::$webDriver->manage()->window()->maximize();
-          // $window = new WebDriverDimension(1024, 768);
-          // $this->webDriver->manage()->window()->setSize($window)
+                                                     // self::$webDriver->manage()->window()->maximize();
+                                                     // $window = new WebDriverDimension(1024, 768);
+                                                     // $this->webDriver->manage()->window()->setSize($window)
     }
 
     /**
@@ -127,9 +132,9 @@ class E2e extends TestPhpUnit {
         
         // if there is at least a screenshot show it in the browser
         if (count(self::$screenshots) > 0) {
-            echo "Taken ".count(self::$screenshots). " screenshots" . PHP_EOL;
+            echo "Taken " . count(self::$screenshots) . " screenshots" . PHP_EOL;
             $first_screenshot = self::$screenshots[0];
-            self::startShell(self::START ." ". self::CHROME ." ". $first_screenshot);
+            self::startShell(self::START . " " . self::CHROME . " " . $first_screenshot);
         }
     }
 
@@ -309,44 +314,23 @@ class E2e extends TestPhpUnit {
      * This method is called when a test method did not execute successfully
      *
      * @param Exception|Throwable $e the exception
-     *
+     *       
      * @throws Exception|Throwable throws a PHPUnit_Framework_ExpectationFailedException
      */
     public function onNotSuccessfulTest(\Exception $e) {
-        $this->handleAssertionException();
+        echo "Exception: " . $e->getMessage() . PHP_EOL;
+        if (self::TAKE_A_SCREENSHOT) {
+            echo "Taking a screenshot..." . PHP_EOL;
+            $this->takeScreenshot();
+        }
         parent::onNotSuccessfulTest($e);
-    }
-    
-    /**
-     * Make a screenshot if the assertion fail
-     *
-     * @param \Exception $e the exception
-     */
-    private function handleAssertionException() {
-        echo PHP_EOL;
-        if (self::TAKE_A_SCREENSHOT) {
-            echo "Assertion failed: taking a screen shot..." . PHP_EOL;
-            $this->takeScreenshot();
-        }
-    }
-
-    /**
-     * Handle the WebDriverException taking a screenshot
-     *
-     * @param WebDriverException $e the exception
-     */
-    protected function handleWebdriverException(WebDriverException $e) {
-        if (self::TAKE_A_SCREENSHOT) {
-            echo "Assertion failed: taking a screen shot..." . PHP_EOL;
-            $this->takeScreenshot();
-        }
     }
 
     /**
      * Shutdown Selenium Server
      */
     protected function quitSelenium() {
-        $this->startShell(self::START . " " .  self::CHROME . " " .  self::SELENIUM_SHUTDOWN_URL);
+        $this->startShell(self::START . " " . self::CHROME . " " . self::SELENIUM_SHUTDOWN_URL);
     }
 
     /**

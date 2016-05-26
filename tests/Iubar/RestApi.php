@@ -5,7 +5,6 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
 
-
 /**
  * PHPUnit_Framework_TestCase Develop
  *
@@ -13,7 +12,6 @@ use GuzzleHttp\Exception\RequestException;
  *        
  */
 class RestApi extends TestPhpUnit {
-
 
     /**
      * Handle the RequestException writing his msg

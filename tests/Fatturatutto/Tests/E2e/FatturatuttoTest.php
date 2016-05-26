@@ -2,13 +2,14 @@
 namespace Fatturatutto\E2e;
 
 use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\Exception\WebDriverException;
 use Iubar\E2e;
 
 /**
  * Test of www.fatturatutto.it website
  *
  * @author Matteo
+ *        
+ * @global ....
  *        
  */
 class FatturatuttoTest extends E2e {
@@ -30,33 +31,29 @@ class FatturatuttoTest extends E2e {
     const ERR_DATI_MSG = "Email o password errati";
 
     const BENVENUTO_MSG = "Benvenuto su FatturaTutto";
-    
+
     /**
      * SiteHome and AppHome test and click on button 'Inizia, è gratis'
      */
     public function testSiteHomeTitle() {
-        try {
-            $wd = $this->getWd();
-            $wd->get(self::SITE_HOME); // Navigate to SITE_HOME
-                                       
-            // SITE HOME
-                                       
-            // checking that we are in the right page
-            $this->check_webpage(self::SITE_HOME, self::SITE_TITLE);
-            
-            // select button 'Inizia' for php-webdriver
-            $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
-            $this->waitForXpath($inizia_button_path); // Wait until the element is visible
-            $start_button = $wd->findElement(WebDriverBy::xpath($inizia_button_path)); // Button "Inizia"
-            $start_button->click();
-            
-            // APP HOME
-            
-            // checking that we are in the right page
-            $this->check_webpage(self::APP_HOME, self::APP_TITLE);
-        } catch (WebDriverException $e) {
-            $this->handleWebdriverException($e);
-        }
+        $wd = $this->getWd();
+        $wd->get(self::SITE_HOME); // Navigate to SITE_HOME
+                                   
+        // SITE HOME
+                                   
+        // checking that we are in the right page
+        $this->check_webpage(self::SITE_HOME, self::SITE_TITLE);
+        
+        // select button 'Inizia' for php-webdriver
+        $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
+        $this->waitForXpath($inizia_button_path); // Wait until the element is visible
+        $start_button = $wd->findElement(WebDriverBy::xpath($inizia_button_path)); // Button "Inizia"
+        $start_button->click();
+        
+        // APP HOME
+        
+        // checking that we are in the right page
+        $this->check_webpage(self::APP_HOME, self::APP_TITLE);
         
         // adding cookie
         /*
@@ -74,72 +71,63 @@ class FatturatuttoTest extends E2e {
      * Login test with wrong and real params
      */
     public function testLogin() {
-        try {
-            $wd = $this->getWd();
-            $wd->get(self::APP_HOME . self::LOGIN_URL); // Navigate to LOGIN_URL
-                                                        
-            // 1) Wrong login
-            
-            $user = 'prova@prova';
-            $this->login($user, $user);
-            
-            // Verify the error msg show
-            $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
-            $this->waitForXpath($login_error_msg); // Wait until the element is visible
-            $incorrectData = $wd->findElement(WebDriverBy::xpath($login_error_msg)); // Text "Email o password errati"
-            $this->assertNotNull($incorrectData);
-            $this->assertContains(self::ERR_DATI_MSG, $incorrectData->getText());
-            
-            // checking that we are in the right page
-            $this->check_webpage(self::APP_HOME . self::LOGIN_URL, self::APP_TITLE);
-            
-            // 2) Real login
-            
-            $user = getEnv('FT_USERNAME');
-            $password = getEnv('FT_PASSWORD');
-            $this->login($user, $password);
-            
-            // Verify to be enter and that welcome msg is show 
-            $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; //TODO
-            if (! isset($welcome_msg)) { //se esiste compilo i campi
-                
-            }
-            
-            // checking that we are in the right page
-            $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
-        } catch (WebDriverException $e) {
-            $this->handleWebdriverException($e);
+        $wd = $this->getWd();
+        $wd->get(self::APP_HOME . self::LOGIN_URL); // Navigate to LOGIN_URL
+                                                    
+        // 1) Wrong login
+        
+        $user = 'prova@prova';
+        $this->login($user, $user);
+        
+        // Verify the error msg show
+        $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
+        $this->waitForXpath($login_error_msg); // Wait until the element is visible
+        $incorrectData = $wd->findElement(WebDriverBy::xpath($login_error_msg)); // Text "Email o password errati"
+        $this->assertNotNull($incorrectData);
+        $this->assertContains(self::ERR_DATI_MSG, $incorrectData->getText());
+        
+        // checking that we are in the right page
+        $this->check_webpage(self::APP_HOME . self::LOGIN_URL, self::APP_TITLE);
+        
+        // 2) Real login
+        
+        $user = getEnv('FT_USERNAME');
+        $password = getEnv('FT_PASSWORD');
+        $this->login($user, $password);
+        
+        // Verify to be enter and that welcome msg is show
+        $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; // TODO
+        if (! isset($welcome_msg)) { // se esiste compilo i campi
         }
+        
+        // checking that we are in the right page
+        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
     }
 
     /**
      * Test the aside navigation bar
      */
     public function testAsideNavigationBar() {
-        try {
-            $wd = $this->getWd();
-            $wd->get(self::APP_HOME . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
-                                                                 
-            // checking that we are in the right page
-            $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
-            
-            $navigation_bar_elem_id = array(
-                'Situazione' => 'situazione',
-                'Anagrafica' => 'anagrafica',
-                'Clienti' => 'clienti',
-                'Articoli - servizi' => 'articoli-servizi',
-                'Fatture' => 'fatture',
-                'Modelli' => 'modelli',
-                'Strumenti' => 'strumenti',
-                'Impostazioni' => 'impostazioni'
-            );
-            
-            // checking that all the section of the navigation bar are ok
-            foreach ($navigation_bar_elem_id as $key => $value) {
-                $this->check_nav_bar($value, $key);
-            }
-        } catch (WebDriverException $e) {
-            $this->handleWebdriverException($e);
+        $wd = $this->getWd();
+        $wd->get(self::APP_HOME . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
+                                                             
+        // checking that we are in the right page
+        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        
+        $navigation_bar_elem_id = array(
+            'Situazione' => 'situazione',
+            'Anagrafica' => 'anagrafica',
+            'Clienti' => 'clienti',
+            'Articoli - servizi' => 'articoli-servizi',
+            'Fatture' => 'fatture',
+            'Modelli' => 'modelli',
+            'Strumenti' => 'strumenti',
+            'Impostazioni' => 'impostazioni'
+        );
+        
+        // checking that all the section of the navigation bar are ok
+        foreach ($navigation_bar_elem_id as $key => $value) {
+            $this->check_nav_bar($value, $key);
         }
     }
 
@@ -147,27 +135,23 @@ class FatturatuttoTest extends E2e {
      * Test 'impostazioni' section in the aside navigation bar
      */
     public function testImpostazioni() {
-        try {
-            $wd = $this->getWd();
-            $wd->get(self::APP_HOME . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
-                                                                 
-            // checking that we are in the right page
-            $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
-            
-            $impostazioni_id = 'impostazioni';
-            $this->waitForId($impostazioni_id); // Wait until the element is visible
-            $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id));
-            $this->assertNotNull($impostazioni_button);
-            $impostazioni_button->click();
-            
-            $imp_generali_path = '//*[@id="impostazioni"]/ul/li[1]/a';
-            $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
-            $this->assertNotNull($imp_generali);
-            $imp_generali->click();
-        } catch (WebDriverException $e) {
-            $this->handleWebdriverException($e);
-        }
+        $wd = $this->getWd();
+        $wd->get(self::APP_HOME . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
+                                                             
+        // checking that we are in the right page
+        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        
+        $impostazioni_id = 'impostazioni';
+        $this->waitForId($impostazioni_id); // Wait until the element is visible
+        $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id));
+        $this->assertNotNull($impostazioni_button);
+        $impostazioni_button->click();
+        
+        $imp_generali_path = '//*[@id="impostazioni"]/ul/li[1]/a';
+        $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+        $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
+        $this->assertNotNull($imp_generali);
+        $imp_generali->click();
     }
 
     /**
@@ -177,30 +161,26 @@ class FatturatuttoTest extends E2e {
      * @param string $password the password of the user
      */
     private function login($user, $password) {
-        try {
-            $wd = $this->getWd();
-            
-            $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
-            $email_enter = $wd->findElement(WebDriverBy::xpath($email_button_path)); // Button "Email"
-            $email_enter->click();
-            
-            // Write into email textfield
-            $username_field_path = '/html/body/div[1]/div[1]/div/div/form/div[2]/input';
-            $username_text_field = $wd->findElement(WebDriverBy::xpath($username_field_path)); // Field "Username"
-            $username_text_field->sendKeys($user);
-            
-            // Write into password textfield
-            $passwor_field_path = '/html/body/div[1]/div[1]/div/div/form/div[3]/input';
-            $password_text_field = $wd->findElement(WebDriverBy::xpath($passwor_field_path)); // Field "Password"
-            $password_text_field->sendKeys($password);
-            
-            // Click on 'Accedi' button
-            $login_button_path = '/html/body/div[1]/div[1]/div/div/form/div[5]/button';
-            $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
-            $accedi_button->click();
-        } catch (WebDriverException $e) {
-            $this->handleWebdriverException($e);
-        }
+        $wd = $this->getWd();
+        
+        $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
+        $email_enter = $wd->findElement(WebDriverBy::xpath($email_button_path)); // Button "Email"
+        $email_enter->click();
+        
+        // Write into email textfield
+        $username_field_path = '/html/body/div[1]/div[1]/div/div/form/div[2]/input';
+        $username_text_field = $wd->findElement(WebDriverBy::xpath($username_field_path)); // Field "Username"
+        $username_text_field->sendKeys($user);
+        
+        // Write into password textfield
+        $passwor_field_path = '/html/body/div[1]/div[1]/div/div/form/div[3]/input';
+        $password_text_field = $wd->findElement(WebDriverBy::xpath($passwor_field_path)); // Field "Password"
+        $password_text_field->sendKeys($password);
+        
+        // Click on 'Accedi' button
+        $login_button_path = '/html/body/div[1]/div[1]/div/div/form/div[5]/button';
+        $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
+        $accedi_button->click();
     }
 
     /**
@@ -210,13 +190,9 @@ class FatturatuttoTest extends E2e {
      * @param string $title the title of the webpage
      */
     private function check_webpage($expected_url, $expected_title) {
-        try {
-            $wd = $this->getWd();
-            $title = $wd->getTitle();
-            $url = $wd->getCurrentURL();
-        } catch (WebDriverException $e) {
-            $this->handleWebdriverException($e);
-        }
+        $wd = $this->getWd();
+        $title = $wd->getTitle();
+        $url = $wd->getCurrentURL();
         
         $this->assertEquals($expected_url, $url);
         $this->assertContains($expected_title, $title);
@@ -229,15 +205,11 @@ class FatturatuttoTest extends E2e {
      * @param string $expected_title the title of the elem
      */
     private function check_nav_bar($id, $expected_title) {
-        try {
-            $wd = $this->getWd();
-            $this->waitForId($id); // Wait until the element is visible
-            $elem = $wd->findElement(WebDriverBy::id($id));
-            $this->assertNotNull($elem);
-            $this->assertContains($expected_title, $elem->getText());            
-        } catch (WebDriverException $e) {
-            $this->handleWebdriverException($e);
-        }
+        $wd = $this->getWd();
+        $this->waitForId($id); // Wait until the element is visible
+        $elem = $wd->findElement(WebDriverBy::id($id));
+        $this->assertNotNull($elem);
+        $this->assertContains($expected_title, $elem->getText());
     }
 
     private function check_dialog() {
