@@ -16,8 +16,7 @@ before_script:
   - cd ..
 script: phpunit
 addons:
-  sauce_connect:
-     true
+  sauce_connect: true
 notifications:
   email:
     recipients:
