@@ -4,6 +4,7 @@ php:
 env:
   global:
     - SERVER="ondemand.saucelabs.com"
+    # - SERVER="localhost:4444"
     - SCREENSHOTS_PATH=""
   matrix:
     - BROWSER="chrome"
