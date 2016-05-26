@@ -78,6 +78,11 @@ class E2e extends TestPhpUnit {
                 die("ERROR: " . $error . PHP_EOL);
         }
         
+        if(getEnv('TRAVIS')){
+            echo "Travis detected..." . PHP_EOL;
+            $capabilities->setCapability( 'tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
+        }
+        
         // create the WebDriver
         $connection_timeout_in_ms = 10 * 1000; // TODO: tarare il valore
         $request_timeout_in_ms = 200 * 1000; // TODO: tarare il valore
