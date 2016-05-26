@@ -14,14 +14,6 @@ use GuzzleHttp\Exception\RequestException;
  */
 class RestApi extends TestPhpUnit {
 
-    /**
-     * Write that an exception fail
-     *
-     * @param \Exception $e
-     */
-    protected function handleAssertionException(\Exception $e) {
-        echo PHP_EOL . "Assertion failed" . PHP_EOL;
-    }
 
     /**
      * Handle the RequestException writing his msg

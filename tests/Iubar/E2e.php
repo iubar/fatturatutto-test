@@ -54,7 +54,7 @@ class E2e extends TestPhpUnit {
         if (self::TAKE_A_SCREENSHOT) {
             $screenshots_path = getEnv('SCREENSHOTS_PATH');
             if ($screenshots_path && ! is_writable($screenshots_path)) {
-                die("ERRORE. percorso non scrivibile: " . $screenshots_path . PHP_EOL);
+                die("ERRORE percorso non scrivibile: " . $screenshots_path . PHP_EOL);
             }
         }
         
@@ -79,6 +79,9 @@ class E2e extends TestPhpUnit {
         }        
         if(getEnv('TRAVIS')){
             echo "Travis detected..." . PHP_EOL;
+            $username = getEnv('SAUCE_USERNAME');
+            $access_key = getEnv('SAUCE_ACCESS_KEY');
+            $server = "http://" . $username . ":" . $access_key . "@ondemand.saucelabs.com";
             $capabilities->setCapability('tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
         }
         
@@ -293,11 +296,23 @@ class E2e extends TestPhpUnit {
     }
 
     /**
+     * This method is called when a test method did not execute successfully
+     *
+     * @param Exception|Throwable $e the exception
+     *
+     * @throws Exception|Throwable throws a PHPUnit_Framework_ExpectationFailedException
+     */
+    public function onNotSuccessfulTest(\Exception $e) {
+        $this->handleAssertionException();
+        parent::onNotSuccessfulTest($e);
+    }
+    
+    /**
      * Make a screenshot if the assertion fail
      *
      * @param \Exception $e the exception
      */
-    protected function handleAssertionException(\Exception $e) {
+    private function handleAssertionException() {
         echo PHP_EOL;
         if (self::TAKE_A_SCREENSHOT) {
             echo "Assertion failed: taking a screen shot..." . PHP_EOL;
