@@ -31,8 +31,7 @@ class E2e extends TestPhpUnit {
 
     const MARIONETTE = 'marionette';
 
-    const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer';
- // FIXME: ...
+    const SELENIUM_SHUTDOWN_URL = 'http://localhost:4444'; // FIXME: ...
                                                                                                          
     const START = 'start';
 
@@ -46,6 +45,11 @@ class E2e extends TestPhpUnit {
      * @throws \InvalidArgumentException if a wrong browser is given
      */
     public static function setUpBeforeClass() {
+        
+        // self:: ..... = getEnv('SERVER') .  "/selenium-server/driver/?cmd=shutDownSeleniumServer';
+        $server = getEnv('SERVER') . "/wd/hub";
+        echo "Server: " . $server . PHP_EOL;
+        
         // check if you can take screenshots and path exist
         if (self::TAKE_A_SCREENSHOT) {
             $screenshots_path = getEnv('SCREENSHOTS_PATH');
@@ -79,7 +83,7 @@ class E2e extends TestPhpUnit {
         $request_timeout_in_ms = 200 * 1000; // TODO: tarare il valore
         
         try {
-            self::$webDriver = RemoteWebDriver::create(getEnv('SERVER'), $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
+            self::$webDriver = RemoteWebDriver::create($server, $capabilities, $connection_timeout_in_ms, $request_timeout_in_ms); // This is the default
         } catch (\Exception $e) {
             $error = "Exception: " . $e->getMessage();
             die($error . PHP_EOL);
@@ -315,8 +319,8 @@ class E2e extends TestPhpUnit {
     /**
      * Shutdown Selenium Server
      */
-    protected function quitselenium() {
-        $this->startShell(self::START . self::CHROME . self::SELENIUM_SHUTDOWN_URL);
+    protected function quitSelenium() {
+        $this->startShell(self::START . " " .  self::CHROME . " " .  self::SELENIUM_SHUTDOWN_URL);
     }
 
     /**
