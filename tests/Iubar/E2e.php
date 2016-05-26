@@ -46,9 +46,9 @@ class E2e extends TestPhpUnit {
      */
     public static function setUpBeforeClass() {
         
-        // self:: ..... = getEnv('SERVER') .  "/selenium-server/driver/?cmd=shutDownSeleniumServer';
-        $server = getEnv('SERVER') . "/wd/hub";
-        echo "Server: " . $server . PHP_EOL;
+      
+        
+        
         
         // check if you can take screenshots and path exist
         if (self::TAKE_A_SCREENSHOT) {
@@ -76,14 +76,24 @@ class E2e extends TestPhpUnit {
             default:
                 $error = "Browser '" . getEnv('BROWSER') . "' not supported.";
                 die("ERROR: " . $error . PHP_EOL);
-        }        
+        }
+        
+        $server_root = null;
+        $server = null;        
         if(getEnv('TRAVIS')){
             echo "Travis detected..." . PHP_EOL;
             $username = getEnv('SAUCE_USERNAME');
             $access_key = getEnv('SAUCE_ACCESS_KEY');
-            $server = "http://" . $username . ":" . $access_key . "@ondemand.saucelabs.com";
+            $server_root = "http://" . $username . ":" . $access_key . "@" . getEnv('SERVER');
+            $server = $server_root . "/wd/hub";
             $capabilities->setCapability('tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
+            
+        }else{
+            $server_root = "http://" . getEnv('SERVER');
+            $server = $server_root . "/wd/hub";
         }
+        // self:: ..... = $server_root .  "/selenium-server/driver/?cmd=shutDownSeleniumServer';
+        echo "Server: " . $server . PHP_EOL;
         
         // create the WebDriver
         $connection_timeout_in_ms = 10 * 1000;  // Set the maximum time of a request
