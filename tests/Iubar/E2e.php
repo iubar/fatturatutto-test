@@ -4,14 +4,17 @@ namespace Iubar;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
-use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
+use League\CLImate\CLImate;
 
 /**
  * PHPUnit_Framework_TestCase Develop
  *
  * @author Matteo
  *        
+ * @see : https://gist.github.com/huangzhichong/3284966 Cheat sheet for using php webdriver
+ * @see : https://gist.github.com/aczietlow/7c4834f79a7afd920d8f Cheat sheet for using php webdriver
+ *     
  */
 class E2e extends TestPhpUnit {
 
@@ -28,15 +31,17 @@ class E2e extends TestPhpUnit {
 
     const CHROME = 'chrome';
 
+    const FIREFOX = 'firefox';
+
     const MARIONETTE = 'marionette';
 
-    const SELENIUM_SHUTDOWN_URL = null;
- // FIXME: ...
     const START = 'start';
 
     protected static $screenshots = array();
 
     protected static $webDriver;
+
+    protected static $selenium_shutdown;
 
     /**
      * Start the WebDriver
@@ -50,7 +55,6 @@ class E2e extends TestPhpUnit {
         // Usage with SauceLabs:
         // set on Travis: SAUCE_USERNAME and SAUCE_ACCESS_KEY
         // set on .tavis.yml and env.bat: SERVER (hostname + port, without protocol);
-        
         
         // check if you can take screenshots and path exist
         if (self::TAKE_A_SCREENSHOT) {
@@ -72,6 +76,10 @@ class E2e extends TestPhpUnit {
                 echo "Inizializing Chrome browser" . PHP_EOL;
                 $capabilities = DesiredCapabilities::chrome();
                 break;
+            case self::FIREFOX:
+                echo "Inizializing Firefox browser" . PHP_EOL;
+                $capabilities = DesiredCapabilities::firefox();
+                break;
             case self::MARIONETTE:
                 echo "Inizializing Marionette browser" . PHP_EOL;
                 $capabilities = DesiredCapabilities::firefox();
@@ -82,24 +90,22 @@ class E2e extends TestPhpUnit {
                 die("ERROR: " . $error . PHP_EOL);
         }
         
-        $server_root = null;
-        $server = null;
         // create the WebDriver
         $connection_timeout_in_ms = 10 * 1000; // Set the maximum time of a request
         $request_timeout_in_ms = 20 * 1000; // Set the maximum time of a request
         
+        $server_root = null;
         if (getEnv('TRAVIS')) {
             echo "Travis detected..." . PHP_EOL;
+            $capabilities->setCapability('tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
             $username = getEnv('SAUCE_USERNAME');
             $access_key = getEnv('SAUCE_ACCESS_KEY');
             $server_root = "http://" . $username . ":" . $access_key . "@" . getEnv('SERVER');
-            $server = $server_root . "/wd/hub";
-            $capabilities->setCapability('tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
         } else {
             $server_root = "http://" . getEnv('SERVER');
-            $server = $server_root . "/wd/hub";
         }
-        // self::SELENIUM_SHUTDOWN_URL = $server_root . "/selenium-server/driver/?cmd=shutDownSeleniumServer';
+        self::$selenium_shutdown = $server_root . '/selenium-server/driver/?cmd=shutDownSeleniumServer';
+        $server = $server_root . "/wd/hub";
         echo "Server: " . $server . PHP_EOL;
         
         try {
@@ -116,11 +122,11 @@ class E2e extends TestPhpUnit {
         self::$webDriver->manage()
             ->timeouts()
             ->setScriptTimeout(240); // Set the amount of time (in seconds) to wait for an asynchronous script to finish execution before throwing an error.
-                                                     
+                                         
         // Window size
-                                                     // self::$webDriver->manage()->window()->maximize();
-                                                     // $window = new WebDriverDimension(1024, 768);
-                                                     // $this->webDriver->manage()->window()->setSize($window)
+                                         // self::$webDriver->manage()->window()->maximize();
+                                         // $window = new WebDriverDimension(1024, 768);
+                                         // $this->webDriver->manage()->window()->setSize($window)
     }
 
     /**
@@ -184,6 +190,26 @@ class E2e extends TestPhpUnit {
     }
 
     /**
+     * This method is called when a test method did not execute successfully
+     *
+     * @param Exception|Throwable $e the exception
+     *       
+     * @throws Exception|Throwable throws a PHPUnit_Framework_ExpectationFailedException
+     */
+    public function onNotSuccessfulTest(\Exception $e) {
+        $msg = $this->formatErrorMsg($e);
+        echo PHP_EOL;
+        $climate = new CLImate();
+        $climate->to('out')->red("EXCEPTION: " . $msg);
+        
+        if (self::TAKE_A_SCREENSHOT) {
+            echo "Taking a screenshot..." . PHP_EOL;
+            $this->takeScreenshot();
+        }
+        parent::onNotSuccessfulTest($e);
+    }
+
+    /**
      * Return the WebDriver
      *
      * @return RemoteWebDriver
@@ -233,13 +259,13 @@ class E2e extends TestPhpUnit {
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath($xpath)));
     }
 
-    public function waitForTag($tag, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+    protected function waitForTag($tag, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
         $this->getWd()
             ->wait($timeout, $interval)
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::tagName($tag)));
     }
 
-    public function waitForCss($css, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+    protected function waitForCss($css, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
         $this->getWd()
             ->wait($timeout, $interval)
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::cssSelector($css)));
@@ -264,7 +290,7 @@ class E2e extends TestPhpUnit {
      * @param integer $interval interval in miliseconds
      * @return void
      */
-    public function waitForAjax($timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
+    protected function waitForAjax($timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
         $this->getWd()
             ->wait($timeout, $interval)
             ->until(function () {
@@ -294,7 +320,7 @@ class E2e extends TestPhpUnit {
      * Wait for user input
      */
     protected function waitForUserInput() {
-        if (trim(fgets(fopen("php://stdin", "r"))) != chr(13))
+        if (trim(fgets(fopen("php://stdin", "r"))) != chr(13)) // chr(13) == "\n"
             return;
     }
 
@@ -311,26 +337,12 @@ class E2e extends TestPhpUnit {
     }
 
     /**
-     * This method is called when a test method did not execute successfully
-     *
-     * @param Exception|Throwable $e the exception
-     *       
-     * @throws Exception|Throwable throws a PHPUnit_Framework_ExpectationFailedException
-     */
-    public function onNotSuccessfulTest(\Exception $e) {
-        echo "Exception: " . $e->getMessage() . PHP_EOL;
-        if (self::TAKE_A_SCREENSHOT) {
-            echo "Taking a screenshot..." . PHP_EOL;
-            $this->takeScreenshot();
-        }
-        parent::onNotSuccessfulTest($e);
-    }
-
-    /**
      * Shutdown Selenium Server
+     *
+     * Metodo non utilizzato. L'azione è delegata allo script che avvia il test.
      */
     protected function quitSelenium() {
-        $this->startShell(self::START . " " . self::CHROME . " " . self::SELENIUM_SHUTDOWN_URL);
+        $this->startShell(self::START . " " . self::CHROME . " " . self::$selenium_shutdown);
     }
 
     /**
@@ -340,5 +352,18 @@ class E2e extends TestPhpUnit {
      */
     protected static function startShell($cmd) {
         shell_exec($cmd);
+    }
+
+    /**
+     * Colored the error msg in red
+     *
+     * @param string $e the error message
+     * @return string the error message colored
+     */
+    private function formatErrorMsg($e) {
+        $msg = $e->getMessage();
+        $array = explode("\n", $msg);
+        $msg = $array[0] . "...";
+        return $msg;
     }
 }
