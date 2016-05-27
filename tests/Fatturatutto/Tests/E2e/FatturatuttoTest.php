@@ -95,13 +95,14 @@ class FatturatuttoTest extends E2e {
         $password = getEnv('FT_PASSWORD');
         $this->login($user, $password);
         
-        // Verify to be enter and that welcome msg is show
-        $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; // TODO
-        if (! isset($welcome_msg)) { // se esiste compilo i campi
-        }
-        
         // checking that we are in the right page
         $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        
+        // Verify to be enter and that welcome msg is show
+        $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]';
+        if (! isset($welcome_msg)) { // se esiste compilo i campi
+            $this->compile_dialog();
+        }
     }
 
     /**
@@ -115,14 +116,14 @@ class FatturatuttoTest extends E2e {
         $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
         $navigation_bar_elem_id = array(
-            'Situazione' => 'situazione',
-            'Anagrafica' => 'anagrafica',
-            'Clienti' => 'clienti',
-            'Articoli - servizi' => 'articoli-servizi',
-            'Fatture' => 'fatture',
-            'Modelli' => 'modelli',
-            'Strumenti' => 'strumenti',
-            'Impostazioni' => 'impostazioni'
+            'Situazione' => 'menu-situazione',
+            'Anagrafica' => 'menu-anagrafica',
+            'Clienti' => 'menu-clienti',
+            'Articoli - servizi' => 'menu-articoli-servizi',
+            'Fatture' => 'menu-fatture',
+            'Modelli' => 'menu-modelli',
+            'Strumenti' => 'menu-strumenti',
+            'Impostazioni' => 'menu-impostazioni'
         );
         
         // checking that all the section of the navigation bar are ok
@@ -141,13 +142,14 @@ class FatturatuttoTest extends E2e {
         // checking that we are in the right page
         $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
-        $impostazioni_id = 'impostazioni';
+        $impostazioni_id = 'menu-impostazioni';
         $this->waitForId($impostazioni_id); // Wait until the element is visible
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id));
         $this->assertNotNull($impostazioni_button);
         $impostazioni_button->click();
         
-        $imp_generali_path = '//*[@id="impostazioni"]/ul/li[1]/a';
+        // click su generali
+        $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
         $this->waitForXpath($imp_generali_path); // Wait until the element is visible
         $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
         $this->assertNotNull($imp_generali);
@@ -212,28 +214,64 @@ class FatturatuttoTest extends E2e {
         $this->assertContains($expected_title, $elem->getText());
     }
 
-    private function check_dialog() {
+    private function check_prova($id, $sendKey) {
         $wd = $this->getWd();
-        // ngdialog1
-        try {
-            if ($wd->findElement(WebDriverBy::id('ngdialog1'))) {
-                // //*[@id="ngdialog1"]/div[2]/div/p/a
-                $elem = $wd->findElement(WebDriverBy::xpath('//*[@id="ngdialog1"]/div[2]/div/p/a'));
-                $elem->click();
-                // /html/body/div[2]/div[2]
-                
-                // if(se "Impostazioni" non è cliccabile){
-                // 1) verificare la presenza di una finestra di dialogo
-                // 2) se la finestra non è presente, allora errore "situazione imprevista"
-                // 3) se finestra presente, faccio clic e attesa implicita
-                // }
-                // clic su "Impostazioni
-                
-                if (condition) {
-                    ;
-                }
-            }
-        } catch (Exception $e) {}
+        $this->waitForId($id); // Wait until the element is visible
+        $elem = $wd->findElement(WebDriverBy::id($id));
+        $elem->sendKeys($sendKey);
+        $this->assertNotNull($elem);
+        $this->assertContains($expected_title, $elem->getText());
+    }
+
+    private function compile_dialog() {
+        $wd = $this->getWd();
+        $avanti_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[1]/div/button';
+        $this->waitForXpath($avanti_button_path); // avanti
+        $avanti_button = $wd->findElement(WebDriverBy::xpath($avanti_button_path)); // Button "Avanti"
+        $avanti_button->click();
+        
+        $avvocato_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[2]/div[1]/div[2]/div[1]/button'; // Avvocato
+        $this->waitForXpath($avvocato_button_path); // Avvocato
+        $avvocato_button = $wd->findElement(WebDriverBy::xpath($avvocato_button_path)); // Button "Avvocato"
+        $avvocato_button->click();
+        
+        // *[@id="ngdialog1"]/div[2]/div/div[2]/div[2]/button
+        $avanti_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[2]/div[2]/button';
+        $this->waitForXpath($avanti_button_path); // avanti
+        $avanti_button = $wd->findElement(WebDriverBy::xpath($avanti_button_path)); // Button "Avanti"
+        $avanti_button->click();
+        
+        $this->check_prova('denominazione', 'aaaaaaaaaaa');
+        $this->check_prova('piva', '22222222222');
+        $this->check_prova('cf', '1111111111111111');
+        $this->check_prova('indirizzo', '11111');
+        $this->check_prova('civico', '111');
+        $this->check_prova('cap', '11111');
+        $this->check_prova('provincia', 'Ancona');
+        $this->check_prova('comune', 'Ancona');
+        $this->check_prova('telefono', '111111');
+        $this->check_prova('fax', '11111111111111');
+        $this->check_prova('email', 'ppp@gma.it');
+        
+        // *[@id="ngdialog1"]/div[2]/div/div[3]/form/div[6]/div[2]/select Ordinario
+        $ordinario_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[3]/form/div[6]/div[2]/select';
+        $this->waitForXpath($ordinario_button_path); // Ordinario
+        $ordinario_button = $wd->findElement(WebDriverBy::xpath($ordinario_button_path)); // textfield "Ordinario"
+        $ordinario_button->sendKeys('Ordinario');
+        
+        // avanti
+        // *[@id="ngdialog1"]/div[2]/div/div[3]/form/div[7]/button
+        $avanti_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[3]/form/div[7]/button';
+        $this->waitForXpath($avanti_button_path); // avanti
+        $avanti_button = $wd->findElement(WebDriverBy::xpath($avanti_button_path)); // Button "Avanti"
+        $avanti_button->click();
+        
+        // fine
+        // *[@id="ngdialog1"]/div[2]/div/div[4]/div[2]/button
+        $fine_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[4]/div[2]/button';
+        $this->waitForXpath($fine_button_path); // fine
+        $fine_button = $wd->findElement(WebDriverBy::xpath($fine_button_path)); // Button "fine"
+        $fine_button->click();
     }
     
     // TODO
