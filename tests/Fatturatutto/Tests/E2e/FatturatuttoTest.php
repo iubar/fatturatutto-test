@@ -166,21 +166,25 @@ class FatturatuttoTest extends E2e {
         $wd = $this->getWd();
         
         $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
+        $this->waitForXpath($email_button_path); // Wait until the element is visible
         $email_enter = $wd->findElement(WebDriverBy::xpath($email_button_path)); // Button "Email"
         $email_enter->click();
         
         // Write into email textfield
         $username_field_path = '/html/body/div[1]/div[1]/div/div/form/div[2]/input';
+        $this->waitForXpath($username_field_path); // Wait until the element is visible
         $username_text_field = $wd->findElement(WebDriverBy::xpath($username_field_path)); // Field "Username"
         $username_text_field->sendKeys($user);
         
         // Write into password textfield
         $passwor_field_path = '/html/body/div[1]/div[1]/div/div/form/div[3]/input';
+        $this->waitForXpath($passwor_field_path); // Wait until the element is visible
         $password_text_field = $wd->findElement(WebDriverBy::xpath($passwor_field_path)); // Field "Password"
         $password_text_field->sendKeys($password);
         
         // Click on 'Accedi' button
         $login_button_path = '/html/body/div[1]/div[1]/div/div/form/div[5]/button';
+        $this->waitForXpath($login_button_path); // Wait until the element is visible
         $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
         $accedi_button->click();
     }
