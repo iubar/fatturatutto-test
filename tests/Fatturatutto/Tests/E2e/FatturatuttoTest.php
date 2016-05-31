@@ -42,7 +42,7 @@ class FatturatuttoTest extends E2e {
         // SITE HOME
                                    
         // checking that we are in the right page
-        $this->check_webpage(self::SITE_HOME, self::SITE_TITLE);
+        $this->check_webpage(self::SITE_HOME, self::SITE_TITLE, $wd);
         
         // select button 'Inizia' for php-webdriver
         $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
@@ -53,7 +53,7 @@ class FatturatuttoTest extends E2e {
         // APP HOME
         
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME, self::APP_TITLE);
+        $this->check_webpage(self::APP_HOME, self::APP_TITLE, $wd);
         
         // adding cookie
         /*
@@ -87,7 +87,7 @@ class FatturatuttoTest extends E2e {
         $this->assertContains(self::ERR_DATI_MSG, $incorrectData->getText());
         
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . self::LOGIN_URL, self::APP_TITLE);
+        $this->check_webpage(self::APP_HOME . self::LOGIN_URL, self::APP_TITLE, $wd);
         
         // 2) Real login
         
@@ -96,7 +96,7 @@ class FatturatuttoTest extends E2e {
         $this->login($user, $password);
         
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE, $wd);
         
         // Verify to be enter and that welcome msg is show
         $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]';
@@ -113,7 +113,7 @@ class FatturatuttoTest extends E2e {
         $wd->get(self::APP_HOME . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
                                                              
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE, $wd);
         
         $navigation_bar_elem_id = array(
             'Situazione' => 'menu-situazione',
@@ -140,7 +140,7 @@ class FatturatuttoTest extends E2e {
         $wd->get(self::APP_HOME . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
                                                              
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        $this->check_webpage(self::APP_HOME . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE, $wd);
         
         $impostazioni_id = 'menu-impostazioni';
         $this->waitForId($impostazioni_id); // Wait until the element is visible
@@ -195,8 +195,8 @@ class FatturatuttoTest extends E2e {
      * @param string $url the url of the webpage
      * @param string $title the title of the webpage
      */
-    private function check_webpage($expected_url, $expected_title) {
-        $wd = $this->getWd();
+    private function check_webpage($expected_url, $expected_title, $wd) {
+        //$wd = $this->getWd();
         $title = $wd->getTitle();
         $url = $wd->getCurrentURL();
         
