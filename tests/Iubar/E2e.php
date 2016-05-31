@@ -54,7 +54,7 @@ class E2e extends TestPhpUnit {
         
         // Usage with SauceLabs:
         // set on Travis: SAUCE_USERNAME and SAUCE_ACCESS_KEY
-        // set on .tavis.yml and env.bat: SERVER (hostname + port, without protocol);
+        // set on .tavis.yml and env.bat: SELENIUM_SERVER (hostname + port, without protocol);
         
         // check if you can take screenshots and path exist
         if (self::TAKE_A_SCREENSHOT) {
@@ -100,9 +100,9 @@ class E2e extends TestPhpUnit {
             $capabilities->setCapability('tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
             $username = getEnv('SAUCE_USERNAME');
             $access_key = getEnv('SAUCE_ACCESS_KEY');
-            $server_root = "http://" . $username . ":" . $access_key . "@" . getEnv('SERVER');
+            $server_root = "http://" . $username . ":" . $access_key . "@" . getEnv('SELENIUM_SERVER');
         } else {
-            $server_root = "http://" . getEnv('SERVER');
+            $server_root = "http://" . getEnv('SELENIUM_SERVER');
         }
         self::$selenium_shutdown = $server_root . '/selenium-server/driver/?cmd=shutDownSeleniumServer';
         $server = $server_root . "/wd/hub";
@@ -154,6 +154,9 @@ class E2e extends TestPhpUnit {
     public function takeScreenshot($element = null) {
         $screenshots_path = getEnv('SCREENSHOTS_PATH');
         if ($screenshots_path) {
+            
+            echo "Taking a screenshot..." . PHP_EOL;
+            
             // The path where save the screenshot
             $screenshot = $screenshots_path . time() . ".png";
             
@@ -200,10 +203,8 @@ class E2e extends TestPhpUnit {
         $msg = $this->formatErrorMsg($e);
         echo PHP_EOL;
         $climate = new CLImate();
-        $climate->to('out')->red("EXCEPTION: " . $msg);
-        
+        $climate->to('out')->red("EXCEPTION: " . $msg);        
         if (self::TAKE_A_SCREENSHOT) {
-            echo "Taking a screenshot..." . PHP_EOL;
             $this->takeScreenshot();
         }
         parent::onNotSuccessfulTest($e);
