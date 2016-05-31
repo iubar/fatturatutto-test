@@ -8,7 +8,6 @@ echo SELENIUM SERVER: %SELENIUM_SERVER%
 echo SELENIUM PATH: %SELENIUM_PATH%
 echo SCREENSHOTS_PATH PATH: %SCREENSHOTS_PATH%
 
-
 IF %BROWSER%==chrome (
 	start %SELENIUM_PATH%\start_selenium_chrome.bat
 	)
@@ -24,5 +23,5 @@ IF %BROWSER%==phantomjs (
 
 call phpunit -c %~dp0..\..\phpunit.xml
 
-echo "Stopping Selenium..."
-start http://%SERVER%/selenium-server/driver/?cmd=shutDownSeleniumServer
+REM echo "Stopping Selenium..."
+REM start http://%SERVER%/selenium-server/driver/?cmd=shutDownSeleniumServer

@@ -87,6 +87,7 @@ class E2e extends TestPhpUnit {
                 break;
             default:
                 $error = "Browser '" . getEnv('BROWSER') . "' not supported.";
+                $error .= PHP_EOL . "(you should set the BROWSER global var with a supported browser name)";
                 die("ERROR: " . $error . PHP_EOL);
         }
         
@@ -127,6 +128,10 @@ class E2e extends TestPhpUnit {
                                          // self::$webDriver->manage()->window()->maximize();
                                          // $window = new WebDriverDimension(1024, 768);
                                          // $this->webDriver->manage()->window()->setSize($window)
+           
+        // Console
+        // $types = self::$webDriver->manage()->getAvailableLogTypes();
+        // print_r($types);       
     }
 
     /**
@@ -140,7 +145,7 @@ class E2e extends TestPhpUnit {
         if (count(self::$screenshots) > 0) {
             echo "Taken " . count(self::$screenshots) . " screenshots" . PHP_EOL;
             $first_screenshot = self::$screenshots[0];
-            self::startShell(self::START . " " . self::CHROME . " " . $first_screenshot);
+            self::startShell(self::START . " " . getEnv('BROWSER') . " " . $first_screenshot);
         }
     }
 
@@ -158,7 +163,7 @@ class E2e extends TestPhpUnit {
             echo "Taking a screenshot..." . PHP_EOL;
             
             // The path where save the screenshot
-            $screenshot = $screenshots_path . time() . ".png";
+            $screenshot = $screenshots_path . date('Y-m-d_His') . ".png";
             
             $this->getWd()->takeScreenshot($screenshot);
             
@@ -203,7 +208,7 @@ class E2e extends TestPhpUnit {
         $msg = $this->formatErrorMsg($e);
         echo PHP_EOL;
         $climate = new CLImate();
-        $climate->to('out')->red("EXCEPTION: " . $msg);        
+        $climate->to('out')->red("EXCEPTION: " . $msg);
         if (self::TAKE_A_SCREENSHOT) {
             $this->takeScreenshot();
         }
@@ -343,7 +348,7 @@ class E2e extends TestPhpUnit {
      * Metodo non utilizzato. L'azione è delegata allo script che avvia il test.
      */
     protected function quitSelenium() {
-        $this->startShell(self::START . " " . self::CHROME . " " . self::$selenium_shutdown);
+        $this->startShell(self::START . " " . getEnv('BROWSER') . " " . self::$selenium_shutdown);
     }
 
     /**
@@ -352,7 +357,8 @@ class E2e extends TestPhpUnit {
      * @param string $cmd the command to execute
      */
     protected static function startShell($cmd) {
-        shell_exec($cmd);
+        $output = shell_exec($cmd);
+        return $output;
     }
 
     /**
@@ -366,5 +372,17 @@ class E2e extends TestPhpUnit {
         $array = explode("\n", $msg);
         $msg = $array[0] . "...";
         return $msg;
+    }
+
+    protected function check_console_error() {
+        $wd = $this->getWd();
+// Log types:        
+//         [0] => browser
+//         [1] => driver
+//         [2] => client
+//         [3] => server        
+        $errors = $wd->manage()->getLog('browser');
+        //print_r($errors);
+        $this->assertEquals(0, count($errors), 'Errori sulla console:', $wd->getCurrentURL());
     }
 }
