@@ -128,10 +128,10 @@ class E2e extends TestPhpUnit {
                                          // self::$webDriver->manage()->window()->maximize();
                                          // $window = new WebDriverDimension(1024, 768);
                                          // $this->webDriver->manage()->window()->setSize($window)
-           
+                                         
         // Console
-        // $types = self::$webDriver->manage()->getAvailableLogTypes();
-        // print_r($types);       
+                                         // $types = self::$webDriver->manage()->getAvailableLogTypes();
+                                         // print_r($types);
     }
 
     /**
@@ -146,6 +146,7 @@ class E2e extends TestPhpUnit {
             echo "Taken " . count(self::$screenshots) . " screenshots" . PHP_EOL;
             $first_screenshot = self::$screenshots[0];
             self::startShell(self::START . " " . getEnv('BROWSER') . " " . $first_screenshot);
+            echo PHP_EOL . self::START . " " . getEnv('BROWSER') . " " . $first_screenshot . PHP_EOL;
         }
     }
 
@@ -374,15 +375,18 @@ class E2e extends TestPhpUnit {
         return $msg;
     }
 
+    /**
+     * Log types:
+     * [0] => browser
+     * [1] => driver
+     * [2] => client
+     * [3] => server
+     */
     protected function check_console_error() {
         $wd = $this->getWd();
-// Log types:        
-//         [0] => browser
-//         [1] => driver
-//         [2] => client
-//         [3] => server        
+        
         $errors = $wd->manage()->getLog('browser');
-        //print_r($errors);
+        // print_r($errors);
         $this->assertEquals(0, count($errors), 'Errori sulla console:', $wd->getCurrentURL());
     }
 }

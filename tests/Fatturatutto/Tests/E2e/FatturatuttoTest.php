@@ -37,14 +37,14 @@ class FatturatuttoTest extends E2e {
      */
     public function testSiteHomeTitle() {
         $wd = $this->getWd();
-        $wd->get(self::SITE_HOME.'/'); // Navigate to SITE_HOME
-                                   
+        $wd->get(self::SITE_HOME . '/'); // Navigate to SITE_HOME
+                                         
         // SITE HOME
-                    
+                                         
         // FIXME: attendere ....
-        
+                                         
         // checking that we are in the right page
-        $this->check_webpage(self::SITE_HOME.'/', self::SITE_TITLE);
+        $this->check_webpage(self::SITE_HOME . '/', self::SITE_TITLE);
         
         // select button 'Inizia' for php-webdriver
         $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
@@ -55,7 +55,7 @@ class FatturatuttoTest extends E2e {
         // APP HOME
         
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME.'/', self::APP_TITLE);
+        $this->check_webpage(self::APP_HOME . '/', self::APP_TITLE);
         
         // adding cookie
         /*
@@ -74,8 +74,8 @@ class FatturatuttoTest extends E2e {
      */
     public function testLogin() {
         $wd = $this->getWd();
-        $wd->get(self::APP_HOME.'/' . self::LOGIN_URL); // Navigate to LOGIN_URL
-                                                    
+        $wd->get(self::APP_HOME . '/' . self::LOGIN_URL); // Navigate to LOGIN_URL
+                                                          
         // 1) Wrong login
         
         $user = 'utente@inesistente';
@@ -89,14 +89,14 @@ class FatturatuttoTest extends E2e {
         $this->assertContains(self::ERR_DATI_MSG, $incorrectData->getText());
         
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME.'/' . self::LOGIN_URL, self::APP_TITLE);
+        $this->check_webpage(self::APP_HOME . '/' . self::LOGIN_URL, self::APP_TITLE);
         
         // 2) Real login
         
         $user = getEnv('FT_USERNAME');
         $password = getEnv('FT_PASSWORD');
         $this->login($user, $password);
-  
+        
         // Verify to be enter and that welcome msg is show
         $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]';
         if (! isset($welcome_msg)) { // se esiste compilo i campi
@@ -109,10 +109,10 @@ class FatturatuttoTest extends E2e {
      */
     public function testAsideNavigationBar() {
         $wd = $this->getWd();
-        $wd->get(self::APP_HOME.'/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
-                                                             
+        $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
+                                                                   
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME.'/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        $this->check_webpage(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
         $navigation_bar_elem_id = array(
             'Situazione' => 'menu-situazione',
@@ -136,10 +136,10 @@ class FatturatuttoTest extends E2e {
      */
     public function testImpostazioni() {
         $wd = $this->getWd();
-        $wd->get(self::APP_HOME.'/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
-                                                             
+        $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
+                                                                   
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME.'/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        $this->check_webpage(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
         $impostazioni_id = 'menu-impostazioni';
         $this->waitForId($impostazioni_id); // Wait until the element is visible
@@ -154,15 +154,15 @@ class FatturatuttoTest extends E2e {
         $this->assertNotNull($imp_generali);
         $imp_generali->click();
     }
-    
+
     public function testConsole() {
-         $wd = $this->getWd();
-         $wd->get('http://app.fatturatutto.it/app/modelli-fattura'); 
-         $aggiungi='/html/body/div[1]/div/section/div/div/div[2]/button';
-         $this->waitForXpath($aggiungi); // Wait until the element is visible
-         $this->check_console_error();
+        $wd = $this->getWd();
+        $wd->get('http://app.fatturatutto.it/app/modelli-fattura');
+        $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
+        $this->waitForXpath($aggiungi); // Wait until the element is visible
+        $this->check_console_error();
     }
-    
+
     /**
      * Compile login fields and try to enter using the email address
      *
@@ -208,30 +208,25 @@ class FatturatuttoTest extends E2e {
         $url = $wd->getCurrentURL();
         
         switch ($url) {
-            case self::SITE_HOME.'/':
+            case self::SITE_HOME . '/':
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
-                $this->waitForXpath($inizia_button_path); // Wait until the element is visible                
+                $this->waitForXpath($inizia_button_path); // Wait until the element is visible
                 break;
-            case self::APP_HOME.'/':
-            case self::APP_HOME.'/' . self::LOGIN_URL:
+            case self::APP_HOME . '/':
+            case self::APP_HOME . '/' . self::LOGIN_URL:
                 $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
-                $this->waitForXpath($email_button_path); // Wait until the element is visible               
+                $this->waitForXpath($email_button_path); // Wait until the element is visible
                 break;
-            case self::APP_HOME.'/' . self::APP_SITUAZIONE_URL:
+            case self::APP_HOME . '/' . self::APP_SITUAZIONE_URL:
                 $impostazioni_id = 'menu-impostazioni';
                 $this->waitForId($impostazioni_id); // Wait until the element is visible
                 break;
             default:
-                die("ERROR: (" . $url ."), url non gestita". PHP_EOL);
+                die("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
         }
-             
+        
         $title = $wd->getTitle();
         
-        echo PHP_EOL;
-        echo "\$url = '" . $url . "'" . " \$expected_url: '" . $expected_url . "'" . PHP_EOL;
-        echo "\$title = '" . $title . "'" . " \$expected_title: '" . $expected_title . "'" . PHP_EOL; 
-        echo PHP_EOL;
-       
         $this->assertEquals($expected_url, $url);
         $this->assertContains($expected_title, $title);
     }
