@@ -18,6 +18,8 @@ use League\CLImate\CLImate;
  */
 class E2e extends TestPhpUnit {
 
+    const DEBUG = false;
+
     const TAKE_A_SCREENSHOT = true;
     
     // seconds
@@ -123,15 +125,17 @@ class E2e extends TestPhpUnit {
         self::$webDriver->manage()
             ->timeouts()
             ->setScriptTimeout(240); // Set the amount of time (in seconds) to wait for an asynchronous script to finish execution before throwing an error.
-                                         
+                                     
         // Window size
-                                         // self::$webDriver->manage()->window()->maximize();
-                                         // $window = new WebDriverDimension(1024, 768);
-                                         // $this->webDriver->manage()->window()->setSize($window)
-                                         
-        // Console
-                                         // $types = self::$webDriver->manage()->getAvailableLogTypes();
-                                         // print_r($types);
+                                     // self::$webDriver->manage()->window()->maximize();
+                                     // $window = new WebDriverDimension(1024, 768);
+                                     // $this->webDriver->manage()->window()->setSize($window)
+        
+        if (getEnv('BROWSER') != self::MARIONETTE) {
+            // Console
+            $types = self::$webDriver->manage()->getAvailableLogTypes();
+            print_r($types);
+        }
     }
 
     /**
@@ -164,7 +168,7 @@ class E2e extends TestPhpUnit {
             echo "Taking a screenshot..." . PHP_EOL;
             
             // The path where save the screenshot
-            $screenshot = $screenshots_path . date('Y-m-d_His') . ".png";
+            $screenshot = $screenshots_path . date('Y-m-d_H:i:s') . ".png";
             
             $this->getWd()->takeScreenshot($screenshot);
             
@@ -311,6 +315,16 @@ class E2e extends TestPhpUnit {
     }
 
     /**
+     * waitForAjax : wait for all ajax request to close
+     *
+     * @param integer $timeout timeout in seconds
+     */
+    protected function waitAjaxLoad2($timeout = 10) {
+        $this->getWd()->waitForJS('return !!window.jQuery && window.jQuery.active == 0;', $timeout);
+        $this->getWd()->wait(1);
+    }
+
+    /**
      * Assert that an element was not found
      *
      * @param string $by the element
@@ -363,6 +377,48 @@ class E2e extends TestPhpUnit {
     }
 
     /**
+     * Search if the browser's console has error
+     *
+     * @throws \InvalidArgumentException if the read of the browser's console isn't support from the browser
+     */
+    protected function assertNoErrorsOnConsole() {
+        // Log types:
+        // [0] => browser
+        // [1] => driver
+        // [2] => client
+        // [3] => server
+        $console_error = 0;
+        
+        if (getEnv('BROWSER') == self::MARIONETTE) {
+            throw new \InvalidArgumentException('Browser ' . getEnv('BROWSER') . ' non supportato dal metodo');
+        }
+        
+        $wd = $this->getWd();
+        $records = $wd->manage()->getLog('browser');
+        foreach ($records as $record) {
+            if (self::DEBUG) {
+                print_r($record);
+            }
+            if ($record['level'] == 'SEVERE') { // only for Chrome
+                $console_error ++;
+            }
+        }
+        
+        if (self::DEBUG && ! getEnv('TRAVIS')) {
+            $data = json_encode($records, JSON_PRETTY_PRINT);
+            $screenshots_path = getEnv('SCREENSHOTS_PATH');
+            $path = $screenshots_path . "/..";
+            if (! is_dir($path)) {
+                die("PATH NOT FOUND: " . $path . PHP_EOL);
+            }
+            file_put_contents($path . "/" . date('Y-m-d_H:i:s') . "_console.txt", $data);
+        }
+        
+        echo PHP_EOL . 'Errori sulla console: ' . $console_error . PHP_EOL;
+        $this->assertEquals(0, $console_error);
+    }
+
+    /**
      * Colored the error msg in red
      *
      * @param string $e the error message
@@ -373,20 +429,5 @@ class E2e extends TestPhpUnit {
         $array = explode("\n", $msg);
         $msg = $array[0] . "...";
         return $msg;
-    }
-
-    /**
-     * Log types:
-     * [0] => browser
-     * [1] => driver
-     * [2] => client
-     * [3] => server
-     */
-    protected function check_console_error() {
-        $wd = $this->getWd();
-        
-        $errors = $wd->manage()->getLog('browser');
-        // print_r($errors);
-        $this->assertEquals(0, count($errors), 'Errori sulla console:', $wd->getCurrentURL());
     }
 }

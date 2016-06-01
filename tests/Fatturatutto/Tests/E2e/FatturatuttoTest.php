@@ -41,8 +41,6 @@ class FatturatuttoTest extends E2e {
                                          
         // SITE HOME
                                          
-        // FIXME: attendere ....
-                                         
         // checking that we are in the right page
         $this->check_webpage(self::SITE_HOME . '/', self::SITE_TITLE);
         
@@ -155,12 +153,25 @@ class FatturatuttoTest extends E2e {
         $imp_generali->click();
     }
 
+    /**
+     * Impossibile leggere da console con browser 'marionette'
+     */
     public function testConsole() {
-        $wd = $this->getWd();
-        $wd->get('http://app.fatturatutto.it/app/modelli-fattura');
-        $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
-        $this->waitForXpath($aggiungi); // Wait until the element is visible
-        $this->check_console_error();
+        if (getEnv('BROWSER') != self::MARIONETTE) {
+            
+            $wd = $this->getWd();
+            $wd->get(self::APP_HOME . '/' . self::LOGIN_URL); // Navigate to LOGIN_URL
+            
+            $user = getEnv('FT_USERNAME');
+            $password = getEnv('FT_PASSWORD');
+            $this->login($user, $password);
+            
+            $wd->get('http://app.fatturatutto.it/app/modelli-fattura');
+            
+            $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
+            $this->waitForXpath($aggiungi); // Wait until the element is visible
+            $this->assertNoErrorsOnConsole();
+        }
     }
 
     /**
