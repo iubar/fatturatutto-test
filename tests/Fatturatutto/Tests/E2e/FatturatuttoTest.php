@@ -24,7 +24,7 @@ class FatturatuttoTest extends E2e {
 
     const SITE_TITLE = "FatturaTutto.it";
 
-    const APP_TITLE = "Login";
+    const APP_LOGIN = "Login";
 
     const APP_SITUAZIONE_TITLE = "Situazione";
 
@@ -37,6 +37,8 @@ class FatturatuttoTest extends E2e {
      */
     public function testSiteHomeTitle() {
         $wd = $this->getWd();
+        $wd->manage()->deleteAllCookies();
+        $this->do_login(); // Make the login
         $wd->get(self::SITE_HOME . '/'); // Navigate to SITE_HOME
                                          
         // SITE HOME
@@ -53,7 +55,7 @@ class FatturatuttoTest extends E2e {
         // APP HOME
         
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . '/', self::APP_TITLE);
+        $this->check_webpage(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
         // adding cookie
         /*
@@ -72,10 +74,10 @@ class FatturatuttoTest extends E2e {
      */
     public function testLogin() {
         $wd = $this->getWd();
+        $wd->manage()->deleteAllCookies();
         $wd->get(self::APP_HOME . '/' . self::LOGIN_URL); // Navigate to LOGIN_URL
                                                           
         // 1) Wrong login
-        
         $user = 'utente@inesistente';
         $this->login($user, $user);
         
@@ -87,13 +89,10 @@ class FatturatuttoTest extends E2e {
         $this->assertContains(self::ERR_DATI_MSG, $incorrectData->getText());
         
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . '/' . self::LOGIN_URL, self::APP_TITLE);
+        $this->check_webpage(self::APP_HOME . '/' . self::LOGIN_URL, self::APP_LOGIN);
         
         // 2) Real login
-        
-        $user = getEnv('FT_USERNAME');
-        $password = getEnv('FT_PASSWORD');
-        $this->login($user, $password);
+        $this->do_login();
         
         // Verify to be enter and that welcome msg is show
         $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]';
@@ -107,6 +106,8 @@ class FatturatuttoTest extends E2e {
      */
     public function testAsideNavigationBar() {
         $wd = $this->getWd();
+        $wd->manage()->deleteAllCookies();
+        $this->do_login();
         $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
                                                                    
         // checking that we are in the right page
@@ -134,6 +135,8 @@ class FatturatuttoTest extends E2e {
      */
     public function testImpostazioni() {
         $wd = $this->getWd();
+        $wd->manage()->deleteAllCookies();
+        $this->do_login();
         $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
                                                                    
         // checking that we are in the right page
@@ -158,20 +161,24 @@ class FatturatuttoTest extends E2e {
      */
     public function testConsole() {
         if (getEnv('BROWSER') != self::MARIONETTE) {
-            
             $wd = $this->getWd();
-            $wd->get(self::APP_HOME . '/' . self::LOGIN_URL); // Navigate to LOGIN_URL
-            
-            $user = getEnv('FT_USERNAME');
-            $password = getEnv('FT_PASSWORD');
-            $this->login($user, $password);
-            
+            $wd->manage()->deleteAllCookies();
+            $this->do_login(); // Make the login
             $wd->get('http://app.fatturatutto.it/app/modelli-fattura');
             
             $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
             $this->waitForXpath($aggiungi); // Wait until the element is visible
             $this->assertNoErrorsOnConsole();
         }
+    }
+
+    /**
+     * Call the login() function with the set params
+     */
+    private function do_login() {
+        $user = getEnv('FT_USERNAME');
+        $password = getEnv('FT_PASSWORD');
+        $this->login($user, $password);
     }
 
     /**
@@ -182,6 +189,7 @@ class FatturatuttoTest extends E2e {
      */
     private function login($user, $password) {
         $wd = $this->getWd();
+        $wd->get(self::APP_HOME . '/' . self::LOGIN_URL); // Navigate to LOGIN_URL
         
         $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
         $this->waitForXpath($email_button_path); // Wait until the element is visible
@@ -217,7 +225,7 @@ class FatturatuttoTest extends E2e {
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
-        
+        // echo PHP_EOL.$url.PHP_EOL;
         switch ($url) {
             case self::SITE_HOME . '/':
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
