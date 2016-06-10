@@ -18,7 +18,7 @@ use League\CLImate\CLImate;
  */
 class E2e extends TestPhpUnit {
 
-    const DEBUG = false;
+    const DEBUG = true;
 
     const TAKE_A_SCREENSHOT = true;
     
@@ -396,9 +396,6 @@ class E2e extends TestPhpUnit {
         $wd = $this->getWd();
         $records = $wd->manage()->getLog('browser');
         foreach ($records as $record) {
-            if (self::DEBUG) {
-                print_r($record);
-            }
             if ($record['level'] == 'SEVERE') { // only for Chrome
                 $console_error ++;
             }
@@ -411,7 +408,7 @@ class E2e extends TestPhpUnit {
             if (! is_dir($path)) {
                 die("PATH NOT FOUND: " . $path . PHP_EOL);
             }
-            file_put_contents($path . "/" . date('Y-m-d_H:i:s') . "_console.txt", $data);
+            file_put_contents($path . "/" . date('Y-m-d_His') . "_console.txt", $data);
         }
         
         echo PHP_EOL . 'Errori sulla console: ' . $console_error . PHP_EOL;
@@ -419,10 +416,10 @@ class E2e extends TestPhpUnit {
     }
 
     /**
-     * Colored the error msg in red
+     * Reduced the error msg until the first '\n'
      *
      * @param string $e the error message
-     * @return string the error message colored
+     * @return string the reduced error message
      */
     private function formatErrorMsg($e) {
         $msg = $e->getMessage();
