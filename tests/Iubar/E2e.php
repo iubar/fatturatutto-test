@@ -395,14 +395,21 @@ class E2e extends TestPhpUnit {
         
         $wd = $this->getWd();
         $records = $wd->manage()->getLog('browser');
+        $severe_records = array();
         foreach ($records as $record) {
-            if ($record['level'] == 'SEVERE') { // only for Chrome
-                $console_error ++;
+            if ($record['level'] == 'SEVERE') {
+                $severe_records[] = $record; 
             }
         }
         
+        $console_error = count($severe_records); 
+        if (self::DEBUG){
+            $output = @rt($severe_records);
+            echo $output . PHP_EOL;
+        }
+        
         if (self::DEBUG && ! getEnv('TRAVIS')) {
-            $data = json_encode($records, JSON_PRETTY_PRINT);
+            $data = json_encode($severe_records, JSON_PRETTY_PRINT);
             $screenshots_path = getEnv('SCREENSHOTS_PATH');
             $path = $screenshots_path . "/..";
             if (! is_dir($path)) {
