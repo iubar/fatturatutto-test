@@ -24,8 +24,14 @@
 	<!-- timeoutForLargeTests="60" -->
 
 	<testsuites>
-		<testsuite name="Fatturatutto">
+		<testsuite name="Fatturatutto App">
 			<file>./tests/Fatturatutto/Tests/E2e/FatturatuttoTest.php</file>
+		</testsuite>
+		<testsuite name="Fatturatutto Api">
+			<!-- -->
+		</testsuite>
+		<testsuite name="Fatturatutto Security">
+			<file>./tests/Fatturatutto/Tests/Security/Security.php</file>
 		</testsuite>
 		<!-- <testsuite name="All Tests"> -->
 		<!-- <directory suffix=".php">./tests/</directory> -->
