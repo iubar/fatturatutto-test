@@ -168,7 +168,7 @@ class E2e extends TestPhpUnit {
             echo "Taking a screenshot..." . PHP_EOL;
             
             // The path where save the screenshot
-            $screenshot = $screenshots_path . date('Y-m-d_H:i:s') . ".png";
+            $screenshot = $screenshots_path . date('Y-m-d_His') . ".png";
             
             $this->getWd()->takeScreenshot($screenshot);
             
