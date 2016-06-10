@@ -45,6 +45,8 @@ class E2e extends TestPhpUnit {
 
     protected static $selenium_shutdown;
 
+    protected static $climate;
+
     /**
      * Start the WebDriver
      *
@@ -53,6 +55,7 @@ class E2e extends TestPhpUnit {
      *        
      */
     public static function setUpBeforeClass() {
+        self::$climate = new CLImate();
         
         // Usage with SauceLabs:
         // set on Travis: SAUCE_USERNAME and SAUCE_ACCESS_KEY
@@ -125,11 +128,13 @@ class E2e extends TestPhpUnit {
         self::$webDriver->manage()
             ->timeouts()
             ->setScriptTimeout(240); // Set the amount of time (in seconds) to wait for an asynchronous script to finish execution before throwing an error.
-                                     
-        // Window size
-                                     // self::$webDriver->manage()->window()->maximize();
-                                     // $window = new WebDriverDimension(1024, 768);
-                                     // $this->webDriver->manage()->window()->setSize($window)
+        
+        /*
+         * Window size
+         * $self::$webDriver->manage()->window()->maximize();
+         * $window = new WebDriverDimension(1024, 768);
+         * $this->webDriver->manage()->window()->setSize($window);
+         */
         
         if (getEnv('BROWSER') != self::MARIONETTE) {
             // Console
@@ -212,8 +217,7 @@ class E2e extends TestPhpUnit {
     public function onNotSuccessfulTest(\Exception $e) {
         $msg = $this->formatErrorMsg($e);
         echo PHP_EOL;
-        $climate = new CLImate();
-        $climate->to('out')->red("EXCEPTION: " . $msg);
+        self::$climate->to('out')->red("EXCEPTION: " . $msg);
         if (self::TAKE_A_SCREENSHOT) {
             $this->takeScreenshot();
         }
@@ -398,12 +402,12 @@ class E2e extends TestPhpUnit {
         $severe_records = array();
         foreach ($records as $record) {
             if ($record['level'] == 'SEVERE') {
-                $severe_records[] = $record; 
+                $severe_records[] = $record;
             }
         }
         
-        $console_error = count($severe_records); 
-        if (self::DEBUG){
+        $console_error = count($severe_records);
+        if (self::DEBUG) {
             $output = @rt($severe_records);
             echo $output . PHP_EOL;
         }
@@ -433,5 +437,15 @@ class E2e extends TestPhpUnit {
         $array = explode("\n", $msg);
         $msg = $array[0] . "...";
         return $msg;
+    }
+
+    /**
+     * Write the message with a specific color in the output
+     *
+     * @param unknown $color the color
+     * @param unknown $msg the message
+     */
+    private function write_color_msg($color, $msg) {
+        self::$climate->to('out')->$color($msg);
     }
 }
