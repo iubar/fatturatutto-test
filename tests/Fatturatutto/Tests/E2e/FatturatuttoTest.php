@@ -37,7 +37,7 @@ class FatturatuttoTest extends E2e {
      */
     public function testSiteHomeTitle() {
         $wd = $this->getWd();
-        $wd->manage()->deleteAllCookies();
+        
         $this->do_login(); // Make the login
         $wd->get(self::SITE_HOME . '/'); // Navigate to SITE_HOME
                                          
@@ -106,7 +106,7 @@ class FatturatuttoTest extends E2e {
      */
     public function testAsideNavigationBar() {
         $wd = $this->getWd();
-        $wd->manage()->deleteAllCookies();
+        
         $this->do_login();
         $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
                                                                    
@@ -135,7 +135,7 @@ class FatturatuttoTest extends E2e {
      */
     public function testImpostazioni() {
         $wd = $this->getWd();
-        $wd->manage()->deleteAllCookies();
+        
         $this->do_login();
         $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
                                                                    
@@ -162,7 +162,7 @@ class FatturatuttoTest extends E2e {
     public function testConsole() {
         if (getEnv('BROWSER') != self::MARIONETTE) {
             $wd = $this->getWd();
-            $wd->manage()->deleteAllCookies();
+            
             $this->do_login(); // Make the login
             $wd->get('http://app.fatturatutto.it/app/modelli-fattura');
             
@@ -189,30 +189,33 @@ class FatturatuttoTest extends E2e {
      */
     private function login($user, $password) {
         $wd = $this->getWd();
-        $wd->get(self::APP_HOME . '/' . self::LOGIN_URL); // Navigate to LOGIN_URL
-        
-        $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
-        $this->waitForXpath($email_button_path); // Wait until the element is visible
-        $email_enter = $wd->findElement(WebDriverBy::xpath($email_button_path)); // Button "Email"
-        $email_enter->click();
-        
-        // Write into email textfield
-        $username_field_path = '/html/body/div[1]/div[1]/div/div/form/div[2]/input';
-        $this->waitForXpath($username_field_path); // Wait until the element is visible
-        $username_text_field = $wd->findElement(WebDriverBy::xpath($username_field_path)); // Field "Username"
-        $username_text_field->sendKeys($user);
-        
-        // Write into password textfield
-        $passwor_field_path = '/html/body/div[1]/div[1]/div/div/form/div[3]/input';
-        $this->waitForXpath($passwor_field_path); // Wait until the element is visible
-        $password_text_field = $wd->findElement(WebDriverBy::xpath($passwor_field_path)); // Field "Password"
-        $password_text_field->sendKeys($password);
-        
-        // Click on 'Accedi' button
-        $login_button_path = '/html/body/div[1]/div[1]/div/div/form/div[5]/button';
-        $this->waitForXpath($login_button_path); // Wait until the element is visible
-        $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
-        $accedi_button->click();
+        $login_url = self::APP_HOME . '/' . self::LOGIN_URL;
+        $wd->get($login_url); // Navigate to LOGIN_URL
+        $expected_url = $wd->getCurrentURL();
+        if ($expected_url == $login_url) {
+            $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
+            $this->waitForXpath($email_button_path); // Wait until the element is visible
+            $email_enter = $wd->findElement(WebDriverBy::xpath($email_button_path)); // Button "Email"
+            $email_enter->click();
+            
+            // Write into email textfield
+            $username_field_path = '/html/body/div[1]/div[1]/div/div/form/div[2]/input';
+            $this->waitForXpath($username_field_path); // Wait until the element is visible
+            $username_text_field = $wd->findElement(WebDriverBy::xpath($username_field_path)); // Field "Username"
+            $username_text_field->sendKeys($user);
+            
+            // Write into password textfield
+            $passwor_field_path = '/html/body/div[1]/div[1]/div/div/form/div[3]/input';
+            $this->waitForXpath($passwor_field_path); // Wait until the element is visible
+            $password_text_field = $wd->findElement(WebDriverBy::xpath($passwor_field_path)); // Field "Password"
+            $password_text_field->sendKeys($password);
+            
+            // Click on 'Accedi' button
+            $login_button_path = '/html/body/div[1]/div[1]/div/div/form/div[5]/button';
+            $this->waitForXpath($login_button_path); // Wait until the element is visible
+            $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
+            $accedi_button->click();
+        }
     }
 
     /**
