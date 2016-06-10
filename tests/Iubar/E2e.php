@@ -18,7 +18,7 @@ use League\CLImate\CLImate;
  */
 class E2e extends TestPhpUnit {
 
-    const DEBUG = true;
+    const DEBUG = false;
 
     const TAKE_A_SCREENSHOT = true;
     
