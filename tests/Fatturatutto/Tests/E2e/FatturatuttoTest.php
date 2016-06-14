@@ -16,7 +16,7 @@ class FatturatuttoTest extends E2e {
 
     const SITE_HOME = "http://www.fatturatutto.it";
 
-    const APP_HOME = "http://app.fatturatutto.it";
+    const APP_HOME = "https://app.fatturatutto.it";
 
     const LOGIN_URL = "login";
 
