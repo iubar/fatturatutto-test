@@ -1,0 +1,40 @@
+{
+	"name" : "iubar/fatturatutto-test",
+    "description": "",
+    "keywords": ["package", "dependency", "autoload"],
+    "homepage": "https://www.fatturatutto.it",
+    "type": "test",
+    "license": "MPL",
+    "authors": [
+        {
+            "name": "Matteo Mirisola",
+            "email": "mirimmm94@gmail.com"
+        },
+        {
+            "name": "Andrea Borgogelli Avveduti",
+            "homepage": "http://www.iubar.it"
+        }
+    ],
+           
+	"repositories": [
+	        {
+	            "type": "git",
+	            "url": "https://github.com/iubar/web-test"
+	        }
+	    ],
+	    
+    "require": {
+        "php": ">=5.5.0",
+        "facebook/webdriver": "*",
+        "guzzlehttp/guzzle": "~6.0",
+        "league/climate":"*",
+        "digitalnature/php-ref": "*",
+        "iubar/web-test": "*"        
+    },
+     
+    "autoload": {
+    	"psr-4": {
+    		"Fatturatutto\\": "tests/Fatturatutto/"
+        }
+     }     
+}

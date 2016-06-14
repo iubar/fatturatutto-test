@@ -164,7 +164,7 @@ class FatturatuttoTest extends E2e {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
-            $wd->get('http://app.fatturatutto.it/app/modelli-fattura');
+            $wd->get('https://app.fatturatutto.it/app/modelli-fattura');
             
             $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
             $this->waitForXpath($aggiungi); // Wait until the element is visible
