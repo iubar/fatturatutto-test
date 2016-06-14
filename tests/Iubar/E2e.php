@@ -44,7 +44,8 @@ class E2e extends TestPhpUnit {
     protected static $webDriver;
 
     protected static $selenium_shutdown;
-
+    
+    // easily output colored text and special formatting
     protected static $climate;
 
     /**
@@ -101,6 +102,7 @@ class E2e extends TestPhpUnit {
         $request_timeout_in_ms = 20 * 1000; // Set the maximum time of a request
         
         $server_root = null;
+        // set Travis params
         if (getEnv('TRAVIS')) {
             echo "Travis detected..." . PHP_EOL;
             $capabilities->setCapability('tunnel-identifier', getEnv('TRAVIS_JOB_NUMBER'));
@@ -136,6 +138,7 @@ class E2e extends TestPhpUnit {
          * $this->webDriver->manage()->window()->setSize($window);
          */
         
+        // write avaiable browser logs (not works with marionette)
         if (getEnv('BROWSER') != self::MARIONETTE) {
             // Console
             $types = self::$webDriver->manage()->getAvailableLogTypes();
@@ -163,18 +166,15 @@ class E2e extends TestPhpUnit {
      * Take a screenshot of the webpage
      *
      * @param string $element the element to capture
-     * @throws Exception if the screenshot doesn't exist
-     * @return string the screenshot
+     * @throws Exception if the screenshot or the directory where to save doesn't exist
      */
     public function takeScreenshot($element = null) {
         $screenshots_path = getEnv('SCREENSHOTS_PATH');
         if ($screenshots_path) {
-            
             echo "Taking a screenshot..." . PHP_EOL;
             
             // The path where save the screenshot
             $screenshot = $screenshots_path . date('Y-m-d_His') . ".png";
-            
             $this->getWd()->takeScreenshot($screenshot);
             
             if (! file_exists($screenshot)) {
@@ -182,10 +182,8 @@ class E2e extends TestPhpUnit {
             }
             
             if ($element) {
-                
                 $element_width = $element->getSize()->getWidth();
                 $element_height = $element->getSize()->getHeight();
-                
                 $element_src_x = $element->getLocation()->getX();
                 $element_src_y = $element->getLocation()->getY();
                 
@@ -210,11 +208,11 @@ class E2e extends TestPhpUnit {
     /**
      * This method is called when a test method did not execute successfully
      *
-     * @param Exception|Throwable $e the exception
+     * @param \Exception $e the exception
      *       
-     * @throws Exception|Throwable throws a PHPUnit_Framework_ExpectationFailedException
      */
     public function onNotSuccessfulTest(\Exception $e) {
+        // reduced the error message
         $msg = $this->formatErrorMsg($e);
         echo PHP_EOL;
         self::$climate->to('out')->red("EXCEPTION: " . $msg);
@@ -254,7 +252,7 @@ class E2e extends TestPhpUnit {
      * Wait at most $timeout seconds until at least one result is shown
      *
      * @param string $id the id of the element
-     * @param int $timeout the timeout
+     * @param int $timeout the timeout in seconds
      */
     protected function waitForId($id, $timeout = self::DEFAULT_WAIT_TIMEOUT) {
         $this->getWd()
@@ -266,7 +264,7 @@ class E2e extends TestPhpUnit {
      * Wait at most $timeout seconds until at least one result is shown
      *
      * @param string $xpath the xpath of the element
-     * @param int $timeout the timeout
+     * @param int $timeout the timeout in seconds
      */
     protected function waitForXpath($xpath, $timeout = self::DEFAULT_WAIT_TIMEOUT) {
         $this->getWd()
@@ -274,12 +272,26 @@ class E2e extends TestPhpUnit {
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::xpath($xpath)));
     }
 
+    /**
+     * Wait at most $timeout seconds until at least one result is shown
+     *
+     * @param string $tag the tag of the element
+     * @param int $timeout the timeout in seconds
+     * @param int $interval the interval in miliseconds
+     */
     protected function waitForTag($tag, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
         $this->getWd()
             ->wait($timeout, $interval)
             ->until(WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::tagName($tag)));
     }
 
+    /**
+     * Wait at most $timeout seconds until at least one result is shown
+     *
+     * @param string $css the css of the element
+     * @param int $timeout the timeout in seconds
+     * @param int $interval the interval in miliseconds
+     */
     protected function waitForCss($css, $timeout = self::DEFAULT_WAIT_TIMEOUT, $interval = self::DEFAULT_WAIT_INTERVAL) {
         $this->getWd()
             ->wait($timeout, $interval)
@@ -289,7 +301,7 @@ class E2e extends TestPhpUnit {
     /**
      * Wait at most $timeout seconds until at least one result is shown
      *
-     * @param int $timeout the timeout
+     * @param int $timeout the timeout in seconds
      */
     protected function waitForEmailLink($timeout = self::DEFAULT_WAIT_TIMEOUT) {
         $partial_link_text = "mailto:";
@@ -355,6 +367,7 @@ class E2e extends TestPhpUnit {
     protected static function closeAllWindows() {
         $wd = self::$webDriver;
         $handlers = $wd->getWindowHandles();
+        // close each tabs of the browser
         foreach ($handlers as $handler) {
             $wd->switchTo()->window($handler);
             $wd->close();
@@ -374,6 +387,7 @@ class E2e extends TestPhpUnit {
      * Start a shell and execute the command
      *
      * @param string $cmd the command to execute
+     * @return string the output command
      */
     protected static function startShell($cmd) {
         $output = shell_exec($cmd);
@@ -381,18 +395,14 @@ class E2e extends TestPhpUnit {
     }
 
     /**
-     * Search if the browser's console has error
+     * Search if the browser's console has error and assuming that are zero
      *
      * @throws \InvalidArgumentException if the read of the browser's console isn't support from the browser
      */
     protected function assertNoErrorsOnConsole() {
-        // Log types:
-        // [0] => browser
-        // [1] => driver
-        // [2] => client
-        // [3] => server
         $console_error = 0;
         
+        // marionette doesn't have the console
         if (getEnv('BROWSER') == self::MARIONETTE) {
             throw new \InvalidArgumentException('Browser ' . getEnv('BROWSER') . ' non supportato dal metodo');
         }
@@ -400,6 +410,7 @@ class E2e extends TestPhpUnit {
         $wd = $this->getWd();
         $records = $wd->manage()->getLog('browser');
         $severe_records = array();
+        // search for the error in the console
         foreach ($records as $record) {
             if ($record['level'] == 'SEVERE') {
                 $severe_records[] = $record;
@@ -412,6 +423,7 @@ class E2e extends TestPhpUnit {
             echo $output . PHP_EOL;
         }
         
+        // write the console error in log file
         if (self::DEBUG && ! getEnv('TRAVIS')) {
             $data = json_encode($severe_records, JSON_PRETTY_PRINT);
             $screenshots_path = getEnv('SCREENSHOTS_PATH');
@@ -442,8 +454,8 @@ class E2e extends TestPhpUnit {
     /**
      * Write the message with a specific color in the output
      *
-     * @param unknown $color the color
-     * @param unknown $msg the message
+     * @param string $color the color
+     * @param string $msg the message
      */
     private function write_color_msg($color, $msg) {
         self::$climate->to('out')->$color($msg);
