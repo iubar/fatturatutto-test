@@ -163,6 +163,30 @@ class E2e extends TestPhpUnit {
     }
 
     /**
+     * Close all windows
+     */
+    protected static function closeAllWindows() {
+        $wd = self::$webDriver;
+        $handlers = $wd->getWindowHandles();
+        // close each tabs of the browser
+        foreach ($handlers as $handler) {
+            $wd->switchTo()->window($handler);
+            $wd->close();
+        }
+    }
+
+    /**
+     * Start a shell and execute the command
+     *
+     * @param string $cmd the command to execute
+     * @return string the output command
+     */
+    protected static function startShell($cmd) {
+        $output = shell_exec($cmd);
+        return $output;
+    }
+
+    /**
      * Take a screenshot of the webpage
      *
      * @param string $element the element to capture
@@ -362,36 +386,12 @@ class E2e extends TestPhpUnit {
     }
 
     /**
-     * Close all windows
-     */
-    protected static function closeAllWindows() {
-        $wd = self::$webDriver;
-        $handlers = $wd->getWindowHandles();
-        // close each tabs of the browser
-        foreach ($handlers as $handler) {
-            $wd->switchTo()->window($handler);
-            $wd->close();
-        }
-    }
-
-    /**
      * Shutdown Selenium Server
      *
      * Metodo non utilizzato. L'azione è delegata allo script che avvia il test.
      */
     protected function quitSelenium() {
         $this->startShell(self::START . " " . getEnv('BROWSER') . " " . self::$selenium_shutdown);
-    }
-
-    /**
-     * Start a shell and execute the command
-     *
-     * @param string $cmd the command to execute
-     * @return string the output command
-     */
-    protected static function startShell($cmd) {
-        $output = shell_exec($cmd);
-        return $output;
     }
 
     /**
