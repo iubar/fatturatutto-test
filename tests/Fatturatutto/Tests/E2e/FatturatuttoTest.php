@@ -164,7 +164,7 @@ class FatturatuttoTest extends Web_TestCase {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
-            $wd->get('https://app.fatturatutto.it/modelli-fattura');
+            $wd->get(self::APP_HOME.'/modelli-fattura');
             
             $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
             $this->waitForXpath($aggiungi); // Wait until the element is visible
