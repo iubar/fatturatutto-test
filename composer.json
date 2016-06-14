@@ -19,17 +19,13 @@
 	"repositories": [
 	        {
 	            "type": "git",
-	            "url": "https://github.com/iubar/web-test"
-	        }
+	            "url": "https://github.com/iubar/web-test.git"
+	        }     
 	    ],
-	    
-    "require": {
+ 
+    "require-dev": {
         "php": ">=5.5.0",
-        "facebook/webdriver": "*",
-        "guzzlehttp/guzzle": "~6.0",
-        "league/climate":"*",
-        "digitalnature/php-ref": "*",
-        "iubar/web-test": "*"        
+        "iubar/web-test": "v0.2-alpha"
     },
      
     "autoload": {
