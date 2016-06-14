@@ -4,7 +4,7 @@ namespace Fatturatutto\Functions;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
-use Iubar\RestApi;
+use Iubar\RestApi_TestCase;
 
 /**
  * API Test
@@ -12,7 +12,7 @@ use Iubar\RestApi;
  * @author Matteo
  *        
  */
-class ApiTest extends RestApi {
+class ApiTest extends RestApi_TestCase {
 
     const APP_HOME = "http://www.iubar.it/extranet/api/";
 

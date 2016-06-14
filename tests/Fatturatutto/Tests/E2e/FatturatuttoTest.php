@@ -2,7 +2,7 @@
 namespace Fatturatutto\E2e;
 
 use Facebook\WebDriver\WebDriverBy;
-use Iubar\E2e;
+use Iubar\Web_TestCase;
 
 /**
  * Test of www.fatturatutto.it website
@@ -12,7 +12,7 @@ use Iubar\E2e;
  * @global ....
  *        
  */
-class FatturatuttoTest extends E2e {
+class FatturatuttoTest extends Web_TestCase {
 
     const SITE_HOME = "http://www.fatturatutto.it";
 

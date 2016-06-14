@@ -11,4 +11,5 @@ use GuzzleHttp\Exception\RequestException;
  * @author Matteo
  *        
  */
-class Security {}
+class Security {
+}
