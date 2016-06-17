@@ -4,6 +4,7 @@ namespace Fatturatutto\Security;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
+use Iubar\RestApi_TestCase;
 
 /**
  * Test Security Address
@@ -11,7 +12,7 @@ use GuzzleHttp\Exception\RequestException;
  * @author Matteo
  *        
  */
-class SecurityTest {
+class SecurityTest extends RestApi_TestCase {
 
     const BASE_URI = "https://www.fatturatutto.it";
 
@@ -24,6 +25,9 @@ class SecurityTest {
     const UNAUTHORIZED = 401;
 
     const MOVED = 301;
+
+    const GET = 'get';
+    
     // seconds
     const TIMEOUT = 4;
 
@@ -45,31 +49,35 @@ class SecurityTest {
      * Test Forbidden and Unauthorized api
      */
     public function testForbidden() {
-        $urls = [
-            $FORBIDDEN => array(
-                self::BASE_URI . "/app/logs/",
-                self::BASE_URI . "/app/vendor",
-                self::APP_HOME . "/logs",
-                self::APP_HOME . "/vendor"
-            ),
-            $UNAUTHORIZED => array(
-                self::DATASLANG . "/wp-login.php"
-            )
-        ];
-        
-        foreach ($urls as $error_code => $url) {
-            $status_code = null;
-            while ($status_code == null || $status_code == self::MOVED) {
-                $request = new Request(self::GET, $url);
-                $response = $this->client->send($request, [
-                    'timeout' => self::TIMEOUT
-                ]);
-                $status_code = $response->getStatusCode();
-                if ($status_code == self::MOVED) {
-//                     $url = $response->get;
+        try {
+            $urls = [
+                self::FORBIDDEN => array(
+                    self::BASE_URI . "/app/logs/",
+                    self::BASE_URI . "/app/vendor",
+                    self::APP_HOME . "/logs",
+                    self::APP_HOME . "/vendor"
+                ),
+                self::UNAUTHORIZED => array(
+                    self::DATASLANG . "/wp-login.php"
+                )
+            ];
+            
+            foreach ($urls as $error_code => $url) {
+                $status_code = null;
+                while ($status_code == null || $status_code == self::MOVED) {
+                    $request = new Request(self::GET, $url);
+                    $response = $this->client->send($request, [
+                        'timeout' => self::TIMEOUT
+                    ]);
+                    $status_code = $response->getStatusCode();
+                    if ($status_code == self::MOVED) {
+                        $url = $response->getUri();
+                    }
                 }
+                assertEqual($error_code, $status_code);
             }
-            assertEqual($error_code, $status_code);
+        } catch (RequestException $e) {
+            $this->handleException($e);
         }
     }
 }
