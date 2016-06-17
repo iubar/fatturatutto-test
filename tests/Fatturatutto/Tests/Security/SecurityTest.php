@@ -3,7 +3,6 @@ namespace Fatturatutto\Security;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Exception\RequestException;
 use Iubar\RestApi_TestCase;
 
 /**
