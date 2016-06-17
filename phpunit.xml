@@ -28,11 +28,11 @@
 <!-- 			<file>./tests/Fatturatutto/Tests/E2e/FatturatuttoTest.php</file> -->
 		</testsuite>
 		<testsuite name="Fatturatutto Api">
-		<file>./tests/Fatturatutto/Tests/Security/SecurityTest.php</file>
+<!-- 		<file>./tests/Fatturatutto/Tests/Functions/ApiTest.php</file> -->
 		</testsuite>
-<!-- 		<testsuite name="Fatturatutto Security"> -->
-<!-- 			<file>./tests/Fatturatutto/Tests/Security/Security.php</file> -->
-<!-- 		</testsuite> -->
+		<testsuite name="Fatturatutto Security">
+			<file>./tests/Fatturatutto/Tests/Security/SecurityTest.php</file>
+		</testsuite>
 		<!-- <testsuite name="All Tests"> -->
 		<!-- <directory suffix=".php">./tests/</directory> -->
 		<!-- </testsuite> -->
