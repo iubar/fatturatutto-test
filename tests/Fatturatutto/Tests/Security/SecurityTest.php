@@ -49,23 +49,23 @@ class SecurityTest extends RestApi_TestCase {
      * Test Forbidden and Unauthorized api
      */
     public function testForbidden() {
-        try {
-            $urls = [
-                self::FORBIDDEN => array(
-                    self::BASE_URI . "/app/logs/",
-                    self::BASE_URI . "/app/vendor",
-                    self::APP_HOME . "/logs",
-                    self::APP_HOME . "/vendor"
-                ),
-                self::UNAUTHORIZED => array(
-                    self::DATASLANG . "/wp-login.php"
-                )
-            ];
-            
-            foreach ($urls as $error_code => $url) {
-                $status_code = null;
+        $urls = [
+            self::FORBIDDEN => array(
+                self::BASE_URI . "/app/logs/",
+                self::BASE_URI . "/app/vendor",
+                self::APP_HOME . "/logs",
+                self::APP_HOME . "/vendor"
+            ),
+            self::UNAUTHORIZED => array(
+                self::DATASLANG . "/wp-login.php"
+            )
+        ];
+        
+        foreach ($urls as $error_code => $url) {
+            $status_code = null;
+            foreach ($url as $value) {
                 while ($status_code == null || $status_code == self::MOVED) {
-                    $request = new Request(self::GET, $url);
+                    $request = new Request(self::GET, $value);
                     $response = $this->client->send($request, [
                         'timeout' => self::TIMEOUT
                     ]);
@@ -76,8 +76,6 @@ class SecurityTest extends RestApi_TestCase {
                 }
                 assertEqual($error_code, $status_code);
             }
-        } catch (RequestException $e) {
-            $this->handleException($e);
         }
     }
 }
