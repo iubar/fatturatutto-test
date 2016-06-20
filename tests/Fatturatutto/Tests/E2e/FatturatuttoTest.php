@@ -33,7 +33,7 @@ class FatturatuttoTest extends Web_TestCase {
     const BENVENUTO_MSG = "Benvenuto su FatturaTutto";
 
     /**
-     * SiteHome and AppHome test and click on button 'Inizia, è gratis'
+     * SiteHome and AppHome test and click on button 'Inizia, ï¿½ gratis'
      */
     public function testSiteHomeTitle() {
         $wd = $this->getWd();
@@ -164,7 +164,7 @@ class FatturatuttoTest extends Web_TestCase {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
-            $wd->get(self::APP_HOME.'/modelli-fattura');
+            $wd->get(self::APP_HOME . '/modelli-fattura');
             
             $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
             $this->waitForXpath($aggiungi); // Wait until the element is visible

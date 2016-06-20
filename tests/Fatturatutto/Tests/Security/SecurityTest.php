@@ -4,6 +4,8 @@ namespace Fatturatutto\Security;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use Iubar\RestApi_TestCase;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 
 /**
  * Test Security Address
@@ -24,6 +26,8 @@ class SecurityTest extends RestApi_TestCase {
     const UNAUTHORIZED = 401;
 
     const MOVED = 301;
+
+    const OK = 200;
 
     const GET = 'get';
     
@@ -57,23 +61,42 @@ class SecurityTest extends RestApi_TestCase {
             ),
             self::UNAUTHORIZED => array(
                 self::DATASLANG . "/wp-login.php"
+            ),
+            self::OK => array(
+                'http://www.iubar.it/bugtracker'
             )
         ];
         
         foreach ($urls as $error_code => $url) {
             $status_code = null;
-            foreach ($url as $value) {
+            foreach ($url as $value_uri) {
                 while ($status_code == null || $status_code == self::MOVED) {
-                    $request = new Request(self::GET, $value);
-                    $response = $this->client->send($request, [
-                        'timeout' => self::TIMEOUT
-                    ]);
-                    $status_code = $response->getStatusCode();
-                    if ($status_code == self::MOVED) {
-                        $url = $response->getUri();
+                    $request = new Request(self::GET, $value_uri);
+                    
+                    // Guzzle 6.x
+                    // Per the docs, the exception types you may need to catch are:
+                    // GuzzleHttp\Exception\ClientException for 400-level errors
+                    // GuzzleHttp\Exception\ServerException for 500-level errors
+                    // GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
+                    
+                    try {
+                        
+                        $response = $this->client->send($request, [
+                            'timeout' => self::TIMEOUT,
+                            'allow_redirects' => true
+                        ]);
+                        // the execution continues only if there isn't any errors 4xx or 5xx
+                        $status_code = $response->getStatusCode();
+                        $this->assertEquals($error_code, $status_code);
+                    } catch (ClientException $e) { // for 400-level errors
+                        $response = $e->getResponse();
+                        // $responseBodyAsString = $response->getBody()->getContents();
+                        $status_code = $response->getStatusCode();
+                        $this->assertEquals($error_code, $status_code);
+                    } catch (ServerException $e) { // for 500-level errors
+                        $this->fail('500-level errors');
                     }
                 }
-                assertEqual($error_code, $status_code);
             }
         }
     }
