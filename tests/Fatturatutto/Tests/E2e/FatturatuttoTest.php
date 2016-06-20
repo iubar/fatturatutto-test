@@ -175,6 +175,10 @@ class FatturatuttoTest extends Web_TestCase {
         }
     }
 
+    public function testFinish() {
+        echo PHP_EOL . 'FINE TEST FATTURATUTTO WEBDRIVER OK!!!!!!!!' . PHP_EOL;
+    }
+
     /**
      * Call the login() function with the set params
      */

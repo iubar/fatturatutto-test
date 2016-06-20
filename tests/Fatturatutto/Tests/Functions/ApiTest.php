@@ -211,6 +211,10 @@ class ApiTest extends RestApi_TestCase {
         $data = $this->checkResponse($response);
     }
 
+    public function testFinish() {
+        echo PHP_EOL . 'FINE TEST API OK!!!!!!!!' . PHP_EOL;
+    }
+
     /**
      * Send a request
      *

@@ -100,4 +100,8 @@ class SecurityTest extends RestApi_TestCase {
             }
         }
     }
+
+    public function testFinish() {
+        echo PHP_EOL . 'FINE TEST SECURITY OK!!!!!!!!' . PHP_EOL;
+    }
 }
