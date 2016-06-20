@@ -4,11 +4,32 @@ title Fatturatutto Test E2E Diagram
 
 start
 
+:Test home di Fatturatutto;
+:Faccio il login;
+  note right
+    utente: inesistente;
+    utente: reale 
+    password: ***
+  end note
+:Controllo di essere nella pagina giusta;
+:Click su inizia per entrare nella maschera di login;
+:Controllo di essere nella pagina giusta;
 :Test maschera di login;
-
-:Compilo finestra di dialogo;
-
-:Creo nuova fattura;
+:Cancello i cookies;
+:Faccio il login;
+  note right
+    utente: inesistente, 
+    controllo il messaggio di errore
+  end note
+:Faccio il login;
+  note right
+    utente: reale, 
+    compilo i dati dell'utente
+    se non sono stati inseriti
+  end note
+:Controllo l'esistenza di tutti 
+gli elementi della barra 
+di navigazione laterale;
 
 stop
 
