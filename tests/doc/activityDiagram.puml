@@ -1,0 +1,15 @@
+@startuml
+
+title Fatturatutto Test E2E Diagram 
+
+start
+
+:Test maschera di login;
+
+:Compilo finestra di dialogo;
+
+:Creo nuova fattura;
+
+stop
+
+@enduml
