@@ -5,7 +5,7 @@ title Fatturatutto Test E2E Diagram
 start
 
 :Test home di Fatturatutto;
-:Faccio il login;
+:Test login;
   note right
     utente: inesistente;
     utente: reale 
@@ -16,12 +16,12 @@ start
 :Controllo di essere nella pagina giusta;
 :Test maschera di login;
 :Cancello i cookies;
-:Faccio il login;
+:Test login;
   note right
     utente: inesistente, 
     controllo il messaggio di errore
   end note
-:Faccio il login;
+:Test login;
   note right
     utente: reale, 
     compilo i dati dell'utente
@@ -31,6 +31,8 @@ start
 gli elementi della barra 
 di navigazione laterale;
 :Click su impostazioni generali;
+:Lettura degli errori dalla console 
+del broswer su modelli-fattura;
 
 stop
 
