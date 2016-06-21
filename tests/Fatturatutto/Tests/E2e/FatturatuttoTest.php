@@ -163,6 +163,23 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     /**
+     * Try to import an invoice
+     */
+    public function testImportazione() {
+        $wd = $this->getWd();
+        
+        $this->do_login(); // Make the login
+        $wd->get(self::APP_HOME . '/strumenti/importazione');
+        
+        $xml = '//*[@id="import-box"]/div[1]/div[2]';
+        $xml_id = 'import-box';
+        $this->waitForXpath($xml); // Wait until the element is visible
+        $drop_area = $wd->findElement(WebDriverBy::id($xml_id));
+        $input_file = 'C:\Users\Matteo\Desktop\esempio_fattura.xml';
+        $this->dragFile($drop_area, $input_file);                
+    }
+
+    /**
      * Impossibile leggere da console con browser 'marionette'
      */
     public function testConsole() {
