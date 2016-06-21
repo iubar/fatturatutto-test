@@ -5,6 +5,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
 use Iubar\RestApi_TestCase;
+use League\CLImate\CLImate;
 
 /**
  * API Test
@@ -49,11 +50,15 @@ class ApiTest extends RestApi_TestCase {
     const PRIVATE_LOGIN_DATA = "C:/Users/Matteo/Desktop/protected_folder/users.ini";
 
     protected $client = null;
+    
+    // easily output colored text and special formatting
+    protected static $climate;
 
     /**
      * Create a Client
      */
     public function setUp() {
+        self::$climate = new CLImate();
         // Base URI is used with relative requests
         // You can set any number of default request options.
         $this->client = new Client([
@@ -212,7 +217,7 @@ class ApiTest extends RestApi_TestCase {
     }
 
     public function testFinish() {
-        echo PHP_EOL . 'FINE TEST API OK!!!!!!!!' . PHP_EOL;
+        self::$climate->info('FINE TEST API OK!!!!!!!!');
     }
 
     /**

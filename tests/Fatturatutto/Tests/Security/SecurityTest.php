@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\Request;
 use Iubar\RestApi_TestCase;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use League\CLImate\CLImate;
 
 /**
  * Test Security Address
@@ -35,11 +36,15 @@ class SecurityTest extends RestApi_TestCase {
     const TIMEOUT = 4;
 
     protected $client = null;
+    
+    // easily output colored text and special formatting
+    protected static $climate;
 
     /**
      * Create a Client
      */
     public function setUp() {
+        self::$climate = new CLImate();
         // Base URI is used with relative requests
         // You can set any number of default request options.
         $this->client = new Client([
@@ -102,6 +107,6 @@ class SecurityTest extends RestApi_TestCase {
     }
 
     public function testFinish() {
-        echo PHP_EOL . 'FINE TEST SECURITY OK!!!!!!!!' . PHP_EOL;
+        self::$climate->info('FINE TEST SECURITY OK!!!!!!!!');
     }
 }

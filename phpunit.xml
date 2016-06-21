@@ -1,6 +1,6 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
-	bootstrap="./tests/bootstrap.php" verbose="true" colors="true" stopOnError="true">
+	bootstrap="./tests/bootstrap.php" verbose="true" colors="true" stopOnError="true" stopOnFailure="true">
 	<!-- cacheTokens="false" -->
 	<!-- forceCoversAnnotation="false" -->
 	<!-- mapTestClassNameToCoveredClassName="false" -->
@@ -14,9 +14,11 @@
 	<!-- convertNoticesToExceptions="true" -->
 	<!-- convertWarningsToExceptions="true" -->
 	<!-- processIsolation="false" -->
+	
 	<!-- stopOnError="false" -->
 	<!-- stopOnFailure="false" -->
 	<!-- stopOnIncomplete="false" -->
+	
 	<!-- stopOnSkipped="false" -->
 	<!-- stopOnRisky="false" -->
 	<!-- timeoutForSmallTests="1" -->
@@ -25,10 +27,10 @@
 
 	<testsuites>
 		<testsuite name="Fatturatutto Api">
-		<file>./tests/Fatturatutto/Tests/Functions/ApiTest.php</file>
+<!-- 		<file>./tests/Fatturatutto/Tests/Functions/ApiTest.php</file> -->
 		</testsuite>
 		<testsuite name="Fatturatutto Security">
-			<file>./tests/Fatturatutto/Tests/Security/SecurityTest.php</file>
+<!-- 			<file>./tests/Fatturatutto/Tests/Security/SecurityTest.php</file> -->
 		</testsuite>
 		<testsuite name="Fatturatutto App">
 			<file>./tests/Fatturatutto/Tests/E2e/FatturatuttoTest.php</file>

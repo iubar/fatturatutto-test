@@ -148,8 +148,9 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertNotNull($impostazioni_button);
         $impostazioni_button->click();
         
-        if (getEnv('BROWSER') != self::PHANTOMJS) { // TODO: probabile bug di phnatomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
-                                                    // click su Generale
+        if (getEnv('BROWSER') != self::PHANTOMJS) {
+            // TODO: probabile bug di phnatomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
+            // click su Generale
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
@@ -249,9 +250,8 @@ class FatturatuttoTest extends Web_TestCase {
             case self::APP_HOME . '/' . self::APP_SITUAZIONE_URL:
                 $impostazioni_id = 'menu-impostazioni';
                 $this->waitForId($impostazioni_id); // Wait until the element is visible
-                break;
             default:
-                die("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
+                $this->fail("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
         }
         
         $title = $wd->getTitle();
