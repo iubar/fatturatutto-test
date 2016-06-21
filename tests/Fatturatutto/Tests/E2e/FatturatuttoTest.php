@@ -50,6 +50,8 @@ class FatturatuttoTest extends Web_TestCase {
         $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
         $this->waitForXpath($inizia_button_path); // Wait until the element is visible
         $start_button = $wd->findElement(WebDriverBy::xpath($inizia_button_path)); // Button "Inizia"
+                                                                                   
+        // TODO: probabile bug di marionette nell'eseguire i click (vedi: https://github.com/seleniumhq/selenium/issues/1202)
         $start_button->click();
         
         // APP HOME
@@ -149,7 +151,7 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_button->click();
         
         if (getEnv('BROWSER') != self::PHANTOMJS) {
-            // TODO: probabile bug di phnatomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
+            // TODO: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
             // click su Generale
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
@@ -177,7 +179,7 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     public function testFinish() {
-        echo PHP_EOL . 'FINE TEST FATTURATUTTO WEBDRIVER OK!!!!!!!!' . PHP_EOL;
+        self::$climate->info('FINE TEST FATTURATUTTO WEBDRIVER OK!!!!!!!!');
     }
 
     /**
@@ -236,6 +238,7 @@ class FatturatuttoTest extends Web_TestCase {
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
+        // echo PHP_EOL.'url: '.$url.PHP_EOL;
         switch ($url) {
             case self::SITE_HOME . '/':
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
