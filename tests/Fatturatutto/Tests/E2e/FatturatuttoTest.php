@@ -174,7 +174,11 @@ class FatturatuttoTest extends Web_TestCase {
         $xml = '//*[@id="import-box"]/div[1]/div[2]';
         $xml_id = 'import-box';
         $this->waitForXpath($xml); // Wait until the element is visible
-        $drop_area = $wd->findElement(WebDriverBy::id($xml_id));
+        $drop_area = $wd->findElement(WebDriverBy::id($xml_id));            // TODO: verificare se posso usare questo
+        
+        $xpath = "//*[@id=\"import-box\"]/div[1]";
+        $drop_area = $wd->findElement(WebDriverBy::xpath($xpath));
+        
         $input_file = 'C:\Users\Matteo\Desktop\esempio_fattura.xml';
         $this->clickByIdWithJs2($drop_area, $input_file);                
     }
