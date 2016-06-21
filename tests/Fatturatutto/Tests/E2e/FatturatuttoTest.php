@@ -236,7 +236,6 @@ class FatturatuttoTest extends Web_TestCase {
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
-        // echo PHP_EOL.$url.PHP_EOL;
         switch ($url) {
             case self::SITE_HOME . '/':
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
@@ -250,6 +249,7 @@ class FatturatuttoTest extends Web_TestCase {
             case self::APP_HOME . '/' . self::APP_SITUAZIONE_URL:
                 $impostazioni_id = 'menu-impostazioni';
                 $this->waitForId($impostazioni_id); // Wait until the element is visible
+                break;
             default:
                 $this->fail("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
         }
