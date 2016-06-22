@@ -134,7 +134,8 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * Test contact api
+     * Test contact api 
+     * send the email but not delete it
      */
     public function testContact() {
         $response = null;
