@@ -227,9 +227,6 @@ class FatturatuttoTest extends Web_TestCase {
         $wd->get($login_url); // Navigate to LOGIN_URL
         $expected_url = $wd->getCurrentURL();
         if ($expected_url == $login_url) {
-            
-            echo "****************************" . PHP_EOL;            
-            
             $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
             $this->waitForXpath($email_button_path); // Wait until the element is visible
             $email_enter = $wd->findElement(WebDriverBy::xpath($email_button_path)); // Button "Email"
@@ -251,7 +248,7 @@ class FatturatuttoTest extends Web_TestCase {
             $login_button_path = '/html/body/div[1]/div[1]/div/div/form/div[5]/button';
             $this->waitForXpath($login_button_path); // Wait until the element is visible
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
-            $accedi_button->click();
+            $accedi_button->click();           
         }
     }
 
@@ -264,7 +261,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
-        $url = $wd->getCurrentURL();        
+        $url = $wd->getCurrentURL();
         switch ($url) {
             case self::SITE_HOME . '/':
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
@@ -301,7 +298,7 @@ class FatturatuttoTest extends Web_TestCase {
         $elem = $wd->findElement(WebDriverBy::id($id));
         $this->assertNotNull($elem);
         $text = $elem->getText();
-        if (getenv('BROWSER') == self::PHANTOMJS) {            
+        if (getenv('BROWSER') == self::PHANTOMJS) {
             $text = $elem->getAttribute("innerText");
         }
         $this->assertContains($expected_title, $text);
