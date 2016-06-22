@@ -173,7 +173,7 @@ class FatturatuttoTest extends Web_TestCase {
         $xml = '//*[@id="import-box"]/div[1]/div[2]';
         $xml_id = 'import-box';
         $this->waitForXpath($xml); // Wait until the element is visible
-        $drop_area = $wd->findElement(WebDriverBy::id($xml_id)); // TODO: verificare se posso usare questo
+        $drop_area = $wd->findElement(WebDriverBy::id($xml_id));
         
         $xpath = "//*[@id=\"import-box\"]/div[1]";
         $drop_area = $wd->findElement(WebDriverBy::xpath($xpath));
@@ -190,7 +190,9 @@ class FatturatuttoTest extends Web_TestCase {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
-                               
+            
+            $this->waitForTag("h2");
+            
             $this->clearConsole();
             $wd->get(self::APP_HOME . '/modelli-fattura');
             
@@ -225,6 +227,9 @@ class FatturatuttoTest extends Web_TestCase {
         $wd->get($login_url); // Navigate to LOGIN_URL
         $expected_url = $wd->getCurrentURL();
         if ($expected_url == $login_url) {
+            
+            echo "****************************" . PHP_EOL;            
+            
             $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
             $this->waitForXpath($email_button_path); // Wait until the element is visible
             $email_enter = $wd->findElement(WebDriverBy::xpath($email_button_path)); // Button "Email"
@@ -259,8 +264,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
-        $url = $wd->getCurrentURL();
-        // echo PHP_EOL.'url: '.$url.PHP_EOL;
+        $url = $wd->getCurrentURL();        
         switch ($url) {
             case self::SITE_HOME . '/':
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
@@ -297,8 +301,7 @@ class FatturatuttoTest extends Web_TestCase {
         $elem = $wd->findElement(WebDriverBy::id($id));
         $this->assertNotNull($elem);
         $text = $elem->getText();
-        if (getenv('BROWSER') == self::PHANTOMJS) {
-            // $text = $elem->getAttribute("textContent");
+        if (getenv('BROWSER') == self::PHANTOMJS) {            
             $text = $elem->getAttribute("innerText");
         }
         $this->assertContains($expected_title, $text);
