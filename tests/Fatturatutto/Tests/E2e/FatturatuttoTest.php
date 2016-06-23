@@ -170,16 +170,34 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login(); // Make the login
         $wd->get(self::APP_HOME . '/strumenti/importazione');
         
-        $xml = '//*[@id="import-box"]/div[1]/div[2]';
-        $xml_id = 'import-box';
+        $xml = '//*[@id="import-box"]/div[1]/div[2]';        
         $this->waitForXpath($xml); // Wait until the element is visible
-        $drop_area = $wd->findElement(WebDriverBy::id($xml_id));
         
-        $xpath = "//*[@id=\"import-box\"]/div[1]";
-        $drop_area = $wd->findElement(WebDriverBy::xpath($xpath));
+        $xml_id = 'import-box';
+        $drop_area = $wd->findElement(WebDriverBy::id($xml_id)); // FIXME: verificare quale soluzione è preferibile
         
-        $input_file = 'C:\Users\Matteo\Desktop\esempio_fattura.xml';
-        $this->clickByIdWithJs2($drop_area, $input_file);
+        $xpath = '//*[@id="import-box"]/div[1]';
+        $drop_area = $wd->findElement(WebDriverBy::xpath($xpath)); // FIXME: verificare quale soluzione è preferibile
+                
+        $this->clearConsole();
+        
+        $data = file_get_contents('http://app.fatturatutto.it/public/resources/xml/1.1/examples/IT01234567890_11002.xml');        
+        $tmp_file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
+        file_put_contents($tmp_file, $data);
+        self::$files_to_del[] = $tmp_file; 
+        $this->clickByIdWithJs2($drop_area, $tmp_file);        
+                      
+        $xpath = '//*[@id="fatture"]/div[2]/button';
+        $this->waitForXpath($xpath);
+        $button = $wd->findElement(WebDriverBy::xpath($xpath));
+        $button->click();
+        
+        $this->waitForTagWithText("h2", "Elenco fatt");
+        $title = $wd->findElement(WebDriverBy::tagName("h2"));
+        $expected_title = "Elenco fatture";
+        $this->assertContains($expected_title, $title->getText());
+        
+        $this->assertNoErrorsOnConsole();
     }
 
     /**
@@ -190,15 +208,24 @@ class FatturatuttoTest extends Web_TestCase {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
+           
+            // Sono nella maschera "Situazione"
             
-            $this->waitForTag("h2");
+           // $impostazioni_id = 'menu-impostazioni';
+           // $this->waitForId($impostazioni_id); // Wait until the element is visible
             
             $this->clearConsole();
             $wd->get(self::APP_HOME . '/modelli-fattura');
             
             $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
             $this->waitForXpath($aggiungi); // Wait until the element is visible
-            $this->assertNoErrorsOnConsole();
+            
+            if (getEnv('BROWSER') == self::CHROME) {
+                 $this->assertErrorsOnConsole(3);
+            }else{
+                $this->assertNoErrorsOnConsole();
+            }
+            
         }
     }
 
