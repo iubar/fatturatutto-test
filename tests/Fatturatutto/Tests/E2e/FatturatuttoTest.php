@@ -9,10 +9,20 @@ use Iubar\Web_TestCase;
  *
  * @author Matteo
  *        
- * @global ....
+ * @global browser
+ * @global selenium_server
+ * @global selenium_path
+ * @global screenshots_path
+ * @global ft_username
+ * @global ft_password
  *        
+ * @see probabile bug di marionette nell'eseguire i click (vedi: https://github.com/seleniumhq/selenium/issues/1202)
+ * @see probabile bug di phantomjs nell'eseguire i click (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
+ *     
  */
 class FatturatuttoTest extends Web_TestCase {
+
+    const EXAMPLE_FATTURA_URL = 'http://app.fatturatutto.it/public/resources/xml/1.1/examples/IT01234567890_11002.xml';
 
     const SITE_HOME = "http://www.fatturatutto.it";
 
@@ -28,12 +38,20 @@ class FatturatuttoTest extends Web_TestCase {
 
     const APP_SITUAZIONE_TITLE = "Situazione";
 
+    const APP_IMPORTAZIONE_TITLE = "Importazione";
+
+    const APP_ELENCO_TITLE = "Elenco";
+
+    const APP_STRUMENTI_IMPORTAZIONE = "strumenti/importazione";
+
+    const APP_ELENCO_FATTURE = "elenco-fatture";
+
     const ERR_DATI_MSG = "Email o password errati";
 
     const BENVENUTO_MSG = "Benvenuto su FatturaTutto";
 
     /**
-     * SiteHome and AppHome test and click on button 'Inizia, � gratis'
+     * SiteHome and AppHome test
      */
     public function testSiteHomeTitle() {
         $wd = $this->getWd();
@@ -42,11 +60,9 @@ class FatturatuttoTest extends Web_TestCase {
         $wd->get(self::SITE_HOME . '/'); // Navigate to SITE_HOME
                                          
         // SITE HOME
-                                         
-        // checking that we are in the right page
         $this->check_webpage(self::SITE_HOME . '/', self::SITE_TITLE);
         
-        // select button 'Inizia' for php-webdriver
+        // select button 'Inizia'
         $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
         $this->waitForXpath($inizia_button_path); // Wait until the element is visible
         $start_button = $wd->findElement(WebDriverBy::xpath($inizia_button_path)); // Button "Inizia"
@@ -55,20 +71,7 @@ class FatturatuttoTest extends Web_TestCase {
         $start_button->click();
         
         // APP HOME
-        
-        // checking that we are in the right page
         $this->check_webpage(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
-        
-        // adding cookie
-        /*
-         * $wd->manage()->deleteAllCookies();
-         * $wd->manage()->addCookie(array(
-         * 'name' => 'cookie_name',
-         * 'value' => 'cookie_value'
-         * ));
-         * $cookies = $wd->manage()->getCookies();
-         * print_r($cookies);
-         */
     }
 
     /**
@@ -97,8 +100,10 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login();
         
         // Verify to be enter and that welcome msg is show
-        $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]';
-        if (! isset($welcome_msg)) { // se esiste compilo i campi
+        $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; // dialog compile your data
+                                                                 
+        // if you have never compile your data this function do it for you
+        if (! isset($welcome_msg)) {
             $this->compile_dialog();
         }
     }
@@ -109,12 +114,13 @@ class FatturatuttoTest extends Web_TestCase {
     public function testAsideNavigationBar() {
         $wd = $this->getWd();
         
-        $this->do_login();
+        $this->do_login(); // Make the login
         $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
                                                                    
         // checking that we are in the right page
         $this->check_webpage(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
+        // the title (key) and the id (value) of each elem of the aside navigation bar
         $navigation_bar_elem_id = array(
             'Situazione' => 'menu-situazione',
             'Anagrafica' => 'menu-anagrafica',
@@ -138,7 +144,7 @@ class FatturatuttoTest extends Web_TestCase {
     public function testImpostazioni() {
         $wd = $this->getWd();
         
-        $this->do_login();
+        $this->do_login(); // Make the login
         $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
                                                                    
         // checking that we are in the right page
@@ -146,16 +152,15 @@ class FatturatuttoTest extends Web_TestCase {
         
         $impostazioni_id = 'menu-impostazioni';
         $this->waitForId($impostazioni_id); // Wait until the element is visible
-        $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id));
+        $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
         $impostazioni_button->click();
         
+        // TODO: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
         if (getEnv('BROWSER') != self::PHANTOMJS) {
-            // TODO: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
-            // click su Generale
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
+            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             $this->assertNotNull($imp_generali);
             $imp_generali->click();
         }
@@ -164,40 +169,45 @@ class FatturatuttoTest extends Web_TestCase {
     /**
      * Try to import an invoice
      */
-    public function testImportazione() {
+    public function testImportazioneFattura() {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $wd->get(self::APP_HOME . '/strumenti/importazione');
+        $wd->get(self::APP_HOME . '/' . self::APP_STRUMENTI_IMPORTAZIONE); // Navigate to APP_STRUMENTI_IMPORTAZIONE
+                                                                           
+        // checking that we are in the right page
+        $this->check_webpage(self::APP_HOME . '/' . self::APP_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
         
-        $xml = '//*[@id="import-box"]/div[1]/div[2]';        
-        $this->waitForXpath($xml); // Wait until the element is visible
+        $import_box_path = '//*[@id="import-box"]/div[1]';
+        $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
+                                                                             
+        // clean the browser console log
+        $this->clearBrowserConsole();
         
-        $xml_id = 'import-box';
-        $drop_area = $wd->findElement(WebDriverBy::id($xml_id)); // FIXME: verificare quale soluzione è preferibile
-        
-        $xpath = '//*[@id="import-box"]/div[1]';
-        $drop_area = $wd->findElement(WebDriverBy::xpath($xpath)); // FIXME: verificare quale soluzione è preferibile
-                
-        $this->clearConsole();
-        
-        $data = file_get_contents('http://app.fatturatutto.it/public/resources/xml/1.1/examples/IT01234567890_11002.xml');        
+        // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
+        $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
         $tmp_file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
         file_put_contents($tmp_file, $data);
-        self::$files_to_del[] = $tmp_file; 
-        $this->clickByIdWithJs2($drop_area, $tmp_file);        
-                      
-        $xpath = '//*[@id="fatture"]/div[2]/button';
-        $this->waitForXpath($xpath);
-        $button = $wd->findElement(WebDriverBy::xpath($xpath));
+        self::$files_to_del[] = $tmp_file;
+        
+        // execute the js script to upload the invoice
+        $this->clickByIdWithJs2($drop_area, $tmp_file);
+        
+        // click on 'avanti'
+        $avanti_button = '//*[@id="fatture"]/div[2]/button';
+        $this->waitForXpath($avanti_button); // Wait until the element is visible
+        $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
+        $this->assertNotNull($button);
         $button->click();
         
+        // checking that we are in the right page
+        //$this->check_webpage(self::APP_HOME . '/' . self::APP_ELENCO_FATTURE, self::APP_ELENCO_TITLE);
         $this->waitForTagWithText("h2", "Elenco fatt");
         $title = $wd->findElement(WebDriverBy::tagName("h2"));
         $expected_title = "Elenco fatture";
         $this->assertContains($expected_title, $title->getText());
         
-        $this->assertNoErrorsOnConsole();
+        $this->assertErrorsOnConsole();
     }
 
     /**
@@ -208,24 +218,23 @@ class FatturatuttoTest extends Web_TestCase {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
-           
+                               
             // Sono nella maschera "Situazione"
+                               
+            // $impostazioni_id = 'menu-impostazioni';
+                               // $this->waitForId($impostazioni_id); // Wait until the element is visible
             
-           // $impostazioni_id = 'menu-impostazioni';
-           // $this->waitForId($impostazioni_id); // Wait until the element is visible
-            
-            $this->clearConsole();
+            $this->clearBrowserConsole();
             $wd->get(self::APP_HOME . '/modelli-fattura');
             
             $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
             $this->waitForXpath($aggiungi); // Wait until the element is visible
             
             if (getEnv('BROWSER') == self::CHROME) {
-                 $this->assertErrorsOnConsole(3);
-            }else{
-                $this->assertNoErrorsOnConsole();
+                $this->assertErrorsOnConsole(3);
+            } else {
+                $this->assertErrorsOnConsole();
             }
-            
         }
     }
 
@@ -275,7 +284,7 @@ class FatturatuttoTest extends Web_TestCase {
             $login_button_path = '/html/body/div[1]/div[1]/div/div/form/div[5]/button';
             $this->waitForXpath($login_button_path); // Wait until the element is visible
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
-            $accedi_button->click();           
+            $accedi_button->click();
         }
     }
 
@@ -302,6 +311,14 @@ class FatturatuttoTest extends Web_TestCase {
             case self::APP_HOME . '/' . self::APP_SITUAZIONE_URL:
                 $impostazioni_id = 'menu-impostazioni';
                 $this->waitForId($impostazioni_id); // Wait until the element is visible
+                break;
+            case self::APP_HOME . '/' . self::APP_STRUMENTI_IMPORTAZIONE:
+                $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
+                $this->waitForXpath($import_box_path); // Wait until the element is visible
+                break;
+            case self::APP_HOME . '/' . self::APP_ELENCO_FATTURE:
+                $data_path = '//*[@id="1466698502307-grid-container"]/div[1]/div/div/div/div/div/div[1]/div/div[1]';
+                $this->waitForXpath($data_path); // Wait until the element is visible
                 break;
             default:
                 $this->fail("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
@@ -389,5 +406,20 @@ class FatturatuttoTest extends Web_TestCase {
         $this->waitForXpath($fine_button_path); // fine
         $fine_button = $wd->findElement(WebDriverBy::xpath($fine_button_path)); // Button "fine"
         $fine_button->click();
+    }
+
+    /**
+     * Unsed, explain only how to use cookies
+     */
+    private function playWithCookies() {
+        $wd = $this->getWd();
+        
+        $wd->manage()->deleteAllCookies();
+        $wd->manage()->addCookie(array(
+            'name' => 'cookie_name',
+            'value' => 'cookie_value'
+        ));
+        $cookies = $wd->manage()->getCookies();
+        print_r($cookies);
     }
 }
