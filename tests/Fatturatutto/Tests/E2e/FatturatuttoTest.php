@@ -42,9 +42,13 @@ class FatturatuttoTest extends Web_TestCase {
 
     const APP_ELENCO_TITLE = "Elenco";
 
+    const APP_MODELLI_TITLE = "Modelli";
+
     const APP_STRUMENTI_IMPORTAZIONE = "strumenti/importazione";
 
     const APP_ELENCO_FATTURE = "elenco-fatture";
+
+    const APP_MODELLI_FATTURA = "modelli-fattura";
 
     const ERR_DATI_MSG = "Email o password errati";
 
@@ -167,7 +171,7 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     /**
-     * Try to import an invoice
+     * Try to import an invoice in APP_STRUMENTI_IMPORTAZIONE
      */
     public function testImportazioneFattura() {
         $wd = $this->getWd();
@@ -180,10 +184,9 @@ class FatturatuttoTest extends Web_TestCase {
         
         $import_box_path = '//*[@id="import-box"]/div[1]';
         $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
-                                                                             
-        // clean the browser console log
-        $this->clearBrowserConsole();
         
+        $this->clearBrowserConsole(); // clean the browser console log
+                                      
         // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
         $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
         $tmp_file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
@@ -200,36 +203,30 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertNotNull($button);
         $button->click();
         
-        // checking that we are in the right page
-        //$this->check_webpage(self::APP_HOME . '/' . self::APP_ELENCO_FATTURE, self::APP_ELENCO_TITLE);
-        $this->waitForTagWithText("h2", "Elenco fatt");
-        $title = $wd->findElement(WebDriverBy::tagName("h2"));
-        $expected_title = "Elenco fatture";
-        $this->assertContains($expected_title, $title->getText());
+        $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
+        $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
+        $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
         
         $this->assertErrorsOnConsole();
     }
 
     /**
-     * Impossibile leggere da console con browser 'marionette'
+     * Test the read of the console in APP_MODELLI_FATTURA
      */
     public function testConsole() {
+        // Impossible to read the console with browser 'marionette'
         if (getEnv('BROWSER') != self::MARIONETTE) {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
-                               
-            // Sono nella maschera "Situazione"
-                               
-            // $impostazioni_id = 'menu-impostazioni';
-                               // $this->waitForId($impostazioni_id); // Wait until the element is visible
+            $this->clearBrowserConsole(); // clean the browser console log
             
-            $this->clearBrowserConsole();
-            $wd->get(self::APP_HOME . '/modelli-fattura');
+            $wd->get(self::APP_HOME . '/' . self::APP_MODELLI_FATTURA);
             
-            $aggiungi = '/html/body/div[1]/div/section/div/div/div[2]/button';
-            $this->waitForXpath($aggiungi); // Wait until the element is visible
+            // checking that we are in the right page
+            $this->check_webpage(self::APP_HOME . '/' . self::APP_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
             
+            // chrome has 3 errors, for more info see the cosole.jason in logs folder
             if (getEnv('BROWSER') == self::CHROME) {
                 $this->assertErrorsOnConsole(3);
             } else {
@@ -243,7 +240,7 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     /**
-     * Call the login() function with the set params
+     * Call the login() function with the global params username and password
      */
     private function do_login() {
         $user = getEnv('FT_USERNAME');
@@ -262,7 +259,10 @@ class FatturatuttoTest extends Web_TestCase {
         $login_url = self::APP_HOME . '/' . self::LOGIN_URL;
         $wd->get($login_url); // Navigate to LOGIN_URL
         $expected_url = $wd->getCurrentURL();
+        
+        // if i'm not already log-in do the login
         if ($expected_url == $login_url) {
+            // select email method to enter
             $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
             $this->waitForXpath($email_button_path); // Wait until the element is visible
             $email_enter = $wd->findElement(WebDriverBy::xpath($email_button_path)); // Button "Email"
@@ -293,11 +293,12 @@ class FatturatuttoTest extends Web_TestCase {
      *
      * @param string $url the url of the webpage
      * @param string $title the title of the webpage
-     * @param string $wd the webdriver
      */
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
+        
+        // implicit wait for an elem of the specific web page to be sure that the web page is completely load
         switch ($url) {
             case self::SITE_HOME . '/':
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
@@ -316,9 +317,9 @@ class FatturatuttoTest extends Web_TestCase {
                 $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
                 $this->waitForXpath($import_box_path); // Wait until the element is visible
                 break;
-            case self::APP_HOME . '/' . self::APP_ELENCO_FATTURE:
-                $data_path = '//*[@id="1466698502307-grid-container"]/div[1]/div/div/div/div/div/div[1]/div/div[1]';
-                $this->waitForXpath($data_path); // Wait until the element is visible
+            case self::APP_HOME . '/' . self::APP_MODELLI_FATTURA:
+                $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
+                $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
                 break;
             default:
                 $this->fail("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
@@ -348,15 +349,9 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertContains($expected_title, $text);
     }
 
-    private function check_prova($id, $sendKey) {
-        $wd = $this->getWd();
-        $this->waitForId($id); // Wait until the element is visible
-        $elem = $wd->findElement(WebDriverBy::id($id));
-        $elem->sendKeys($sendKey);
-        $this->assertNotNull($elem);
-        $this->assertContains($expected_title, $elem->getText());
-    }
-
+    /**
+     * Compile the dialog 'configurazione iniziale' with random data
+     */
     private function compile_dialog() {
         $wd = $this->getWd();
         $avanti_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[1]/div/button';
@@ -369,7 +364,6 @@ class FatturatuttoTest extends Web_TestCase {
         $avvocato_button = $wd->findElement(WebDriverBy::xpath($avvocato_button_path)); // Button "Avvocato"
         $avvocato_button->click();
         
-        // *[@id="ngdialog1"]/div[2]/div/div[2]/div[2]/button
         $avanti_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[2]/div[2]/button';
         $this->waitForXpath($avanti_button_path); // avanti
         $avanti_button = $wd->findElement(WebDriverBy::xpath($avanti_button_path)); // Button "Avanti"
@@ -387,25 +381,35 @@ class FatturatuttoTest extends Web_TestCase {
         $this->check_prova('fax', '11111111111111');
         $this->check_prova('email', 'ppp@gma.it');
         
-        // *[@id="ngdialog1"]/div[2]/div/div[3]/form/div[6]/div[2]/select Ordinario
         $ordinario_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[3]/form/div[6]/div[2]/select';
         $this->waitForXpath($ordinario_button_path); // Ordinario
         $ordinario_button = $wd->findElement(WebDriverBy::xpath($ordinario_button_path)); // textfield "Ordinario"
         $ordinario_button->sendKeys('Ordinario');
         
-        // avanti
-        // *[@id="ngdialog1"]/div[2]/div/div[3]/form/div[7]/button
         $avanti_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[3]/form/div[7]/button';
         $this->waitForXpath($avanti_button_path); // avanti
         $avanti_button = $wd->findElement(WebDriverBy::xpath($avanti_button_path)); // Button "Avanti"
         $avanti_button->click();
         
-        // fine
-        // *[@id="ngdialog1"]/div[2]/div/div[4]/div[2]/button
         $fine_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[4]/div[2]/button';
         $this->waitForXpath($fine_button_path); // fine
         $fine_button = $wd->findElement(WebDriverBy::xpath($fine_button_path)); // Button "fine"
         $fine_button->click();
+    }
+
+    /**
+     * Write into the respective field
+     *
+     * @param string $id the id of the elem
+     * @param string $sendKey what do you wanna write in the elem
+     */
+    private function check_prova($id, $sendKey) {
+        $wd = $this->getWd();
+        $this->waitForId($id); // Wait until the element is visible
+        $elem = $wd->findElement(WebDriverBy::id($id));
+        $elem->sendKeys($sendKey);
+        $this->assertNotNull($elem);
+        $this->assertContains($expected_title, $elem->getText());
     }
 
     /**
