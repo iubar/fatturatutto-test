@@ -13,6 +13,10 @@ use League\CLImate\CLImate;
  * @author Matteo
  *        
  * @global ft_username
+ * @global host
+ * @global port
+ * @global user
+ * @global password
  *        
  */
 class ApiTest extends RestApi_TestCase {
@@ -60,17 +64,31 @@ class ApiTest extends RestApi_TestCase {
     const NOME = "NomeTest";
 
     const COGNOME = "CognomeTest";
-
-    protected $client = null;
     
     // easily output colored text and special formatting
     protected static $climate;
+
+    protected $client = null;
+
+    protected $host = null;
+
+    protected $port = null;
+
+    protected $user = null;
+
+    protected $password = null;
 
     /**
      * Create a Client
      */
     public function setUp() {
         self::$climate = new CLImate();
+        
+        $host = getenv('host');
+        $port = getenv('port');
+        $user = getenv('user');
+        $password = getenv('password');
+        
         // Base URI is used with relative requests
         // You can set any number of default request options.
         $this->client = new Client([
@@ -204,6 +222,168 @@ class ApiTest extends RestApi_TestCase {
 
     public function testFinish() {
         self::$climate->info('FINE TEST API OK!!!!!!!!');
+    }
+
+    /**
+     * Make the login with pop3
+     *
+     * @param string $host the host
+     * @param int $port the port
+     * @param string $user the user email
+     * @param string $pass the password
+     * @param string $folder default:INBOX
+     * @param string $ssl if you want the ssl certificate
+     */
+    protected function pop3_login($host, $port, $user, $pass, $folder = "INBOX", $ssl = false) {
+        // the version of this function in this webpage is wrog http://php.net/manual/en/book.imap.php
+        
+        // this is the right code
+        $ssl = ($ssl == true) ? "/ssl/novalidate-cert" : "";
+        $x = "{" . $host . ":" . $port . "/pop3" . $ssl . "}" . $folder;
+        return (imap_open($x, $user, $pass));
+    }
+
+    /**
+     * Delete the given message
+     *
+     * @param string $connection the connection
+     * @param string $message the message
+     */
+    protected function pop3_dele($connection, $message) {
+        return (imap_delete($connection, $message));
+    }
+
+    /**
+     * unutilized function
+     *
+     * @param string $connection
+     * @return array
+     */
+    protected function pop3_stat($connection) {
+        $check = imap_mailboxmsginfo($connection);
+        return ((array) $check);
+    }
+
+    /**
+     * unutilized function
+     *
+     * @param string $connection
+     * @param string $message
+     * @return array
+     */
+    protected function pop3_list($connection, $message = "") {
+        if ($message) {
+            $range = $message;
+        } else {
+            $MC = imap_check($connection);
+            $range = "1:" . $MC->Nmsgs;
+        }
+        $response = imap_fetch_overview($connection, $range);
+        foreach ($response as $msg)
+            $result[$msg->msgno] = (array) $msg;
+        return $result;
+    }
+
+    /**
+     * unutilized function
+     *
+     * @param string $connection
+     * @param string $message
+     */
+    protected function pop3_retr($connection, $message) {
+        return (imap_fetchheader($connection, $message, FT_PREFETCHTEXT));
+    }
+
+    /**
+     * unutilized function
+     *
+     * @param string $headers
+     * @return unknown
+     */
+    protected function mail_parse_headers($headers) {
+        $headers = preg_replace('/\r\n\s+/m', '', $headers);
+        preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)?\r\n/m', $headers, $matches);
+        foreach ($matches[1] as $key => $value)
+            $result[$value] = $matches[2][$key];
+        return ($result);
+    }
+
+    /**
+     * unutilized function
+     *
+     * @param unknown $imap
+     * @param unknown $mid
+     * @param string $parse_headers
+     * @return unknown
+     */
+    protected function mail_mime_to_array($imap, $mid, $parse_headers = false) {
+        $mail = imap_fetchstructure($imap, $mid);
+        $mail = mail_get_parts($imap, $mid, $mail, 0);
+        if ($parse_headers)
+            $mail[0]["parsed"] = mail_parse_headers($mail[0]["data"]);
+        return ($mail);
+    }
+
+    /**
+     * unutilized function
+     *
+     * @param unknown $imap
+     * @param unknown $mid
+     * @param unknown $part
+     * @param unknown $prefix
+     * @return NULL[]
+     */
+    protected function mail_get_parts($imap, $mid, $part, $prefix) {
+        $attachments = array();
+        $attachments[$prefix] = mail_decode_part($imap, $mid, $part, $prefix);
+        if (isset($part->parts)) // multipart
+{
+            $prefix = ($prefix == "0") ? "" : "$prefix.";
+            foreach ($part->parts as $number => $subpart)
+                $attachments = array_merge($attachments, mail_get_parts($imap, $mid, $subpart, $prefix . ($number + 1)));
+        }
+        return $attachments;
+    }
+
+    /**
+     * unutilized function
+     *
+     * @param unknown $connection
+     * @param unknown $message_number
+     * @param unknown $part
+     * @param unknown $prefix
+     * @return boolean[]|NULL[]
+     */
+    protected function mail_decode_part($connection, $message_number, $part, $prefix) {
+        $attachment = array();
+        
+        if ($part->ifdparameters) {
+            foreach ($part->dparameters as $object) {
+                $attachment[strtolower($object->attribute)] = $object->value;
+                if (strtolower($object->attribute) == 'filename') {
+                    $attachment['is_attachment'] = true;
+                    $attachment['filename'] = $object->value;
+                }
+            }
+        }
+        
+        if ($part->ifparameters) {
+            foreach ($part->parameters as $object) {
+                $attachment[strtolower($object->attribute)] = $object->value;
+                if (strtolower($object->attribute) == 'name') {
+                    $attachment['is_attachment'] = true;
+                    $attachment['name'] = $object->value;
+                }
+            }
+        }
+        
+        $attachment['data'] = imap_fetchbody($connection, $message_number, $prefix);
+        if ($part->encoding == 3) { // 3 = BASE64
+            $attachment['data'] = base64_decode($attachment['data']);
+        } elseif ($part->encoding == 4) { // 4 = QUOTED-PRINTABLE
+            $attachment['data'] = quoted_printable_decode($attachment['data']);
+        }
+        return ($attachment);
     }
 
     /**
