@@ -208,9 +208,9 @@ class ApiTest extends RestApi_TestCase {
         try {
             $array = array(
                 'email' => getenv('FT_USERNAME'),
-                'nome' => self::NOME,
-                'cognome' => self::COGNOME,
-                'idprofessione' => self::ID_EDIT_UNSUBSCRIBE,
+              //  'nome' => self::NOME,
+              //  'cognome' => self::COGNOME,
+              //  'idprofessione' => self::ID_EDIT_UNSUBSCRIBE,
                 'list_id' => self::ID_EDIT_UNSUBSCRIBE
             );
             $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::EDIT, $array, self::TIMEOUT);
