@@ -12,27 +12,34 @@ use League\CLImate\CLImate;
  *
  * @author Matteo
  *        
+ * @global ft_username
+ *        
  */
 class ApiTest extends RestApi_TestCase {
 
-    const APP_HOME = "http://www.iubar.it/extranet/api/";
-
-    const ELEM_LIMIT = 3;
-
-    const GET = 'get';
+    const IUBAR_EXTRANET_API = "http://www.iubar.it/extranet/api/";
     
     // seconds
     const TIMEOUT = 4;
 
+    const ELEM_LIMIT = 3;
+
+    const PARTIAL_EMAIL = "postmaster@";
+
+    const EMAIL_DOMAIN = "fatturatutto.it";
+
+    const GET = 'get';
+
     const TWITTER = 'twitter';
+
+    const LENGTH = 100;
 
     const CONTENT_TYPE = 'Content-Type';
 
     const APP_JSON_CT = 'application/json';
-
-    const OK_STATUS_CODE = 200;
-
-    const LENGTH = 100;
+    
+    // http status code
+    const OK = 200;
 
     const RSS = 'rss';
 
@@ -45,9 +52,14 @@ class ApiTest extends RestApi_TestCase {
     const EDIT = 'edit';
 
     const UNSUBSCRIBE = 'unsubscribe';
-    
-    // momentanea da cancellare e mettere nella classe padre
-    const PRIVATE_LOGIN_DATA = "C:/Users/Matteo/Desktop/protected_folder/users.ini";
+
+    const ID_SUBSCRIBE = 1;
+
+    const ID_EDIT_UNSUBSCRIBE = 2;
+
+    const NOME = "NomeTest";
+
+    const COGNOME = "CognomeTest";
 
     protected $client = null;
     
@@ -62,52 +74,29 @@ class ApiTest extends RestApi_TestCase {
         // Base URI is used with relative requests
         // You can set any number of default request options.
         $this->client = new Client([
-            'base_uri' => self::APP_HOME,
+            'base_uri' => self::IUBAR_EXTRANET_API,
             'timeout' => self::TIMEOUT
         ]);
     }
 
     /**
-     * Test Twitter api
+     * Test Twitter
      */
     public function testTwitter() {
         $response = null;
         try {
-            /*
-             * $request = new Request(self::GET, self::TWITTER);
-             * $array = array(
-             * 'limit' => self::ELEM_LIMIT
-             * );
-             * $response = $this->client->send($request, [
-             * 'timeout' => self::TIMEOUT,
-             * 'query' => $array
-             * ]);
-             */
             $array = array(
                 'limit' => self::ELEM_LIMIT
             );
             $response = $this->sendRequest(self::GET, self::TWITTER, $array, self::TIMEOUT);
-            // echo PHP_EOL.$response->getBody();
+            // echo PHP_EOL . $response->getBody();
         } catch (RequestException $e) {
             $this->handleException($e);
         }
-        
-        /*
-         * // Response
-         * $this->assertContains(self::APP_JSON_CT, $response->getHeader(self::CONTENT_TYPE)[0]);
-         * $this->assertEquals(self::OK_STATUS_CODE, $response->getStatusCode());
-         */
-        
         $data = $this->checkResponse($response);
-        
-        /*
-         * // Data
-         * $data = json_decode($response->getBody(), true);
-         */
         $this->assertEquals(self::ELEM_LIMIT, count($data));
         $first_obj = $data[0];
         $this->assertArrayHasKey('short_text', $first_obj);
-        
         /*
          * foreach ($response->getHeaders() as $name => $values) {
          * echo $name . ': ' . implode(', ', $values) . "\r\n";
@@ -116,7 +105,7 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * Test rss api
+     * Test Rss
      */
     public function testRss() {
         $response = null;
@@ -126,26 +115,25 @@ class ApiTest extends RestApi_TestCase {
                 'length' => self::LENGTH
             );
             $response = $this->sendRequest(self::GET, self::RSS, $array, self::TIMEOUT);
-            // echo PHP_EOL.$response->getBody();
         } catch (RequestException $e) {
             $this->handleException($e);
         }
         $data = $this->checkResponse($response);
+        $this->assertEquals(self::ELEM_LIMIT, count($data));
     }
 
     /**
-     * Test contact api 
-     * send the email but not delete it
+     * Test contact
      */
     public function testContact() {
         $response = null;
         try {
             $array = array(
-                'from_name' => 'Matteo',
-                'from_email' => 'postmaster@fatturatutto.it',
-                'from_domain' => 'fatturatutto.it',
+                'from_name' => getEnv('FT_USERNAME'),
+                'from_email' => self::PARTIAL_EMAIL . self::EMAIL_DOMAIN,
+                'from_domain' => self::EMAIL_DOMAIN,
                 'subject' => 'Prova API',
-                'message' => 'Ciao'
+                'message' => 'This is an api test'
             );
             $response = $this->sendRequest(self::GET, self::CONTACT, $array, self::TIMEOUT + 10);
         } catch (RequestException $e) {
@@ -155,17 +143,17 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * Test subscribe into the mailing list
+     * Subscribe into the mailing list
      */
     public function testMailingListSubscribe() {
         $response = null;
         try {
             $array = array(
                 'email' => getenv('FT_USERNAME'),
-                'nome' => 'Matteo',
-                'cognome' => 'Prova API',
-                'idprofessione' => '1',
-                'list_id' => '1'
+                'nome' => self::NOME,
+                'cognome' => self::COGNOME,
+                'idprofessione' => self::ID_SUBSCRIBE,
+                'list_id' => self::ID_SUBSCRIBE
             );
             $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::SUBSCRIBE, $array, self::TIMEOUT);
         } catch (RequestException $e) {
@@ -175,20 +163,19 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * Test edit from the mailing list
+     * Edit from the mailing list
      */
     public function testMailingListEdit() {
         $response = null;
         try {
             $array = array(
                 'email' => getenv('FT_USERNAME'),
-                'nome' => 'Matteo',
-                'cognome' => 'Prova API',
-                'idprofessione' => '2',
-                'list_id' => '2'
+                'nome' => self::NOME,
+                'cognome' => self::COGNOME,
+                'idprofessione' => self::ID_EDIT_UNSUBSCRIBE,
+                'list_id' => self::ID_EDIT_UNSUBSCRIBE
             );
             $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::EDIT, $array, self::TIMEOUT);
-            // echo PHP_EOL.$response->getBody();
         } catch (RequestException $e) {
             $this->handleException($e);
         }
@@ -196,21 +183,19 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * Test unsubscribe from the mailing list
+     * Unsubscribe from the mailing list
      */
     public function testMailingListUnsubscribe() {
         $response = null;
         try {
-            
             $array = array(
                 'email' => getenv('FT_USERNAME'),
-                'nome' => 'Matteo',
-                'cognome' => 'Prova API',
-                'idprofessione' => '2',
-                'list_id' => '2'
+                'nome' => self::NOME,
+                'cognome' => self::COGNOME,
+                'idprofessione' => self::ID_EDIT_UNSUBSCRIBE,
+                'list_id' => self::ID_EDIT_UNSUBSCRIBE
             );
             $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::EDIT, $array, self::TIMEOUT);
-            // echo PHP_EOL.$response->getBody();
         } catch (RequestException $e) {
             $this->handleException($e);
         }
@@ -222,7 +207,7 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * Send a request
+     * Send an http request and return the response
      *
      * @param string $method the method
      * @param string $partial_uri the partial uri
@@ -244,15 +229,15 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * Check the status code and the content type of the response
+     * Check the OK status code and the APP_JSON_CT content type of the response
      *
      * @param string $response the response
-     * @return string a PHP variable of the JSON string of the response
+     * @return string the body of the decode response
      */
     private function checkResponse($response) {
         // Response
         $this->assertContains(self::APP_JSON_CT, $response->getHeader(self::CONTENT_TYPE)[0]);
-        $this->assertEquals(self::OK_STATUS_CODE, $response->getStatusCode());
+        $this->assertEquals(self::OK, $response->getStatusCode());
         
         // Data
         $data = json_decode($response->getBody(), true);
