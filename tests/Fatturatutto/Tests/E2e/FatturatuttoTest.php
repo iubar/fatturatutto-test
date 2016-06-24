@@ -8,16 +8,14 @@ use Iubar\Web_TestCase;
  * Test of www.fatturatutto.it website
  *
  * @author Matteo
+ *
+ * @global env BROWSER
+ * @global env SELENIUM_SERVER
+ * @global env SELENIUM_PATH
+ * @global env SCREENSHOTS_PATH
+ * @global env FT_USERNAME
+ * @global env FT_PASSWORD
  *        
- * @global browser
- * @global selenium_server
- * @global selenium_path
- * @global screenshots_path
- * @global ft_username
- * @global ft_password
- *        
- * @see probabile bug di marionette nell'eseguire i click (vedi: https://github.com/seleniumhq/selenium/issues/1202)
- * @see probabile bug di phantomjs nell'eseguire i click (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
  *     
  */
 class FatturatuttoTest extends Web_TestCase {
@@ -71,7 +69,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->waitForXpath($inizia_button_path); // Wait until the element is visible
         $start_button = $wd->findElement(WebDriverBy::xpath($inizia_button_path)); // Button "Inizia"
                                                                                    
-        // TODO: probabile bug di marionette nell'eseguire i click (vedi: https://github.com/seleniumhq/selenium/issues/1202)
+        // TODO: probabile bug di marionette nell'identificarte l'elemento precedente con il metodo findElement() (vedi: https://github.com/seleniumhq/selenium/issues/1202)
         $start_button->click();
         
         // APP HOME
