@@ -21,14 +21,17 @@ class SecurityTest extends RestApi_TestCase {
     const APP_HOME = "http://app.fatturatutto.it/";
 
     const DATASLANG = "http://www.dataslang.com";
-    // http status code
-    const FORBIDDEN = 403;
 
-    const UNAUTHORIZED = 401;
+    const IUBAR = "http://www.iubar.it";
+    
+    // http status code
+    const OK = 200;
 
     const MOVED = 301;
 
-    const OK = 200;
+    const UNAUTHORIZED = 401;
+
+    const FORBIDDEN = 403;
 
     const GET = 'get';
     
@@ -57,6 +60,7 @@ class SecurityTest extends RestApi_TestCase {
      * Test Forbidden and Unauthorized api
      */
     public function testForbidden() {
+        // the status code and the relative address to check
         $urls = [
             self::FORBIDDEN => array(
                 self::BASE_URI . "/app/logs/",
@@ -68,7 +72,7 @@ class SecurityTest extends RestApi_TestCase {
                 self::DATASLANG . "/wp-login.php"
             ),
             self::OK => array(
-                'http://www.iubar.it/bugtracker'
+                self::IUBAR . '/bugtracker'
             )
         ];
         
@@ -85,17 +89,17 @@ class SecurityTest extends RestApi_TestCase {
                     // GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
                     
                     try {
-                        
                         $response = $this->client->send($request, [
                             'timeout' => self::TIMEOUT,
+                            // if status code is MOVED this makes redirects automatically
                             'allow_redirects' => true
                         ]);
+                        
                         // the execution continues only if there isn't any errors 4xx or 5xx
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
                     } catch (ClientException $e) { // for 400-level errors
                         $response = $e->getResponse();
-                        // $responseBodyAsString = $response->getBody()->getContents();
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
                     } catch (ServerException $e) { // for 500-level errors
