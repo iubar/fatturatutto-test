@@ -25,7 +25,7 @@
  
     "require-dev": {
         "php": ">=5.5.0",
-        "iubar/iubar-web-test": "v0.2-alpha"
+        "iubar/iubar-web-test": "dev-master@dev"
     },
      
     "autoload": {
