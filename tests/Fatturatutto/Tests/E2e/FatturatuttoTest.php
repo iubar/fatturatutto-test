@@ -320,6 +320,12 @@ class FatturatuttoTest extends Web_TestCase {
                 $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
                 break;
             default:
+                
+                $stack = debug_backtrace();
+                echo PHP_EOL . "Printout of Function Stack: " . PHP_EOL . PHP_EOL;
+                print_r($stack);
+                echo PHP_EOL;                
+                
                 $this->fail("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
         }
         
