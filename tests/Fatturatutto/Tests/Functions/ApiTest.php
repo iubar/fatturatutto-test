@@ -64,6 +64,10 @@ class ApiTest extends RestApi_TestCase {
     const NOME = "NomeTest";
 
     const COGNOME = "CognomeTest";
+
+    const PREFIX_SUBJECT = "msgTest";
+
+    const EMAIL_WAIT = 40;
     
     // easily output colored text and special formatting
     protected static $climate;
@@ -141,16 +145,19 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * Test contact
+     * Send an email with a uniqid subject and delete it
      */
-    public function testContact() {
+    public function testSendDeleteEmail() {
         $response = null;
+        
+        // create a unique id for the subject of the email to identify it
+        $expected_subject = uniqid(self::PREFIX_SUBJECT);
         try {
             $array = array(
                 'from_name' => getEnv('FT_USERNAME'),
                 'from_email' => self::PARTIAL_EMAIL . self::EMAIL_DOMAIN,
                 'from_domain' => self::EMAIL_DOMAIN,
-                'subject' => 'Prova API',
+                'subject' => $expected_subject,
                 'message' => 'This is an api test'
             );
             $response = $this->sendRequest(self::GET, self::CONTACT, $array, self::TIMEOUT + 10);
@@ -158,12 +165,40 @@ class ApiTest extends RestApi_TestCase {
             $this->handleException($e);
         }
         $data = $this->checkResponse($response);
+        
+        // wait for email arrived
+        sleep(self::EMAIL_WAIT);
+        
+        // connect to the email inbox
+        $conn = $this->pop3_login($host, $port, $user, $password, "INBOX", true);
+        $bOk = false;
+        if (! $conn) {
+            $this->fail('Connection error');
+        } else {
+            $messages = $this->pop3_list($conn);
+            if (count($messages) > 0) {
+                foreach ($messages as $msg) {
+                    $subject = $msg['subject'];
+                    echo "subject --> " . $subject . PHP_EOL;
+                    if ($subject == $expected_subject) {
+                        $bOk = true;
+                        $this->pop3_dele($conn, $msg);
+                        break;
+                    }
+                }
+            }
+        }
+        if ($bOk) {
+            self::$climate->info('I have found your email and i delete it    !!!!');
+        } else {
+            $this->fail('ERROR: I haven\'t found your email');
+        }
     }
 
     /**
      * Subscribe into the mailing list
      */
-    public function testMailingListSubscribe() {
+    public function testSubscribeMailingList() {
         $response = null;
         try {
             $array = array(
@@ -174,6 +209,7 @@ class ApiTest extends RestApi_TestCase {
                 'list_id' => self::ID_SUBSCRIBE
             );
             $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::SUBSCRIBE, $array, self::TIMEOUT);
+            echo PHP_EOL . $response->getBody();
         } catch (RequestException $e) {
             $this->handleException($e);
         }
@@ -183,17 +219,18 @@ class ApiTest extends RestApi_TestCase {
     /**
      * Edit from the mailing list
      */
-    public function testMailingListEdit() {
+    public function testEditMailingList() {
         $response = null;
         try {
+            // Param 'list_id' cannot be modified
             $array = array(
                 'email' => getenv('FT_USERNAME'),
                 'nome' => self::NOME,
                 'cognome' => self::COGNOME,
-                'idprofessione' => self::ID_EDIT_UNSUBSCRIBE,
-                'list_id' => self::ID_EDIT_UNSUBSCRIBE
+                'idprofessione' => self::ID_EDIT_UNSUBSCRIBE
             );
             $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::EDIT, $array, self::TIMEOUT);
+            echo PHP_EOL . $response->getBody();
         } catch (RequestException $e) {
             $this->handleException($e);
         }
@@ -203,17 +240,14 @@ class ApiTest extends RestApi_TestCase {
     /**
      * Unsubscribe from the mailing list
      */
-    public function testMailingListUnsubscribe() {
+    public function testUnsubscribeMailingList() {
         $response = null;
         try {
             $array = array(
-                'email' => getenv('FT_USERNAME'),
-                // 'nome' => self::NOME,
-                // 'cognome' => self::COGNOME,
-                // 'idprofessione' => self::ID_EDIT_UNSUBSCRIBE,
-                'list_id' => self::ID_EDIT_UNSUBSCRIBE
+                'email' => getenv('FT_USERNAME')
             );
-            $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::EDIT, $array, self::TIMEOUT);
+            $response = $this->sendRequest(self::GET, self::MAILING_LIST . self::UNSUBSCRIBE, $array, self::TIMEOUT);
+            echo PHP_EOL . $response->getBody();
         } catch (RequestException $e) {
             $this->handleException($e);
         }
@@ -265,11 +299,11 @@ class ApiTest extends RestApi_TestCase {
     }
 
     /**
-     * unutilized function
+     * Give all the messages of the connection folder
      *
-     * @param string $connection
-     * @param string $message
-     * @return array
+     * @param string $connection the connection
+     * @param string $message the message
+     * @return array all the messages
      */
     protected function pop3_list($connection, $message = "") {
         if ($message) {
