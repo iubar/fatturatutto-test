@@ -72,26 +72,11 @@ class ApiTest extends RestApi_TestCase {
     // easily output colored text and special formatting
     protected static $climate;
 
-    protected $client = null;
-
-    protected $host = null;
-
-    protected $port = null;
-
-    protected $user = null;
-
-    protected $password = null;
-
     /**
      * Create a Client
      */
     public function setUp() {
         self::$climate = new CLImate();
-        
-        $host = getenv('host');
-        $port = getenv('port');
-        $user = getenv('user');
-        $password = getenv('password');
         
         // Base URI is used with relative requests
         // You can set any number of default request options.
@@ -170,7 +155,7 @@ class ApiTest extends RestApi_TestCase {
         sleep(self::EMAIL_WAIT);
         
         // connect to the email inbox
-        $conn = $this->pop3_login($host, $port, $user, $password, "INBOX", true);
+        $conn = $this->pop3_login(getenv('host'), getenv('port'), getenv('user'), getenv('password'), "INBOX", true);
         $bOk = false;
         if (! $conn) {
             $this->fail('Connection error');
@@ -181,6 +166,7 @@ class ApiTest extends RestApi_TestCase {
                     $subject = $msg['subject'];
                     echo "subject --> " . $subject . PHP_EOL;
                     if ($subject == $expected_subject) {
+                        // delete the uniqid msg
                         $bOk = true;
                         $this->pop3_dele($conn, $msg);
                         break;
