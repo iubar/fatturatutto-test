@@ -164,11 +164,13 @@ class ApiTest extends RestApi_TestCase {
             if (count($messages) > 0) {
                 foreach ($messages as $msg) {
                     $subject = $msg['subject'];
+                    $msg_num = $msg['msgno'];
                     echo "subject --> " . $subject . PHP_EOL;
-                    if ($subject == $expected_subject) {
-                        // delete the uniqid msg
+                    $pos = strpos($subject, $expected_subject);
+                    if ($pos !== false) {
                         $bOk = true;
-                        $this->pop3_dele($conn, $msg);
+                        // delete the uniqid msg
+                        $this->pop3_dele($conn, $msg_num);
                         break;
                     }
                 }
