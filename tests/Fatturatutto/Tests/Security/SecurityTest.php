@@ -79,7 +79,8 @@ class SecurityTest extends RestApi_TestCase {
         foreach ($urls as $error_code => $url) {
             $status_code = null;
             foreach ($url as $value_uri) {
-                while ($status_code == null || $status_code == self::MOVED) {
+                $bOk=false;
+                while ($status_code == null||$bOk==false) {
                     $request = new Request(self::GET, $value_uri);
                     
                     // Guzzle 6.x
@@ -98,10 +99,12 @@ class SecurityTest extends RestApi_TestCase {
                         // the execution continues only if there isn't any errors 4xx or 5xx
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
+                        $bOk=true;
                     } catch (ClientException $e) { // for 400-level errors
                         $response = $e->getResponse();
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
+                        $bOk=true;
                     } catch (ServerException $e) { // for 500-level errors
                         $this->fail('500-level errors');
                     }
