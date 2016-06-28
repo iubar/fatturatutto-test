@@ -12,7 +12,6 @@ use League\CLImate\CLImate;
  * Test Security Address
  *
  * @author Matteo
- *        
  */
 class SecurityTest extends RestApi_TestCase {
 
@@ -32,6 +31,8 @@ class SecurityTest extends RestApi_TestCase {
     const UNAUTHORIZED = 401;
 
     const FORBIDDEN = 403;
+
+    const NOT_FOUND = 404;
 
     const GET = 'get';
     
@@ -64,7 +65,6 @@ class SecurityTest extends RestApi_TestCase {
         $urls = [
             self::FORBIDDEN => array(
                 self::BASE_URI . "/app/logs/",
-                self::BASE_URI . "/app/vendor",
                 self::APP_HOME . "/logs",
                 self::APP_HOME . "/vendor"
             ),
@@ -73,14 +73,17 @@ class SecurityTest extends RestApi_TestCase {
             ),
             self::OK => array(
                 self::IUBAR . '/bugtracker'
+            ),
+            self::NOT_FOUND => array(
+                self::BASE_URI . "/app/vendor"
             )
         ];
         
         foreach ($urls as $error_code => $url) {
             $status_code = null;
             foreach ($url as $value_uri) {
-                $bOk=false;
-                while ($status_code == null||$bOk==false) {
+                $bOk = false;
+                while ($status_code == null || $bOk == false) {
                     $request = new Request(self::GET, $value_uri);
                     
                     // Guzzle 6.x
@@ -99,12 +102,12 @@ class SecurityTest extends RestApi_TestCase {
                         // the execution continues only if there isn't any errors 4xx or 5xx
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
-                        $bOk=true;
+                        $bOk = true;
                     } catch (ClientException $e) { // for 400-level errors
                         $response = $e->getResponse();
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
-                        $bOk=true;
+                        $bOk = true;
                     } catch (ServerException $e) { // for 500-level errors
                         $this->fail('500-level errors');
                     }
