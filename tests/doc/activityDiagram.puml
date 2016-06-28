@@ -4,35 +4,102 @@ title Fatturatutto Test E2E Diagram
 
 start
 
-:Test home di Fatturatutto;
-:Test login;
-  note right
-    utente: inesistente;
-    utente: reale 
-    password: ***
-  end note
-:Controllo di essere nella pagina giusta;
-:Click su inizia per entrare nella maschera di login;
-:Controllo di essere nella pagina giusta;
-:Test maschera di login;
-:Cancello i cookies;
-:Test login;
-  note right
-    utente: inesistente, 
-    controllo il messaggio di errore
-  end note
-:Test login;
-  note right
-    utente: reale, 
-    compilo i dati dell'utente
-    se non sono stati inseriti
-  end note
-:Controllo l'esistenza di tutti 
-gli elementi della barra 
-di navigazione laterale;
-:Click su impostazioni generali;
-:Lettura degli errori dalla console 
-del broswer su modelli-fattura;
+partition testSiteHome {
+    :Home page di Fatturatutto;
+    :Login;
+        note right
+            se non si è già loggati
+        end note
+    :Controllo di essere nella pagina giusta;
+    :Click sul bottone inizia;
+        note right
+            per entrare nella maschera di login
+        end note
+    :Login page di Fatturatutto;
+    :Controllo di essere nella pagina giusta;
+}
+
+partition testLogin {
+    :Cancellazione i cookies;
+    :Login page di Fatturatutto;
+    :Test login;
+        note right
+            utente: inesistente, 
+            controllo il messaggio di errore
+        end note
+    :Verifico la presenza del messaggio 
+    di errore per dati errati;
+    :Login page di Fatturatutto;
+    :Controllo di essere nella pagina giusta;
+    :Test login;
+        note right
+            utente: esistente, 
+            compilo i dati dell'utente
+            se non sono stati inseriti
+        end note
+    :Click per entrare con l'email;
+    :Compilo i campi username e password;
+    :Click sul bottone accedi;
+    :Compilazione dati utente;
+        note right
+            solo se non ho mai 
+            inserito i dati
+        end note
+}
+
+partition testAsideNavigationBar{
+    :Login;
+        note right
+            se non si è già loggati
+        end note
+    :Situazione page di Fatturatutto;
+    :Controllo di essere nella pagina giusta;
+    :Controllo l'esistenza di tutti 
+    gli elementi della barra 
+    di navigazione laterale;
+}
+
+partition testImpostazioni{
+    :Login;
+        note right
+            se non si è già loggati
+        end note
+    :Impostazioni page di Fatturatutto;
+    :Controllo di essere nella pagina giusta;
+    :Click su impostazioni nel menù laterale;
+    :Click su impostazioni->generale nel menù laterale;
+    :Attendo la compilazione di tutti i campi;
+}
+
+partition testImportazioneFattura{
+    :Login;
+        note right
+            se non si è già loggati
+        end note
+    :strumenti/importazione page di Fatturatutto;
+    :Attendo il caricamento del box 
+    per l'upload della fattura;
+    :Pulisco la console del browser;
+    :Scarico un esempio di fattura xml;
+    :Carico la fattura con uno script javascript;
+    :Click sul bottone avanti;
+    :Attendo il caricamento della pagina
+    :elenco-fatture page di Fatturatutto;
+    :Controllo che nella console del 
+    browser non ci siano errori;
+}
+
+partition testConsole{
+    :Login;
+        note right
+            se non si è già loggati
+        end note
+    :Pulisco la console del browser;
+    :modelli-fattura page di Fatturatutto;
+    :Controllo di essere nella pagina giusta;
+    :Controllo che nella console del 
+    browser non ci siano errori;
+}
 
 stop
 
