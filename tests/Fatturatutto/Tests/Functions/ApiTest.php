@@ -88,6 +88,7 @@ class ApiTest extends RestApi_TestCase {
 
     /**
      * Test Twitter
+     * Some tweet could be filtered so the ELEM_LIMIT and the number of tweet could be different
      */
     public function testTwitter() {
         $response = null;
