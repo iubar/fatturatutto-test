@@ -11,13 +11,11 @@ use League\CLImate\CLImate;
  * API Test
  *
  * @author Matteo
- *        
  * @global env ft_username
  * @global env host
  * @global env port
  * @global env user
  * @global env password
- *        
  */
 class ApiTest extends RestApi_TestCase {
 
@@ -66,7 +64,8 @@ class ApiTest extends RestApi_TestCase {
     const COGNOME = "CognomeTest";
 
     const PREFIX_SUBJECT = "msgTest";
-
+    
+    // seconds to wait before logging to the pop3 mailbox to delete the message
     const EMAIL_WAIT = 40;
     
     // easily output colored text and special formatting
@@ -88,7 +87,8 @@ class ApiTest extends RestApi_TestCase {
 
     /**
      * Test Twitter
-     * Some tweet could be filtered so the ELEM_LIMIT and the number of tweet could be different
+     *
+     * @uses Some tweet could be filtered so the ELEM_LIMIT and the number of tweet could be different
      */
     public function testTwitter() {
         $response = null;
@@ -106,9 +106,7 @@ class ApiTest extends RestApi_TestCase {
         $first_obj = $data[0];
         $this->assertArrayHasKey('short_text', $first_obj);
         /*
-         * foreach ($response->getHeaders() as $name => $values) {
-         * echo $name . ': ' . implode(', ', $values) . "\r\n";
-         * }
+         * foreach ($response->getHeaders() as $name => $values) { echo $name . ': ' . implode(', ', $values) . "\r\n"; }
          */
     }
 
@@ -158,7 +156,7 @@ class ApiTest extends RestApi_TestCase {
         // connect to the email inbox
         $conn = $this->pop3_login(getenv('host'), getenv('port'), getenv('user'), getenv('password'), "INBOX", true);
         $bOk = false;
-        if (! $conn) {
+        if (!$conn) {
             $this->fail('Connection error');
         } else {
             $messages = $this->pop3_list($conn);
@@ -228,6 +226,8 @@ class ApiTest extends RestApi_TestCase {
 
     /**
      * Unsubscribe from the mailing list
+     *
+     * @uses Can't unsubribe twice but only once. Even if you retry to subscribe, you can't.
      */
     public function testUnsubscribeMailingList() {
         $response = null;
