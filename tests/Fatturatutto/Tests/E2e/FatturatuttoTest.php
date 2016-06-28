@@ -55,7 +55,7 @@ class FatturatuttoTest extends Web_TestCase {
     /**
      * SiteHome and AppHome test
      */
-    public function testSiteHomeTitle() {
+    public function testSiteHome() {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
@@ -183,11 +183,11 @@ class FatturatuttoTest extends Web_TestCase {
         $import_box_path = '//*[@id="import-box"]/div[1]';
         $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
         
-        $this->clearBrowserConsole(); // clean the browser console log
-                                      
+        $this->clearBrowserConsole(); // clean the browser console log         
+
         // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
         $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
-        $tmp_file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
+        $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
         file_put_contents($tmp_file, $data);
         self::$files_to_del[] = $tmp_file;
         
@@ -201,6 +201,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertNotNull($button);
         $button->click();
         
+        //wait for elenco-fatture page is ready
         $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
         $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
         $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
@@ -208,6 +209,17 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertErrorsOnConsole();
     }
 
+    private function getTmpDir(){
+        $tmp_dir = sys_get_temp_dir();
+        if (getenv('TRAVIS')) {
+            $tmp_dir = __DIR__;
+        }        
+        if(!is_writable($tmp_dir)){
+            $this->fail("Temp dir not writable: " . $tmp_dir);
+        }
+        return $tmp_dir;
+    }
+    
     /**
      * Test the read of the console in APP_MODELLI_FATTURA
      */
