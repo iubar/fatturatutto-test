@@ -6,6 +6,8 @@
  */
 require_once ('../../vendor/autoload.php');
 
+use Iubar\Web_TestCase;
+
 class RoboFile extends \Robo\Tasks {
 
     private $climate = null;
@@ -15,15 +17,17 @@ class RoboFile extends \Robo\Tasks {
     private $selenium_server = null;
 
     private $selenium_path = null;
-	
-	private $start_selenium = true;
+
+    private $start_selenium = true;
+
+    private $openSlideshow = true;
 
     public function start() {
         $this->climate = new League\CLImate\CLImate();
         echo "Iinitializing..." . PHP_EOL;
         $this->init();
         echo PHP_EOL;
-        if($this->start_selenium){
+        if ($this->start_selenium) {
             echo "Starting Selenium..." . PHP_EOL;
             $this->startSelenium();
             echo PHP_EOL;
@@ -32,19 +36,21 @@ class RoboFile extends \Robo\Tasks {
         echo "Running php unit tests..." . PHP_EOL;
         $this->runPhpunit();
         echo PHP_EOL;
-        if($this->start_selenium){
+        if ($this->start_selenium) {
             echo "Shutting down Selenium..." . PHP_EOL;
             $this->stopSelenium(); // TODO: verificare se necessario o se ci pensa Robo
             echo PHP_EOL;
         }
-        if ($this->browser != 'phantomjs') {
-            echo "Running slideshow..." . PHP_EOL;
-            $this->startHttpServer();
-            $url = 'http://localhost:8000/slideshow/index.php';
-            $this->browser($url);
-            echo PHP_EOL;
-            $input = $this->climate->password('Press Enter to stop the slideshow:');
-            $dummy = $input->prompt();
+        if ($this->browser != Web_TestCase::PHANTOMJS) {
+            if ($this->openSlideshow) {
+                echo "Running slideshow..." . PHP_EOL;
+                $this->startHttpServer();
+                $url = 'http://localhost:8000/slideshow/index.php';
+                $this->browser($url);
+                echo PHP_EOL;
+                $input = $this->climate->password('Press Enter to stop the slideshow:');
+                $dummy = $input->prompt();
+            }
         }
         echo "Done." . PHP_EOL;
     }
@@ -61,7 +67,7 @@ class RoboFile extends \Robo\Tasks {
 
     private function isRelativePath($path) {
         $tmp = realpath($path);
-        if (! $tmp) { // then it's a relative path
+        if (!$tmp) { // then it's a relative path
             return true;
         }
         return false;
@@ -69,12 +75,12 @@ class RoboFile extends \Robo\Tasks {
 
     private function init() {
         $ini_file = "config.ini";
-        if (! is_file($ini_file)) {
+        if (!is_file($ini_file)) {
             die("File not found: " . $ini_file . PHP_EOL);
         }
         $ini_array = parse_ini_file($ini_file);
         
-        $this->start_selenium = $ini_array['start_selenium'];         
+        $this->start_selenium = $ini_array['start_selenium'];
         
         $screenshots_path = $ini_array['screenshots_path'];
         $this->browser = $ini_array['browser'];
@@ -84,18 +90,22 @@ class RoboFile extends \Robo\Tasks {
         putenv('BROWSER=' . $this->browser);
         putenv('SELENIUM_SERVER=' . $this->selenium_server);
         
+        $ft_host = $ini_array['ft_host'];
+        putenv('FT_HOST=' . $ft_host);
+        
         $ft_username = getenv('FT_USERNAME');
-        if (! $ft_username) {
+        if (!$ft_username) {
             $ft_username = $ini_array['ft_username'];
             putenv('FT_USERNAME=' . $ft_username);
         }
         
+        // Posso specificare la password a) come variabile d'ambiente, b) nel file .ini, c) in modo interattivo da console
         $ft_password = null;
-        if (! getenv('FT_PASSWORD')) {
+        if (!getenv('FT_PASSWORD')) {
             if (isset($ini_array['ft_password'])) {
                 $ft_password = $ini_array['ft_password'];
             }
-            if (! $ft_password) {
+            if (!$ft_password) {
                 $input = $this->climate->password('Please enter password for ' . $ft_username . ':');
                 $ft_password = $input->prompt();
             }
@@ -105,14 +115,14 @@ class RoboFile extends \Robo\Tasks {
         if ($this->isRelativePath($this->selenium_path)) {
             $this->selenium_path = __DIR__ . $this->selenium_path;
         }
-        if (! is_dir($this->selenium_path)) {
+        if (!is_dir($this->selenium_path)) {
             die("Path not found: " . $this->selenium_path . PHP_EOL);
         }
         
         if ($this->isRelativePath($screenshots_path)) {
             $screenshots_path = __DIR__ . $screenshots_path;
         }
-        if (! is_dir($screenshots_path)) {
+        if (!is_dir($screenshots_path)) {
             die("Path not found: " . $screenshots_path . PHP_EOL);
         }
         putenv('SCREENSHOTS_PATH=' . $screenshots_path);
@@ -148,23 +158,23 @@ class RoboFile extends \Robo\Tasks {
     private function startSelenium() {
         $cmd = null;
         
-        $selenium_path = $this->selenium_path;   
+        $selenium_path = $this->selenium_path;
         
         // TODO: se non trovo selenium-server.jar o i drivers (!!!), allora il test deve fallire
         
         $cmmd_prefix = "java -jar $selenium_path/selenium-server\selenium-server-standalone.jar";
         switch ($this->browser) {
-            case 'chrome':
+            case Web_TestCase::CHROME:
                 $cmd = $cmmd_prefix . " -Dwebdriver.chrome.driver=" . "$selenium_path/drivers/chrome/chromedriver.exe";
                 break;
-            case 'marionette':
-                //$cmd = $cmmd_prefix . " -Dwebdriver.gecko.driver=" . "$selenium_path/drivers/marionette/wires-0.6.2.exe" . " -Dwebdriver.firefox.bin=" . "\"C:/Program Files (x86)/Firefox Developer Edition/firefox.exe\"";
+            case Web_TestCase::MARIONETTE:
+                // $cmd = $cmmd_prefix . " -Dwebdriver.gecko.driver=" . "$selenium_path/drivers/marionette/wires-0.6.2.exe" . " -Dwebdriver.firefox.bin=" . "\"C:/Program Files (x86)/Firefox Developer Edition/firefox.exe\"";
                 $cmd = $cmmd_prefix . " -Dwebdriver.gecko.driver=" . "$selenium_path/drivers/marionette/wires-0.6.2.exe";
                 break;
-            case 'firefox':
+            case Web_TestCase::FIREFOX:
                 $cmd = $cmmd_prefix . "";
                 break;
-            case 'phantomjs':
+            case Web_TestCase::PHANTOMJS:
                 $cmd = $cmmd_prefix . " -Dphantomjs.ghostdriver.cli.args=[\"--loglevel=DEBUG\"] -Dphantomjs.binary.path=" . "$selenium_path/phantomjs-2.1.1-windows\bin\phantomjs.exe";
                 break;
             case 'all':
@@ -179,42 +189,42 @@ class RoboFile extends \Robo\Tasks {
             $this->taskExec($cmd)
                 ->background()
                 ->run();
-		
-		}
-        
-    }
-    
-    protected function isFile(){
-        
+        }
     }
 
     private function startHttpServer() {
         $dir = __DIR__ . "/../../logs/screenshots";
-        if (! is_dir($dir)) {
+        if (!is_dir($dir)) {
             die("Path not found: " . $dir . PHP_EOL);
         }
         // starts PHP server
         $this->taskServer(8000)
-        ->dir($dir)    
-        // ->host('0.0.0.0')                
-        ->background()  // execute server in background
-        ->run();
+            ->dir($dir)
+            ->
+        // ->host('0.0.0.0')
+        background()
+            ->
+        // execute server in background
+        run();
     }
 
     private function browser($url) {
         // TODO: valutare se è meglio avviare il browser $this->browser pittuosto che quello di default di sistema
-        $this->taskOpenBrowser([$url])->run();
+        $this->taskOpenBrowser([
+            $url
+        ])->run();
     }
 
     private function runPhpunit() {
         $cfg_file = __DIR__ . "\..\..\phpunit.xml";
-        if (! is_file($cfg_file)) {
+        if (!is_file($cfg_file)) {
             die("File not found: " . $cfg_file . PHP_EOL);
         }
         // runs PHPUnit tests
         $this->taskPHPUnit('phpunit')
-            ->configFile($cfg_file)           
-            // ->bootstrap('test/bootstrap.php')
-            ->run();
+            ->configFile($cfg_file)
+            ->
+        // ->bootstrap('test/bootstrap.php')
+        run();
     }
 }

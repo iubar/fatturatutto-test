@@ -8,23 +8,17 @@ use Iubar\Web_TestCase;
  * Test of www.fatturatutto.it website
  *
  * @author Matteo
- *
  * @global env BROWSER
  * @global env SELENIUM_SERVER
  * @global env SELENIUM_PATH
  * @global env SCREENSHOTS_PATH
+ * @global env FT_HOST
  * @global env FT_USERNAME
  * @global env FT_PASSWORD
- *        
- *     
  */
 class FatturatuttoTest extends Web_TestCase {
 
     const EXAMPLE_FATTURA_URL = 'http://app.fatturatutto.it/public/resources/xml/1.1/examples/IT01234567890_11002.xml';
-
-    const SITE_HOME = "http://www.fatturatutto.it";
-
-    const APP_HOME = "https://app.fatturatutto.it";
 
     const LOGIN_URL = "login";
 
@@ -59,10 +53,10 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $wd->get(self::SITE_HOME . '/'); // Navigate to SITE_HOME
-                                         
+        $wd->get($this->getSiteHome() . '/'); // Navigate to SITE_HOME
+                                              
         // SITE HOME
-        $this->check_webpage(self::SITE_HOME . '/', self::SITE_TITLE);
+        $this->check_webpage($this->getSiteHome() . '/', self::SITE_TITLE);
         
         // select button 'Inizia'
         $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
@@ -73,7 +67,7 @@ class FatturatuttoTest extends Web_TestCase {
         $start_button->click();
         
         // APP HOME
-        $this->check_webpage(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        $this->check_webpage($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
     }
 
     /**
@@ -82,8 +76,8 @@ class FatturatuttoTest extends Web_TestCase {
     public function testLogin() {
         $wd = $this->getWd();
         $wd->manage()->deleteAllCookies();
-        $wd->get(self::APP_HOME . '/' . self::LOGIN_URL); // Navigate to LOGIN_URL
-                                                          
+        $wd->get($this->getAppHome() . '/' . self::LOGIN_URL); // Navigate to LOGIN_URL
+                                                               
         // 1) Wrong login
         $user = 'utente@inesistente';
         $this->login($user, $user);
@@ -96,7 +90,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertContains(self::ERR_DATI_MSG, $incorrectData->getText());
         
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . '/' . self::LOGIN_URL, self::APP_LOGIN);
+        $this->check_webpage($this->getAppHome() . '/' . self::LOGIN_URL, self::APP_LOGIN);
         
         // 2) Real login
         $this->do_login();
@@ -105,7 +99,7 @@ class FatturatuttoTest extends Web_TestCase {
         $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; // dialog compile your data
                                                                  
         // if you have never compile your data this function do it for you
-        if (! isset($welcome_msg)) {
+        if (!isset($welcome_msg)) {
             $this->compile_dialog();
         }
     }
@@ -117,10 +111,10 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
-                                                                   
+        $wd->get($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
+                                                                        
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        $this->check_webpage($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
         // the title (key) and the id (value) of each elem of the aside navigation bar
         $navigation_bar_elem_id = array(
@@ -147,10 +141,10 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $wd->get(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
-                                                                   
+        $wd->get($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
+                                                                        
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
+        $this->check_webpage($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
         $impostazioni_id = 'menu-impostazioni';
         $this->waitForId($impostazioni_id); // Wait until the element is visible
@@ -159,7 +153,7 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_button->click();
         
         // TODO: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
-        if (getEnv('BROWSER') != self::PHANTOMJS) {
+        if (self::$browser != self::PHANTOMJS) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
@@ -175,16 +169,16 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $wd->get(self::APP_HOME . '/' . self::APP_STRUMENTI_IMPORTAZIONE); // Navigate to APP_STRUMENTI_IMPORTAZIONE
-                                                                           
+        $wd->get($this->getAppHome() . '/' . self::APP_STRUMENTI_IMPORTAZIONE); // Navigate to APP_STRUMENTI_IMPORTAZIONE
+                                                                                
         // checking that we are in the right page
-        $this->check_webpage(self::APP_HOME . '/' . self::APP_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
+        $this->check_webpage($this->getAppHome() . '/' . self::APP_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
         
         $import_box_path = '//*[@id="import-box"]/div[1]';
         $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
         
-        $this->clearBrowserConsole(); // clean the browser console log         
-
+        $this->clearBrowserConsole(); // clean the browser console log
+                                      
         // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
         $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
         $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
@@ -201,7 +195,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertNotNull($button);
         $button->click();
         
-        //wait for elenco-fatture page is ready
+        // wait for elenco-fatture page is ready
         $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
         $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
         $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
@@ -209,35 +203,35 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertErrorsOnConsole();
     }
 
-    private function getTmpDir(){
+    private function getTmpDir() {
         $tmp_dir = sys_get_temp_dir();
-        if (getenv('TRAVIS')) {
+        if ($this->isTravis()) {
             $tmp_dir = __DIR__;
-        }        
-        if(!is_writable($tmp_dir)){
+        }
+        if (!is_writable($tmp_dir)) {
             $this->fail("Temp dir not writable: " . $tmp_dir);
         }
         return $tmp_dir;
     }
-    
+
     /**
      * Test the read of the console in APP_MODELLI_FATTURA
      */
     public function testConsole() {
         // Impossible to read the console with browser 'marionette'
-        if (getEnv('BROWSER') != self::MARIONETTE) {
+        if (self::$browser != self::MARIONETTE) {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
             $this->clearBrowserConsole(); // clean the browser console log
             
-            $wd->get(self::APP_HOME . '/' . self::APP_MODELLI_FATTURA);
+            $wd->get($this->getAppHome() . '/' . self::APP_MODELLI_FATTURA);
             
             // checking that we are in the right page
-            $this->check_webpage(self::APP_HOME . '/' . self::APP_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
+            $this->check_webpage($this->getAppHome() . '/' . self::APP_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
             
             // chrome has 3 errors, for more info see the cosole.jason in logs folder
-            if (getEnv('BROWSER') == self::CHROME) {
+            if (self::$browser == self::CHROME) {
                 $this->assertErrorsOnConsole(3);
             } else {
                 $this->assertErrorsOnConsole();
@@ -253,8 +247,8 @@ class FatturatuttoTest extends Web_TestCase {
      * Call the login() function with the global params username and password
      */
     private function do_login() {
-        $user = getEnv('FT_USERNAME');
-        $password = getEnv('FT_PASSWORD');
+        $user = self::$ft_username;
+        $password = self::$ft_password;
         $this->login($user, $password);
     }
 
@@ -266,7 +260,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function login($user, $password) {
         $wd = $this->getWd();
-        $login_url = self::APP_HOME . '/' . self::LOGIN_URL;
+        $login_url = $this->getAppHome() . '/' . self::LOGIN_URL;
         $wd->get($login_url); // Navigate to LOGIN_URL
         $expected_url = $wd->getCurrentURL();
         
@@ -310,24 +304,24 @@ class FatturatuttoTest extends Web_TestCase {
         
         // implicit wait for an elem of the specific web page to be sure that the web page is completely load
         switch ($url) {
-            case self::SITE_HOME . '/':
+            case $this->getSiteHome() . '/':
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
                 $this->waitForXpath($inizia_button_path); // Wait until the element is visible
                 break;
-            case self::APP_HOME . '/':
-            case self::APP_HOME . '/' . self::LOGIN_URL:
+            case $this->getAppHome() . '/':
+            case $this->getAppHome() . '/' . self::LOGIN_URL:
                 $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
                 $this->waitForXpath($email_button_path); // Wait until the element is visible
                 break;
-            case self::APP_HOME . '/' . self::APP_SITUAZIONE_URL:
+            case $this->getAppHome() . '/' . self::APP_SITUAZIONE_URL:
                 $impostazioni_id = 'menu-impostazioni';
                 $this->waitForId($impostazioni_id); // Wait until the element is visible
                 break;
-            case self::APP_HOME . '/' . self::APP_STRUMENTI_IMPORTAZIONE:
+            case $this->getAppHome() . '/' . self::APP_STRUMENTI_IMPORTAZIONE:
                 $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
                 $this->waitForXpath($import_box_path); // Wait until the element is visible
                 break;
-            case self::APP_HOME . '/' . self::APP_MODELLI_FATTURA:
+            case $this->getAppHome() . '/' . self::APP_MODELLI_FATTURA:
                 $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
                 $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
                 break;
@@ -336,7 +330,7 @@ class FatturatuttoTest extends Web_TestCase {
                 $stack = debug_backtrace();
                 echo PHP_EOL . "Printout of Function Stack: " . PHP_EOL . PHP_EOL;
                 print_r($stack);
-                echo PHP_EOL;                
+                echo PHP_EOL;
                 
                 $this->fail("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
         }
@@ -359,7 +353,7 @@ class FatturatuttoTest extends Web_TestCase {
         $elem = $wd->findElement(WebDriverBy::id($id));
         $this->assertNotNull($elem);
         $text = $elem->getText();
-        if (getenv('BROWSER') == self::PHANTOMJS) {
+        if (self::$browser == self::PHANTOMJS) {
             $text = $elem->getAttribute("innerText");
         }
         $this->assertContains($expected_title, $text);
@@ -441,5 +435,19 @@ class FatturatuttoTest extends Web_TestCase {
         ));
         $cookies = $wd->manage()->getCookies();
         print_r($cookies);
+    }
+
+    /**
+     * Return SiteHome (use http protocol)
+     */
+    private function getSiteHome() {
+        return "http://www." . self::$ft_host;
+    }
+
+    /**
+     * Return AppHome (use https protocol)
+     */
+    private function getAppHome() {
+        return "https://app." . self::$ft_host;
     }
 }
