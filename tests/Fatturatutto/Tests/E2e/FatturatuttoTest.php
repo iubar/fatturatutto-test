@@ -296,6 +296,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
+        sleep(2);
         $url = $wd->getCurrentURL();
         
         // implicit wait for an elem of the specific web page to be sure that the web page is completely load
