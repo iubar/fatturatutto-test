@@ -183,8 +183,6 @@ class FatturatuttoTest extends Web_TestCase {
         $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
         if (!is_string($data)) {
             $this->fail("Can't read the invoice");
-        } else {
-            echo $data . PHP_EOL;
         }
         $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
         file_put_contents($tmp_file, $data);
