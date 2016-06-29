@@ -181,8 +181,15 @@ class FatturatuttoTest extends Web_TestCase {
                                       
         // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
         $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
+        if (!is_file($data)) {
+            $this->fail("Can't read the invoice");
+        }
         $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
         file_put_contents($tmp_file, $data);
+        if (!is_readable($tmp_file)) {
+            $this->fail("Can't get the temporary directory file");
+        }
+        
         self::$files_to_del[] = $tmp_file;
         
         // execute the js script to upload the invoice
