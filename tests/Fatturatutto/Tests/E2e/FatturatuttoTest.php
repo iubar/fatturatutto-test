@@ -304,11 +304,11 @@ class FatturatuttoTest extends Web_TestCase {
                 $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
                 $this->waitForXpath($inizia_button_path); // Wait until the element is visible
                 break;
-            case $this->getAppHome() . '/':
             case $this->getAppHome() . '/' . self::LOGIN_URL:
                 $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
                 $this->waitForXpath($email_button_path); // Wait until the element is visible
                 break;
+            case $this->getAppHome() . '/':
             case $this->getAppHome() . '/' . self::APP_SITUAZIONE_URL:
                 $impostazioni_id = 'menu-impostazioni';
                 $this->waitForId($impostazioni_id); // Wait until the element is visible
