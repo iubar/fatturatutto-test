@@ -203,17 +203,6 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertErrorsOnConsole();
     }
 
-    private function getTmpDir() {
-        $tmp_dir = sys_get_temp_dir();
-        if ($this->isTravis()) {
-            $tmp_dir = __DIR__;
-        }
-        if (!is_writable($tmp_dir)) {
-            $this->fail("Temp dir not writable: " . $tmp_dir);
-        }
-        return $tmp_dir;
-    }
-
     /**
      * Test the read of the console in APP_MODELLI_FATTURA
      */
@@ -449,5 +438,21 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function getAppHome() {
         return "https://app." . self::$ft_host;
+    }
+
+    /**
+     * Take a temporary directory
+     *
+     * @return string the temporary directory
+     */
+    private function getTmpDir() {
+        $tmp_dir = sys_get_temp_dir();
+        if ($this->isTravis()) {
+            $tmp_dir = __DIR__;
+        }
+        if (!is_writable($tmp_dir)) {
+            $this->fail("Temp dir not writable: " . $tmp_dir);
+        }
+        return $tmp_dir;
     }
 }
