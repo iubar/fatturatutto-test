@@ -229,11 +229,11 @@ class FatturatuttoTest extends Web_TestCase {
             $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
             
             // chrome has 3 errors, for more info see the cosole.jason in logs folder
-            if (self::$browser == self::CHROME) {
-                $this->assertErrorsOnConsole(3);
-            } else {
+//             if (self::$browser == self::CHROME) {
+//                 $this->assertErrorsOnConsole(3);
+//             } else {
                 $this->assertErrorsOnConsole();
-            }
+//             }
         }
     }
 
