@@ -284,6 +284,9 @@ class FatturatuttoTest extends Web_TestCase {
             $this->waitForXpath($login_button_path); // Wait until the element is visible
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
             $accedi_button->click();
+            
+            $impostazioni_id = 'menu-impostazioni';
+            $this->waitForId($impostazioni_id); // Wait until the element is visible
         }
     }
 
@@ -295,7 +298,6 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
-        sleep(3);
         $url = $wd->getCurrentURL();
         
         // implicit wait for an elem of the specific web page to be sure that the web page is completely load
