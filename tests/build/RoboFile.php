@@ -20,7 +20,7 @@ class RoboFile extends \Robo\Tasks {
 
     private $start_selenium = true;
 
-    private $openSlideshow = true;
+    private $open_slideshow = true;
     
     private $update_vendor = false;
 
@@ -50,7 +50,7 @@ class RoboFile extends \Robo\Tasks {
             echo PHP_EOL;
         }
         if ($this->browser != Web_TestCase::PHANTOMJS) {
-            if ($this->openSlideshow) {
+            if ($this->open_slideshow) {
                 echo "Running slideshow..." . PHP_EOL;
                 $this->startHttpServer();
                 $url = 'http://localhost:8000/slideshow/index.php';
@@ -88,6 +88,7 @@ class RoboFile extends \Robo\Tasks {
         }
         $ini_array = parse_ini_file($ini_file);
         
+        $this->open_slideshow =  $ini_array['open_slideshow'];
         $this->update_vendor = $ini_array['update_vendor'];
         
         $this->start_selenium = $ini_array['start_selenium'];
@@ -220,6 +221,9 @@ class RoboFile extends \Robo\Tasks {
 
     private function browser($url) {
         // TODO: valutare se è meglio avviare il browser $this->browser pittuosto che quello di default di sistema
+        $this->climate->info("opening browser at: " . $url);
+        $input = $this->climate->input('Invio per continuare');
+        $response = $input->prompt();
         $this->taskOpenBrowser([
             $url
         ])->run();
