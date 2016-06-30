@@ -21,16 +21,15 @@ class RoboFile extends \Robo\Tasks {
     private $start_selenium = true;
 
     private $open_slideshow = true;
-    
+
     private $update_vendor = false;
 
     public function start() {
-               
         $this->climate = new League\CLImate\CLImate();
         echo "Iinitializing..." . PHP_EOL;
         $this->init();
         
-        if($this->update_vendor){
+        if ($this->update_vendor) {
             echo "Updating vendor..." . PHP_EOL;
             $this->taskComposerUpdate()->run();
         }
@@ -88,7 +87,7 @@ class RoboFile extends \Robo\Tasks {
         }
         $ini_array = parse_ini_file($ini_file);
         
-        $this->open_slideshow =  $ini_array['open_slideshow'];
+        $this->open_slideshow = $ini_array['open_slideshow'];
         $this->update_vendor = $ini_array['update_vendor'];
         
         $this->start_selenium = $ini_array['start_selenium'];

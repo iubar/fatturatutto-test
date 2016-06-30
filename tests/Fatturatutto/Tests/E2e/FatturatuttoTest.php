@@ -19,7 +19,7 @@ use Iubar\Web_TestCase;
 class FatturatuttoTest extends Web_TestCase {
 
     const EXAMPLE_FATTURA_URL = 'http://app.fatturatutto.it/public/resources/xml/1.1/examples/IT01234567890_11002.xml';
-    
+
     const SITE_TITLE = "FatturaTutto.it";
 
     const APP_SITUAZIONE_TITLE = "Situazione";
@@ -31,11 +31,11 @@ class FatturatuttoTest extends Web_TestCase {
     const APP_MODELLI_TITLE = "Modelli";
 
     const LOGIN_TITLE = "Login";
-    
-    const ROUTE_LOGIN = "login";    
-    
+
+    const ROUTE_LOGIN = "login";
+
     const ROUTE_SITUAZIONE = "situazione";
-    
+
     const ROUTE_STRUMENTI_IMPORTAZIONE = "strumenti/importazione";
 
     const ROUTE_ELENCO_FATTURE = "elenco-fatture";
@@ -43,9 +43,9 @@ class FatturatuttoTest extends Web_TestCase {
     const ROUTE_MODELLI_FATTURA = "modelli-fattura";
 
     const DIALOG_WELCOME_MSG = "Benvenuto su FatturaTutto";
-    
-    const LOGIN_ERR_MSG = "Email o password errati";
 
+    const LOGIN_ERR_MSG = "Email o password errati";
+    
     // the title (key) and the id (value) of each elem of the aside navigation bar
     private static $navigation_bar_elem_id = array(
         'Situazione' => 'menu-situazione',
@@ -57,7 +57,7 @@ class FatturatuttoTest extends Web_TestCase {
         'Strumenti' => 'menu-strumenti',
         'Impostazioni' => 'menu-impostazioni'
     );
-    
+
     /**
      * SiteHome and AppHome test
      */
@@ -89,7 +89,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         $wd->manage()->deleteAllCookies();
         $wd->get($this->getAppHome() . '/' . self::ROUTE_LOGIN); // Navigate to ROUTE_LOGIN
-                                                               
+                                                                 
         // 1) Wrong login
         $user = 'utente@inesistente';
         $this->login($user, $user);
@@ -124,10 +124,10 @@ class FatturatuttoTest extends Web_TestCase {
         
         $this->do_login(); // Make the login
         $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
-                                                                        
+                                                                      
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
-                
+        
         // checking that all the section of the navigation bar are ok
         foreach (self::$navigation_bar_elem_id as $key => $value) {
             $this->check_nav_bar($value, $key);
@@ -141,9 +141,9 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE        
-        // TODO: attendere caricamento pagina
-        
+        $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
+                                                                      // TODO: attendere caricamento pagina
+                                                                      
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
@@ -170,9 +170,9 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        // TODO: attendere caricamento pagina
+                           // TODO: attendere caricamento pagina
         $wd->get($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
-                                                                                
+                                                                                  
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
         
@@ -288,9 +288,6 @@ class FatturatuttoTest extends Web_TestCase {
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
             $accedi_button->click();
         }
-        
-        
-        
     }
 
     /**
@@ -327,14 +324,14 @@ class FatturatuttoTest extends Web_TestCase {
                 $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
                 break;
             default:
-                     
+                
                 echo "Situazione imprevista:" . PHP_EOL;
                 echo "\$expected_url: " . $expected_url . PHP_EOL;
                 echo "\$url: " . $url . PHP_EOL;
                 
                 $stack = debug_backtrace();
                 echo PHP_EOL . "Printout of debug_print_backtrace(): " . PHP_EOL . PHP_EOL;
-                //print_r($stack);
+                // print_r($stack);
                 debug_print_backtrace();
                 echo PHP_EOL;
                 
