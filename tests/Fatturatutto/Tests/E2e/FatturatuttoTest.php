@@ -46,6 +46,18 @@ class FatturatuttoTest extends Web_TestCase {
 
     const BENVENUTO_MSG = "Benvenuto su FatturaTutto";
 
+    // the title (key) and the id (value) of each elem of the aside navigation bar
+    private static $navigation_bar_elem_id = array(
+        'Situazione' => 'menu-situazione',
+        'Anagrafica' => 'menu-anagrafica',
+        'Clienti' => 'menu-clienti',
+        'Articoli - servizi' => 'menu-articoli-servizi',
+        'Fatture' => 'menu-fatture',
+        'Modelli' => 'menu-modelli',
+        'Strumenti' => 'menu-strumenti',
+        'Impostazioni' => 'menu-impostazioni'
+    );
+    
     /**
      * SiteHome and AppHome test
      */
@@ -115,21 +127,9 @@ class FatturatuttoTest extends Web_TestCase {
                                                                         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
-        
-        // the title (key) and the id (value) of each elem of the aside navigation bar
-        $navigation_bar_elem_id = array(
-            'Situazione' => 'menu-situazione',
-            'Anagrafica' => 'menu-anagrafica',
-            'Clienti' => 'menu-clienti',
-            'Articoli - servizi' => 'menu-articoli-servizi',
-            'Fatture' => 'menu-fatture',
-            'Modelli' => 'menu-modelli',
-            'Strumenti' => 'menu-strumenti',
-            'Impostazioni' => 'menu-impostazioni'
-        );
-        
+                
         // checking that all the section of the navigation bar are ok
-        foreach ($navigation_bar_elem_id as $key => $value) {
+        foreach (self::$navigation_bar_elem_id as $key => $value) {
             $this->check_nav_bar($value, $key);
         }
     }
@@ -141,12 +141,13 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $wd->get($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL
-                                                                        
+        $wd->get($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL); // Navigate to APP_SITUAZIONE_URL        
+        // TODO: attendere caricamento pagina
+        
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::APP_SITUAZIONE_URL, self::APP_SITUAZIONE_TITLE);
         
-        $impostazioni_id = 'menu-impostazioni';
+        $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
         $this->waitForId($impostazioni_id); // Wait until the element is visible
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
@@ -169,6 +170,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
+        // TODO: attendere caricamento pagina
         $wd->get($this->getAppHome() . '/' . self::APP_STRUMENTI_IMPORTAZIONE); // Navigate to APP_STRUMENTI_IMPORTAZIONE
                                                                                 
         // checking that we are in the right page
@@ -182,14 +184,12 @@ class FatturatuttoTest extends Web_TestCase {
         // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
         $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
         if (!is_string($data)) {
-            $this->fail("Can't read the invoice");
+            $this->fail("Can't read the invoice: " . self::EXAMPLE_FATTURA_URL);
         }
         $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
         file_put_contents($tmp_file, $data);
         if (!is_readable($tmp_file)) {
-            $this->fail("Can't get the temporary directory file");
-        } else {
-            echo "Invoice data: " . file_get_contents($tmp_file) . PHP_EOL;
+            $this->fail("Can't read the temp file: " . $tmp_file);
         }
         
         self::$files_to_del[] = $tmp_file;
@@ -312,7 +312,7 @@ class FatturatuttoTest extends Web_TestCase {
                 break;
             case $this->getAppHome() . '/':
             case $this->getAppHome() . '/' . self::APP_SITUAZIONE_URL:
-                $impostazioni_id = 'menu-impostazioni';
+                $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
                 $this->waitForId($impostazioni_id); // Wait until the element is visible
                 break;
             case $this->getAppHome() . '/' . self::APP_STRUMENTI_IMPORTAZIONE:
@@ -324,17 +324,21 @@ class FatturatuttoTest extends Web_TestCase {
                 $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
                 break;
             default:
+                     
+                echo "Situazione imprevista:" . PHP_EOL;
+                echo "\$expected_url: " . $expected_url . PHP_EOL;
+                echo "\$url: " . $url . PHP_EOL;
                 
                 $stack = debug_backtrace();
-                echo PHP_EOL . "Printout of Function Stack: " . PHP_EOL . PHP_EOL;
-                print_r($stack);
+                echo PHP_EOL . "Printout of debug_print_backtrace(): " . PHP_EOL . PHP_EOL;
+                //print_r($stack);
+                debug_print_backtrace();
                 echo PHP_EOL;
                 
-                $this->fail("ERROR: (" . $url . "), url non gestita" . PHP_EOL);
+                $fail = true;
         }
         
         $title = $wd->getTitle();
-        
         $this->assertEquals($expected_url, $url);
         $this->assertContains($expected_title, $title);
     }
