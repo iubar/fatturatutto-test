@@ -77,9 +77,6 @@ class FatturatuttoTest extends Web_TestCase {
                                                                                    
         // TODO: probabile bug di marionette nell'identificarte l'elemento precedente con il metodo findElement() (vedi: https://github.com/seleniumhq/selenium/issues/1202)
         $start_button->click();
-        
-        // APP HOME
-        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
     }
 
     /**
@@ -228,12 +225,12 @@ class FatturatuttoTest extends Web_TestCase {
             // checking that we are in the right page
             $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
             
-            // chrome has 3 errors, for more info see the cosole.jason in logs folder
-//             if (self::$browser == self::CHROME) {
-//                 $this->assertErrorsOnConsole(3);
-//             } else {
+            // chrome has 1 error, for more info see the cosole.jason in logs folder
+            if (self::$browser == self::CHROME) {
+                $this->assertErrorsOnConsole(3);
+            } else {
                 $this->assertErrorsOnConsole();
-//             }
+            }
         }
     }
 
@@ -288,8 +285,6 @@ class FatturatuttoTest extends Web_TestCase {
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
             $accedi_button->click();
         }
-        
-        sleep(2);
     }
 
     /**
@@ -300,7 +295,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
-        sleep(2);
+        sleep(1);
         $url = $wd->getCurrentURL();
         
         // implicit wait for an elem of the specific web page to be sure that the web page is completely load
