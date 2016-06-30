@@ -324,18 +324,7 @@ class FatturatuttoTest extends Web_TestCase {
                 $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
                 break;
             default:
-                
-                echo "Situazione imprevista:" . PHP_EOL;
-                echo "\$expected_url: " . $expected_url . PHP_EOL;
-                echo "\$url: " . $url . PHP_EOL;
-                
-                $stack = debug_backtrace();
-                echo PHP_EOL . "Printout of debug_print_backtrace(): " . PHP_EOL . PHP_EOL;
-                // print_r($stack);
-                debug_print_backtrace();
-                echo PHP_EOL;
-                
-                $fail = true;
+                $this->fail("Situazione imprevista:" . PHP_EOL . "\$expected_url: " . $expected_url . PHP_EOL . "\$url: " . $url . PHP_EOL);
         }
         
         $title = $wd->getTitle();
