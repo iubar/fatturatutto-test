@@ -227,7 +227,7 @@ class FatturatuttoTest extends Web_TestCase {
             
             // chrome has 1 error, for more info see the cosole.jason in logs folder
             if (self::$browser == self::CHROME) {
-                $this->assertErrorsOnConsole(3);
+                $this->assertErrorsOnConsole(1);
             } else {
                 $this->assertErrorsOnConsole();
             }
@@ -295,7 +295,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
-        sleep(1);
+        sleep(3);
         $url = $wd->getCurrentURL();
         
         // implicit wait for an elem of the specific web page to be sure that the web page is completely load
