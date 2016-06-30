@@ -188,6 +188,8 @@ class FatturatuttoTest extends Web_TestCase {
         file_put_contents($tmp_file, $data);
         if (!is_readable($tmp_file)) {
             $this->fail("Can't get the temporary directory file");
+        }else{
+            echo file_get_contents($tmp_file) . PHP_EOL;
         }
         
         self::$files_to_del[] = $tmp_file;
