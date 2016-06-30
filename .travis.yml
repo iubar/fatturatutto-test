@@ -6,10 +6,11 @@ env:
     - SELENIUM_SERVER="ondemand.saucelabs.com"
     # - SELENIUM_SERVER="localhost:4444"
     - SCREENSHOTS_PATH=""
-    - FT_HOST="fatturatutto.it"
+    - APP_HOST="fatturatutto.it"
   matrix:
     - BROWSER="chrome"
     - BROWSER="firefox"
+    - BROWSER="safari"
     #- BROWSER="phantomjs"
 before_script:
   # - composer self-update

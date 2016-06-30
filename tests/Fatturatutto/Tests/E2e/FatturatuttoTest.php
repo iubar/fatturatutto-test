@@ -12,9 +12,9 @@ use Iubar\Web_TestCase;
  * @global env SELENIUM_SERVER
  * @global env SELENIUM_PATH
  * @global env SCREENSHOTS_PATH
- * @global env FT_HOST
- * @global env FT_USERNAME
- * @global env FT_PASSWORD
+ * @global env APP_HOST
+ * @global env APP_USERNAME
+ * @global env APP_PASSWORD
  */
 class FatturatuttoTest extends Web_TestCase {
 
@@ -245,8 +245,8 @@ class FatturatuttoTest extends Web_TestCase {
      * Call the login() function with the global params username and password
      */
     private function do_login() {
-        $user = self::$ft_username;
-        $password = self::$ft_password;
+        $user = self::$app_username;
+        $password = self::$app_password;
         $this->login($user, $password);
     }
 
@@ -439,14 +439,14 @@ class FatturatuttoTest extends Web_TestCase {
      * Return SiteHome (use http protocol)
      */
     private function getSiteHome() {
-        return "http://www." . self::$ft_host;
+        return "http://www." . self::$app_host;
     }
 
     /**
      * Return AppHome (use https protocol)
      */
     private function getAppHome() {
-        return "https://app." . self::$ft_host;
+        return "https://app." . self::$app_host;
     }
 
     /**

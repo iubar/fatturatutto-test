@@ -100,26 +100,26 @@ class RoboFile extends \Robo\Tasks {
         putenv('BROWSER=' . $this->browser);
         putenv('SELENIUM_SERVER=' . $this->selenium_server);
         
-        $ft_host = $ini_array['ft_host'];
-        putenv('FT_HOST=' . $ft_host);
+        $app_host = $ini_array['app_host'];
+        putenv('APP_HOST=' . $app_host);
         
-        $ft_username = getenv('FT_USERNAME');
-        if (!$ft_username) {
-            $ft_username = $ini_array['ft_username'];
-            putenv('FT_USERNAME=' . $ft_username);
+        $app_username = getenv('APP_USERNAME');
+        if (!$app_username) {
+            $app_username = $ini_array['app_username'];
+            putenv('APP_USERNAME=' . $app_username);
         }
         
         // Posso specificare la password a) come variabile d'ambiente, b) nel file .ini, c) in modo interattivo da console
-        $ft_password = null;
-        if (!getenv('FT_PASSWORD')) {
-            if (isset($ini_array['ft_password'])) {
-                $ft_password = $ini_array['ft_password'];
+        $app_password = null;
+        if (!getenv('APP_PASSWORD')) {
+            if (isset($ini_array['app_password'])) {
+                $app_password = $ini_array['app_password'];
             }
-            if (!$ft_password) {
-                $input = $this->climate->password('Please enter password for ' . $ft_username . ':');
-                $ft_password = $input->prompt();
+            if (!$app_password) {
+                $input = $this->climate->password('Please enter password for ' . $app_username . ':');
+                $app_password = $input->prompt();
             }
-            putenv('FT_PASSWORD=' . $ft_password);
+            putenv('APP_PASSWORD=' . $app_password);
         }
         
         if ($this->isRelativePath($this->selenium_path)) {
@@ -142,8 +142,8 @@ class RoboFile extends \Robo\Tasks {
         
         echo "BROWSER:  " . $this->formatEnv(getenv("BROWSER")) . PHP_EOL;
         echo "SCREENSHOTS_PATH: " . $this->formatEnv(getenv("SCREENSHOTS_PATH")) . PHP_EOL;
-        echo "FT_USERNAME: " . $this->formatEnv(getenv("FT_USERNAME")) . PHP_EOL;
-        echo "FT_PASSWORD: " . $this->formatPassword(getenv("FT_PASSWORD")) . PHP_EOL;
+        echo "APP_USERNAME: " . $this->formatEnv(getenv("APP_USERNAME")) . PHP_EOL;
+        echo "APP_PASSWORD: " . $this->formatPassword(getenv("APP_PASSWORD")) . PHP_EOL;
         
         echo "TRAVIS_JOB_NUMBER: " . $this->formatEnv(getenv("TRAVIS_JOB_NUMBER")) . PHP_EOL;
         echo "TRAVIS: " . $this->formatEnv(getenv("TRAVIS")) . PHP_EOL;
