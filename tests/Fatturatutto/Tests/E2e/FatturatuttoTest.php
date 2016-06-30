@@ -312,8 +312,7 @@ class FatturatuttoTest extends Web_TestCase {
                 break;
             case $this->getAppHome() . '/':
             case $this->getAppHome() . '/' . self::ROUTE_SITUAZIONE:
-                $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
-                echo self::$navigation_bar_elem_id['Impostazioni'].PHP_EOL;
+                $impostazioni_id = 'menu-impostazioni';
                 $this->waitForId($impostazioni_id); // Wait until the element is visible
                 break;
             case $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE:
