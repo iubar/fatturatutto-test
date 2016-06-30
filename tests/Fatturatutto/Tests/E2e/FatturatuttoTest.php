@@ -65,6 +65,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
+        $this->waitSituazione();
         $wd->get($this->getSiteHome() . '/'); // Navigate to SITE_HOME
                                               
         // SITE HOME
@@ -103,6 +104,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         // 2) Real login
         $this->do_login();
+        $this->waitSituazione();
         
         // Verify to be enter and that welcome msg is show
         $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; // dialog compile your data
@@ -120,6 +122,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
+        $this->waitSituazione();
         $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
                                                                       
         // checking that we are in the right page
@@ -138,9 +141,9 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
-                                                                      // TODO: attendere caricamento pagina
-                                                                      
+        $this->waitSituazione();
+        // $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
+        
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
@@ -167,7 +170,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-                           // TODO: attendere caricamento pagina
+        $this->waitSituazione();
         $wd->get($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
                                                                                   
         // checking that we are in the right page
@@ -218,6 +221,7 @@ class FatturatuttoTest extends Web_TestCase {
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
+            $this->waitSituazione();
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
@@ -284,9 +288,6 @@ class FatturatuttoTest extends Web_TestCase {
             $this->waitForXpath($login_button_path); // Wait until the element is visible
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
             $accedi_button->click();
-            
-            $impostazioni_id = 'menu-impostazioni';
-            $this->waitForId($impostazioni_id); // Wait until the element is visible
         }
     }
 
@@ -456,5 +457,13 @@ class FatturatuttoTest extends Web_TestCase {
             $this->fail("Temp dir not writable: " . $tmp_dir);
         }
         return $tmp_dir;
+    }
+
+    /**
+     * Wait for an elem in page Situazione
+     */
+    private function waitSituazione() {
+        $impostazioni_id = 'menu-impostazioni';
+        $this->waitForId($impostazioni_id); // Wait until the element is visible
     }
 }
