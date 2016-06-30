@@ -21,12 +21,20 @@ class RoboFile extends \Robo\Tasks {
     private $start_selenium = true;
 
     private $openSlideshow = true;
+    
+    private $update_vendor = false;
 
     public function start() {
+               
         $this->climate = new League\CLImate\CLImate();
         echo "Iinitializing..." . PHP_EOL;
         $this->init();
-        echo PHP_EOL;
+        
+        if($this->update_vendor){
+            echo "Updating vendor..." . PHP_EOL;
+            $this->taskComposerUpdate()->run();
+        }
+        
         if ($this->start_selenium) {
             echo "Starting Selenium..." . PHP_EOL;
             $this->startSelenium();
@@ -79,6 +87,8 @@ class RoboFile extends \Robo\Tasks {
             die("File not found: " . $ini_file . PHP_EOL);
         }
         $ini_array = parse_ini_file($ini_file);
+        
+        $this->update_vendor = $ini_array['update_vendor'];
         
         $this->start_selenium = $ini_array['start_selenium'];
         
