@@ -189,7 +189,7 @@ class FatturatuttoTest extends Web_TestCase {
         if (!is_readable($tmp_file)) {
             $this->fail("Can't get the temporary directory file");
         }else{
-            echo file_get_contents($tmp_file) . PHP_EOL;
+            echo "Invoice data: " . file_get_contents($tmp_file) . PHP_EOL;
         }
         
         self::$files_to_del[] = $tmp_file;
