@@ -288,6 +288,8 @@ class FatturatuttoTest extends Web_TestCase {
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
             $accedi_button->click();
         }
+        
+        sleep(2);
     }
 
     /**
