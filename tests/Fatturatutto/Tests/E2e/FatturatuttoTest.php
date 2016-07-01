@@ -77,7 +77,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->waitForXpath($inizia_button_path); // Wait until the element is visible
         $start_button = $wd->findElement(WebDriverBy::xpath($inizia_button_path)); // Button "Inizia"
                                                                                    
-        // TODO: probabile bug di marionette nell'identificarte l'elemento precedente con il metodo findElement() (vedi: https://github.com/seleniumhq/selenium/issues/1202)
+        // FIXME: probabile bug di marionette nell'identificarte l'elemento precedente con il metodo findElement() (vedi: https://github.com/seleniumhq/selenium/issues/1202)
         $start_button->click();
     }
 
@@ -93,6 +93,7 @@ class FatturatuttoTest extends Web_TestCase {
         $user = 'utente@inesistente';
         $this->login($user, $user);
         
+        if (self::$browser != self::SAFARI) { // FIXME: codice non comptibile con SAFARI
         // Verify the error msg show
         // $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
         // $this->waitForXpath($login_error_msg); // Wait until the element is visible
@@ -100,9 +101,13 @@ class FatturatuttoTest extends Web_TestCase {
         $login_error_class = 'text-danger';
         $this->waitForClassName($login_error_class);
         $incorrectData = $wd->findElement(WebDriverBy::className($login_error_class)); // Find the first element matching the class name argument.
-        
         $this->assertNotNull($incorrectData);
         $this->assertContains(self::LOGIN_ERR_MSG, $incorrectData->getText());
+       }else{
+           $this->waitForClassName('login-box');
+       }
+        
+
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_LOGIN, self::LOGIN_TITLE);
@@ -159,7 +164,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertNotNull($impostazioni_button);
         $impostazioni_button->click();
         
-        // TODO: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
+        // FIXME: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
         if (self::$browser != self::PHANTOMJS) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
@@ -210,7 +215,7 @@ class FatturatuttoTest extends Web_TestCase {
         $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
         $this->assertNotNull($button);
         $button->click();
-        
+
         // wait for elenco-fatture page is ready
         $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
         $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
@@ -223,8 +228,8 @@ class FatturatuttoTest extends Web_TestCase {
      * Test the read of the console in ROUTE_MODELLI_FATTURA
      */
     public function testConsole() {
-        // Impossible to read the console with browser 'marionette'
-        if (self::$browser != self::MARIONETTE) {
+        //  'marionette'
+        if (self::$browser != self::MARIONETTE) {  // FIXME: codice non comptibile con 'marionette' (can't read the console)
             $wd = $this->getWd();
             
             $this->do_login(); // Make the login
