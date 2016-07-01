@@ -496,7 +496,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     private function waitStrumentiImportazione() {
         $import_box_id = 'import-box';
-        $this->waitForXpath($import_box_id); // Wait until the element is visible
+        $this->waitForId($import_box_id); // Wait until the element is visible
     }
 
     /**
