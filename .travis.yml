@@ -25,7 +25,7 @@ before_script:
   #- "sh -e /etc/init.d/xvfb start"
   #- sleep 3 # give xvfb some time to start 
   #
-  # BrowserStack
+  # BrowserStack (da riportare su script basch, vedi https://github.com/travis-ci/travis-ci/issues/879)
   # - wget http://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
   # - unzip BrowserStackLocal-linux-x64.zip
   # - ./BrowserStackLocal $BROWSERSTACK_ACCESS_KEY localhost,8001,0 > /dev/null &
