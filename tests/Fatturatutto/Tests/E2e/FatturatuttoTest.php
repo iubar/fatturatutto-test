@@ -2,7 +2,9 @@
 namespace Fatturatutto\E2e;
 
 use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverWait;
 use Iubar\Web_TestCase;
+use Facebook\WebDriver\WebDriverExpectedCondition;
 
 /**
  * Test of www.fatturatutto.it website
@@ -174,9 +176,15 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertNotNull($impostazioni_button);
         $impostazioni_button->click();
         
+        
+        
+        $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+        // Wait for the menu animation to complete
+        $wait = new WebDriverWait($wd, 2);
+        $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
+        
         // FIXME: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
-        if (self::$browser != self::PHANTOMJS) {
-            $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+        if (self::$browser != self::PHANTOMJS) {            
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             $this->assertNotNull($imp_generali);
