@@ -3,8 +3,10 @@ php:
 - 5.5
 env:
   global:
+    - BROWSER_TESTING_TOOL="saucelabs" # (saucelabs or browserstack)
     - SELENIUM_SERVER="ondemand.saucelabs.com"
-    # - SELENIUM_SERVER="localhost:4444"
+    # - SELENIUM_SERVER="hub.browserstack.com"
+    # - SELENIUM_SERVER="localhost"
     - SCREENSHOTS_PATH=""
     - APP_HOST="fatturatutto.it"
   matrix:
@@ -22,6 +24,13 @@ before_script:
   #- "export DISPLAY=:99.0"
   #- "sh -e /etc/init.d/xvfb start"
   #- sleep 3 # give xvfb some time to start 
+  #
+  # BrowserStack
+  # - wget http://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
+  # - unzip BrowserStackLocal-linux-x64.zip
+  # - ./BrowserStackLocal $BROWSERSTACK_ACCESS_KEY localhost,8001,0 > /dev/null &
+  # - sleep 10
+  
 script: phpunit
 addons:
   sauce_connect: true

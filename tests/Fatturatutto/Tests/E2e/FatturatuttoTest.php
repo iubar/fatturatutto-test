@@ -96,7 +96,7 @@ class FatturatuttoTest extends Web_TestCase {
         ->timeouts()
         ->implicitlyWait(1);
         
-        $current_url = $wd->getCurrentURL();
+        $expected_url = $wd->getCurrentURL();
         $this->assertEquals($expected_url, $url);
         
         // 1) Wrong login
