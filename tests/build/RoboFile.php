@@ -31,7 +31,7 @@ class RoboFile extends \Robo\Tasks {
         
         if ($this->update_vendor) {
             echo "Updating vendor..." . PHP_EOL;
-            $this->taskComposerUpdate()->run();
+            $this->taskComposerUpdate()->dir('../..')->run();
         }
         
         if ($this->start_selenium) {

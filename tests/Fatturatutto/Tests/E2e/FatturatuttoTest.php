@@ -94,9 +94,13 @@ class FatturatuttoTest extends Web_TestCase {
         $this->login($user, $user);
         
         // Verify the error msg show
-        $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
-        $this->waitForXpath($login_error_msg); // Wait until the element is visible
-        $incorrectData = $wd->findElement(WebDriverBy::xpath($login_error_msg)); // Text "Email o password errati"
+        // $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
+        // $this->waitForXpath($login_error_msg); // Wait until the element is visible
+        // $incorrectData = $wd->findElement(WebDriverBy::xpath($login_error_msg)); // Text "Email o password errati"
+        $login_error_class = 'text-danger';
+        $this->waitForClassName($login_error_class);
+        $incorrectData = $wd->findElement(WebDriverBy::className($login_error_class)); // Find the first element matching the class name argument.
+        
         $this->assertNotNull($incorrectData);
         $this->assertContains(self::LOGIN_ERR_MSG, $incorrectData->getText());
         
@@ -212,7 +216,7 @@ class FatturatuttoTest extends Web_TestCase {
         $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
         $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
         
-        $this->assertErrorsOnConsole();
+        $this->assertNoErrorsOnConsole();
     }
 
     /**
@@ -233,11 +237,11 @@ class FatturatuttoTest extends Web_TestCase {
             // checking that we are in the right page
             $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
             
-            // chrome has 1 error, for more info see the cosole.jason in logs folder
+            // FIXME: chrome has 1 error, for more info see the cosole.json in logs folder
             if (self::$browser == self::CHROME) {
-                $this->assertErrorsOnConsole(1);
-            } else {
                 $this->assertErrorsOnConsole();
+            } else {
+                $this->assertNoErrorsOnConsole();
             }
         }
     }
@@ -265,13 +269,16 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         $login_url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($login_url); // Navigate to ROUTE_LOGIN
+                              
+        // Implicit waits: I don't know which page it is
         $this->getWd()
             ->manage()
             ->timeouts()
             ->implicitlyWait(2);
+        
         $expected_url = $wd->getCurrentURL();
         
-        // if i'm not already log-in do the login
+        // if I'm not already log-in do the login
         if ($expected_url == $login_url) {
             // select email method to enter
             $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
@@ -471,23 +478,32 @@ class FatturatuttoTest extends Web_TestCase {
      * Wait for an elem in page ROUTE_SITUAZIONE
      */
     private function waitSituazione() {
-        $this->waitForTagWithText("span", "logo-lg"); // Wait until the element is visible
+        $impostazioni_id = 'menu-impostazioni';
+        $this->waitForId($impostazioni_id); // Wait until the element is visible
     }
 
     /**
      * Wait for an elem in page SiteHome
      */
     private function waitSiteHome() {
-        $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
-        $this->waitForXpath($inizia_button_path); // Wait until the element is visible
+        // $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
+        // $this->waitForXpath($inizia_button_path); // Wait until the element is visible
+        $tag = "h1";
+        $substr = "fattura elettronica";
+        $this->waitForTagWithText($tag, $substr);
     }
 
     /**
      * Wait for an elem in page ROUTE_LOGIN
      */
     private function waitLogin() {
-        $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
-        $this->waitForXpath($email_button_path); // Wait until the element is visible
+        // $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
+        // $this->waitForXpath($email_button_path); // Wait until the element is visible
+        
+        // $tag = "button";
+        // $substr = "email";
+        // $this->waitForTagWithText($tag, $substr);
+        $this->waitForClassName("login-box");
     }
 
     /**
@@ -502,7 +518,10 @@ class FatturatuttoTest extends Web_TestCase {
      * Wait for an elem in page ROUTE_MODELLI_FATTURA
      */
     private function waitModelliFattura() {
-        $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
-        $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
+        // $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button'; ?
+        // $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
+        $tag = "h2";
+        $substr = "Modelli fattura";
+        $this->waitForTagWithText($tag, $substr);
     }
 }
