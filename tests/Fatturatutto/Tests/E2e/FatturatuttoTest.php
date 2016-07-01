@@ -87,8 +87,18 @@ class FatturatuttoTest extends Web_TestCase {
     public function testLogin() {
         $wd = $this->getWd();
         $wd->manage()->deleteAllCookies();
-        $wd->get($this->getAppHome() . '/' . self::ROUTE_LOGIN); // Navigate to ROUTE_LOGIN
-                                                                 
+                
+        $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
+        $wd->get($url); // Navigate to ROUTE_LOGIN
+        
+        $this->getWd()
+        ->manage()
+        ->timeouts()
+        ->implicitlyWait(1);
+        
+        $current_url = $wd->getCurrentURL();
+        $this->assertEquals($expected_url, $url);
+        
         // 1) Wrong login
         $user = 'utente@inesistente';
         $this->login($user, $user);
@@ -308,6 +318,8 @@ class FatturatuttoTest extends Web_TestCase {
             $this->waitForXpath($login_button_path); // Wait until the element is visible
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
             $accedi_button->click();
+        }else{
+            echo "You're already logged" . PHP_EOL;
         }
     }
 
