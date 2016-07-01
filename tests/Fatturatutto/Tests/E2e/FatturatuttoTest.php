@@ -96,7 +96,11 @@ class FatturatuttoTest extends Web_TestCase {
         // Firefox: @config[:capabilities][:profile] = Selenium::WebDriver::Firefox::Profile.new
         // Edge: @config[:capabilities]['ensureCleanSession'] = true
         
-        $wd->manage()->deleteAllCookies();
+        if (self::$browser != self::SAFARI) {
+            $wd->manage()->deleteAllCookies();  // codice non comptibile con SAFARI
+        }else{        
+            $this->deleteAllCookies();
+        }
                 
         $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($url); // Navigate to ROUTE_LOGIN
@@ -109,11 +113,7 @@ class FatturatuttoTest extends Web_TestCase {
         // 1) Wrong login
         $user = 'utente@inesistente';
         $this->login($user, $user);
-        
-        if (self::$browser != self::SAFARI) { // FIXME: codice non comptibile con SAFARI
-            
-        // TODO: provare a risolvere con wait implicito per attendere l'esecuzione del codice angualrjs
-            
+ 
         // Verify the error msg show
         // $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
         // $this->waitForXpath($login_error_msg); // Wait until the element is visible
@@ -123,9 +123,7 @@ class FatturatuttoTest extends Web_TestCase {
         $incorrectData = $wd->findElement(WebDriverBy::className($login_error_class)); // Find the first element matching the class name argument.
         $this->assertNotNull($incorrectData);
         $this->assertContains(self::LOGIN_ERR_MSG, $incorrectData->getText());
-       }else{
-           $this->waitForClassName('login-box');
-       }
+ 
         
 
         
