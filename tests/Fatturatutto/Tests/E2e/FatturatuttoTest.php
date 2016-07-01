@@ -67,7 +67,8 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login(); // Make the login
         $this->waitSituazione();
         $wd->get($this->getSiteHome() . '/'); // Navigate to SITE_HOME
-                                              
+        $this->waitSiteHome();
+        
         // SITE HOME
         $this->check_webpage($this->getSiteHome() . '/', self::SITE_TITLE);
         
@@ -124,7 +125,8 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login(); // Make the login
         $this->waitSituazione();
         $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
-                                                                      
+        $this->waitSituazione();
+        
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
@@ -172,7 +174,8 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login(); // Make the login
         $this->waitSituazione();
         $wd->get($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
-                                                                                  
+        $this->waitStrumentiImportazione();
+        
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
         
@@ -225,6 +228,7 @@ class FatturatuttoTest extends Web_TestCase {
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
+            $this->waitModelliFattura();
             
             // checking that we are in the right page
             $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
@@ -302,31 +306,31 @@ class FatturatuttoTest extends Web_TestCase {
         $url = $wd->getCurrentURL();
         
         // implicit wait for an elem of the specific web page to be sure that the web page is completely load
-        switch ($url) {
-            case $this->getSiteHome() . '/':
-                $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
-                $this->waitForXpath($inizia_button_path); // Wait until the element is visible
-                break;
-            case $this->getAppHome() . '/' . self::ROUTE_LOGIN:
-                $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
-                $this->waitForXpath($email_button_path); // Wait until the element is visible
-                break;
-            case $this->getAppHome() . '/':
-            case $this->getAppHome() . '/' . self::ROUTE_SITUAZIONE:
-                $impostazioni_id = 'menu-impostazioni';
-                $this->waitForId($impostazioni_id); // Wait until the element is visible
-                break;
-            case $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE:
-                $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
-                $this->waitForXpath($import_box_path); // Wait until the element is visible
-                break;
-            case $this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA:
-                $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
-                $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
-                break;
-            default:
-                $this->fail("Situazione imprevista:" . PHP_EOL . "\$expected_url: " . $expected_url . PHP_EOL . "\$url: " . $url . PHP_EOL);
-        }
+        // switch ($url) {
+        // case $this->getSiteHome() . '/':
+        // $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
+        // $this->waitForXpath($inizia_button_path); // Wait until the element is visible
+        // break;
+        // case $this->getAppHome() . '/' . self::ROUTE_LOGIN:
+        // $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
+        // $this->waitForXpath($email_button_path); // Wait until the element is visible
+        // break;
+        // case $this->getAppHome() . '/':
+        // case $this->getAppHome() . '/' . self::ROUTE_SITUAZIONE:
+        // $impostazioni_id = 'menu-impostazioni';
+        // $this->waitForId($impostazioni_id); // Wait until the element is visible
+        // break;
+        // case $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE:
+        // $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
+        // $this->waitForXpath($import_box_path); // Wait until the element is visible
+        // break;
+        // case $this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA:
+        // $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
+        // $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
+        // break;
+        // default:
+        // $this->fail("Situazione imprevista:" . PHP_EOL . "\$expected_url: " . $expected_url . PHP_EOL . "\$url: " . $url . PHP_EOL);
+        // }
         
         $title = $wd->getTitle();
         $this->assertEquals($expected_url, $url);
@@ -460,10 +464,42 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     /**
-     * Wait for an elem in page Situazione
+     * Wait for an elem in page ROUTE_SITUAZIONE
      */
     private function waitSituazione() {
         $impostazioni_id = 'menu-impostazioni';
         $this->waitForId($impostazioni_id); // Wait until the element is visible
+    }
+
+    /**
+     * Wait for an elem in page SiteHome
+     */
+    private function waitSiteHome() {
+        $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
+        $this->waitForXpath($inizia_button_path); // Wait until the element is visible
+    }
+
+    /**
+     * Wait for an elem in page ROUTE_LOGIN
+     */
+    private function waitLogin() {
+        $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
+        $this->waitForXpath($email_button_path); // Wait until the element is visible
+    }
+
+    /**
+     * Wait for an elem in page ROUTE_STRUMENTI_IMPORTAZIONE
+     */
+    private function waitStrumentiImportazione() {
+        $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
+        $this->waitForXpath($import_box_path); // Wait until the element is visible
+    }
+
+    /**
+     * Wait for an elem in page ROUTE_MODELLI_FATTURA
+     */
+    private function waitModelliFattura() {
+        $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
+        $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
     }
 }
