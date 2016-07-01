@@ -495,8 +495,8 @@ class FatturatuttoTest extends Web_TestCase {
      * Wait for an elem in page ROUTE_STRUMENTI_IMPORTAZIONE
      */
     private function waitStrumentiImportazione() {
-        $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
-        $this->waitForXpath($import_box_path); // Wait until the element is visible
+        $import_box_id = 'import-box';
+        $this->waitForXpath($import_box_id); // Wait until the element is visible
     }
 
     /**
