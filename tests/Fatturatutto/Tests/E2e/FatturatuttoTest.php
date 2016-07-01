@@ -174,7 +174,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login(); // Make the login
         $this->waitSituazione();
         $wd->get($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
-        $this->waitSituazione();
+        $this->waitStrumentiImportazione();
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
@@ -228,11 +228,11 @@ class FatturatuttoTest extends Web_TestCase {
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
-            $this->waitSituazione();
+            $this->waitModelliFattura();
             
             // checking that we are in the right page
             $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
-            sleep(2);
+            
             // chrome has 1 error, for more info see the cosole.jason in logs folder
             if (self::$browser == self::CHROME) {
                 $this->assertErrorsOnConsole(1);
@@ -464,10 +464,11 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     /**
-     * Wait for an elem in page ROUTE_SITUAZIONE,ROUTE_STRUMENTI_IMPORTAZIONE,ROUTE_MODELLI_FATTURA
+     * Wait for an elem in page ROUTE_SITUAZIONE
      */
     private function waitSituazione() {
-        $this->waitForTagWithText("class", "logo-lg"); // Wait until the element is visible
+        $impostazioni_id = 'menu-impostazioni';
+        $this->waitForId($impostazioni_id); // Wait until the element is visible
     }
 
     /**
@@ -484,5 +485,21 @@ class FatturatuttoTest extends Web_TestCase {
     private function waitLogin() {
         $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
         $this->waitForXpath($email_button_path); // Wait until the element is visible
+    }
+
+    /**
+     * Wait for an elem in page ROUTE_STRUMENTI_IMPORTAZIONE
+     */
+    private function waitStrumentiImportazione() {
+        $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
+        $this->waitForXpath($import_box_path); // Wait until the element is visible
+    }
+
+    /**
+     * Wait for an elem in page ROUTE_MODELLI_FATTURA
+     */
+    private function waitModelliFattura() {
+        $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
+        $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
     }
 }
