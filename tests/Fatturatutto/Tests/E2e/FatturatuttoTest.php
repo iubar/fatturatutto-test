@@ -174,7 +174,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login(); // Make the login
         $this->waitSituazione();
         $wd->get($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
-        $this->waitStrumentiImportazione();
+        $this->waitSituazione();
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
@@ -228,7 +228,7 @@ class FatturatuttoTest extends Web_TestCase {
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
-            $this->waitModelliFattura();
+            $this->waitSituazione();
             
             // checking that we are in the right page
             $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
@@ -464,11 +464,10 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     /**
-     * Wait for an elem in page ROUTE_SITUAZIONE
+     * Wait for an elem in page ROUTE_SITUAZIONE,ROUTE_STRUMENTI_IMPORTAZIONE,ROUTE_MODELLI_FATTURA
      */
     private function waitSituazione() {
-        $impostazioni_id = 'menu-impostazioni';
-        $this->waitForId($impostazioni_id); // Wait until the element is visible
+        $this->waitForTagWithText("class", "logo-lg"); // Wait until the element is visible
     }
 
     /**
@@ -485,21 +484,5 @@ class FatturatuttoTest extends Web_TestCase {
     private function waitLogin() {
         $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
         $this->waitForXpath($email_button_path); // Wait until the element is visible
-    }
-
-    /**
-     * Wait for an elem in page ROUTE_STRUMENTI_IMPORTAZIONE
-     */
-    private function waitStrumentiImportazione() {
-        $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
-        $this->waitForXpath($import_box_path); // Wait until the element is visible
-    }
-
-    /**
-     * Wait for an elem in page ROUTE_MODELLI_FATTURA
-     */
-    private function waitModelliFattura() {
-        $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
-        $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
     }
 }
