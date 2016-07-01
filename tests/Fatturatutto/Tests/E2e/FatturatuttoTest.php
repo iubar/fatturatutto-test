@@ -101,10 +101,7 @@ class FatturatuttoTest extends Web_TestCase {
         $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($url); // Navigate to ROUTE_LOGIN
         
-        $this->getWd()
-        ->manage()
-        ->timeouts()
-        ->implicitlyWait(1);
+        $wd->manage()->timeouts()->implicitlyWait(1);
         
         $expected_url = $wd->getCurrentURL();
         $this->assertEquals($expected_url, $url);
@@ -220,6 +217,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         $import_box_path = '//*[@id="import-box"]/div[1]';
         $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
+        $this->assertNotNull($drop_area);
         
         $this->clearBrowserConsole(); // clean the browser console log
                                       
@@ -306,10 +304,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd->get($login_url); // Navigate to ROUTE_LOGIN
                               
         // Implicit waits: I don't know which page it is
-        $this->getWd()
-            ->manage()
-            ->timeouts()
-            ->implicitlyWait(2);
+        $wd->manage()->timeouts()->implicitlyWait(2);
         
         $expected_url = $wd->getCurrentURL();
         
