@@ -471,8 +471,7 @@ class FatturatuttoTest extends Web_TestCase {
      * Wait for an elem in page ROUTE_SITUAZIONE
      */
     private function waitSituazione() {
-        $impostazioni_id = 'menu-impostazioni';
-        $this->waitForId($impostazioni_id); // Wait until the element is visible
+        $this->waitForTagWithText("span", "logo-lg"); // Wait until the element is visible
     }
 
     /**
