@@ -88,6 +88,14 @@ class FatturatuttoTest extends Web_TestCase {
      */
     public function testLogin() {
         $wd = $this->getWd();
+        
+        // Se ils eguente metodo non funziona:
+        // Verificare le opzioni seguenti per singolo browser        
+        // Safari : @config[:capabilities]['safari.options'] = { cleanSession: true }
+        // IE : @config[:capabilities]['ie.ensureCleanSession'] = true
+        // Firefox: @config[:capabilities][:profile] = Selenium::WebDriver::Firefox::Profile.new
+        // Edge: @config[:capabilities]['ensureCleanSession'] = true
+        
         $wd->manage()->deleteAllCookies();
                 
         $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
@@ -106,6 +114,9 @@ class FatturatuttoTest extends Web_TestCase {
         $this->login($user, $user);
         
         if (self::$browser != self::SAFARI) { // FIXME: codice non comptibile con SAFARI
+            
+        // TODO: provare a risolvere con wait implicito per attendere l'esecuzione del codice angualrjs
+            
         // Verify the error msg show
         // $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
         // $this->waitForXpath($login_error_msg); // Wait until the element is visible
@@ -184,6 +195,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
         
         // FIXME: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
+        // TODO: da riprovare con PHANTOMJS perchè sono state fatte modifiche migliorative al codice
         if (self::$browser != self::PHANTOMJS) {            
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
