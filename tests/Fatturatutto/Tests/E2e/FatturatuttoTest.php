@@ -265,6 +265,10 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         $login_url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($login_url); // Navigate to ROUTE_LOGIN
+        $this->getWd()
+            ->manage()
+            ->timeouts()
+            ->implicitlyWait(2);
         $expected_url = $wd->getCurrentURL();
         
         // if i'm not already log-in do the login
