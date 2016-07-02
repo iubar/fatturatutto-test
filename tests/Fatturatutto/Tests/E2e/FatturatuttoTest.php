@@ -156,8 +156,10 @@ class FatturatuttoTest extends Web_TestCase {
         
         $this->do_login(); // Make the login
         $this->waitSituazione();
-        $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
-        $this->waitSituazione();
+        
+        // Matteo ho commkentato le due seguenti righe: che ne pensi ? sembrano esserci ripetizioni di codice ?
+        // $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
+        // $this->waitSituazione();
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
