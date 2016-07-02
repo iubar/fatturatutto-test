@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/eclipse,composer
 
 ### Eclipse ###
@@ -57,7 +56,11 @@ local.properties
 
 ### Composer ###
 composer.phar
-/**/vendor
+composer.lock
+/vendor/
+# Commit your application's lock file http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file
+# You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
+# composer.lock
 
 # LOGS folder
 logs/
@@ -67,10 +70,3 @@ tests/build/config.ini
 
 #debug
 tests/build/debug.log
-
-
-
-# Commit your application's lock file http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file
-# You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
-# composer.lock
-tests/build/config.ini
