@@ -3,8 +3,8 @@ namespace Fatturatutto\E2e;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverWait;
-use Iubar\Web_TestCase;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use Iubar\Tests\Web_TestCase;
 
 /**
  * Test of www.fatturatutto.it website
@@ -35,6 +35,8 @@ class FatturatuttoTest extends Web_TestCase {
     const LOGIN_TITLE = "Login";
 
     const ROUTE_LOGIN = "login";
+    
+    const ROUTE_LOGOUT = "logout";
 
     const ROUTE_SITUAZIONE = "situazione";
 
@@ -99,7 +101,10 @@ class FatturatuttoTest extends Web_TestCase {
         if (self::$browser != self::SAFARI) {
             $wd->manage()->deleteAllCookies();  // codice non comptibile con SAFARI
         }else{        
-            $this->deleteAllCookies();
+            // $this->deleteAllCookies(); // TODO: testare se con Chrom il metodo deleteAllCookies() funziona
+            // oppure
+            $url = $this->getAppHome() . '/' . self::ROUTE_LOGOUT;
+            $wd->get($url); // Navigate to ROUTE_LOGOUT
         }
                 
         $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
