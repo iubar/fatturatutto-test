@@ -240,7 +240,7 @@ class FatturatuttoTest extends Web_TestCase {
         self::$files_to_del[] = $tmp_file;
         
         // execute the js script to upload the invoice
-        $this->clickByIdWithJs2($drop_area, $tmp_file);
+        $this->dragfileToUpload($drop_area, $tmp_file);
         
         // click on 'avanti'
         $avanti_button = '//*[@id="fatture"]/div[2]/button';
