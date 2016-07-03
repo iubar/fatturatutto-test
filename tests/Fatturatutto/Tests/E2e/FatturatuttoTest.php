@@ -348,7 +348,7 @@ class FatturatuttoTest extends Web_TestCase {
      * @param string $url the url of the webpage
      * @param string $title the title of the webpage
      */
-    private function check_webpage($expected_url, $expected_title) {
+    private function check_webpage($expected_url, $expected_title=null) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
         $this->assertEquals($expected_url, $url);
