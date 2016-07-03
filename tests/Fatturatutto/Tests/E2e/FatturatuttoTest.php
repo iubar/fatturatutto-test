@@ -233,9 +233,6 @@ class FatturatuttoTest extends Web_TestCase {
         }
         $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
         file_put_contents($tmp_file, $data);
-        if (!is_readable($tmp_file)) {
-            $this->fail("Can't read the temp file: " . $tmp_file);
-        }
         
         self::$files_to_del[] = $tmp_file;
         
