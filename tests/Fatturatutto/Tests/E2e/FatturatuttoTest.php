@@ -214,7 +214,9 @@ class FatturatuttoTest extends Web_TestCase {
         
         $this->do_login(); // Make the login
         $this->waitSituazione();
-        $wd->get($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
+        $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
+        $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
+        $this->check_webpage($excpected_url);
         $this->waitStrumentiImportazione();
         
         // checking that we are in the right page
@@ -349,37 +351,11 @@ class FatturatuttoTest extends Web_TestCase {
     private function check_webpage($expected_url, $expected_title) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
-        
-        // implicit wait for an elem of the specific web page to be sure that the web page is completely load
-        // switch ($url) {
-        // case $this->getSiteHome() . '/':
-        // $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
-        // $this->waitForXpath($inizia_button_path); // Wait until the element is visible
-        // break;
-        // case $this->getAppHome() . '/' . self::ROUTE_LOGIN:
-        // $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
-        // $this->waitForXpath($email_button_path); // Wait until the element is visible
-        // break;
-        // case $this->getAppHome() . '/':
-        // case $this->getAppHome() . '/' . self::ROUTE_SITUAZIONE:
-        // $impostazioni_id = 'menu-impostazioni';
-        // $this->waitForId($impostazioni_id); // Wait until the element is visible
-        // break;
-        // case $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE:
-        // $import_box_path = '//*[@id="import-box"]/div[1]/div[2]';
-        // $this->waitForXpath($import_box_path); // Wait until the element is visible
-        // break;
-        // case $this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA:
-        // $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button';
-        // $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
-        // break;
-        // default:
-        // $this->fail("Situazione imprevista:" . PHP_EOL . "\$expected_url: " . $expected_url . PHP_EOL . "\$url: " . $url . PHP_EOL);
-        // }
-        
-        $title = $wd->getTitle();
         $this->assertEquals($expected_url, $url);
-        $this->assertContains($expected_title, $title);
+        if($expected_title){
+            $title = $wd->getTitle();
+            $this->assertContains($expected_title, $title);
+        }
     }
 
     /**
