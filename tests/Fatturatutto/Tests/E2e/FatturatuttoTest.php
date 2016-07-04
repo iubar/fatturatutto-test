@@ -178,40 +178,32 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
         
-        echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
-        $wait = new WebDriverWait($wd, 2);
-        $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
+//         echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
+//         $wait = new WebDriverWait($wd, 2);
+//         $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
         
         $impostazioni_button->click();
-        
-        $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
-        
-        $url = $wd->getCurrentURL();
-        $title = $wd->getTitle();
-        echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;        
-//        echo "I'm waiting for the xpath: " . $imp_generali_path . PHP_EOL;
-        
-        // FIXME: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
-        // TODO: da riprovare con PHANTOMJS perchè sono state fatte modifiche migliorative al codice
-        if (self::$browser != self::PHANTOMJS) {            
 
-//            $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-//            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+        
 
-            echo "I'm waitForPartialLinkText: " . 'Generale' . PHP_EOL;
+        if (self::$browser == self::CHROME) {
+            $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+            $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button            
+        }else {
+            // Ho commenato il codice che non funziona
+            // $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';            
+            // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+            // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             
-            $this->waitForPartialLinkText('Generale');
-            $imp_generali = $wd->findElement(WebDriverBy::partialLinkText('Generale'));
-            
-            $this->assertNotNull($imp_generali);
-            
-           // echo "Waiting to be clickable: " . $imp_generali_path . PHP_EOL;            
-           // $wait = new WebDriverWait($wd, 2);
-           // $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
-            
-            $imp_generali->click();
-            
+            $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
+            $this->waitForCss($imp_generali_sel); // Wait until the element is visible
+            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
         }
+             $this->assertNotNull($imp_generali);
+             $imp_generali->click();
+            
+        
         echo "End of testImpostazioni()" . PHP_EOL;
     }
 
@@ -307,11 +299,10 @@ class FatturatuttoTest extends Web_TestCase {
             $url = $wd->getCurrentURL();
             $title = $wd->getTitle();            
             $impostazioni_id = 'menu-impostazioni';
-            echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;
-            echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;            
-            
-            $this->waitForClassName('logo-lg');            
-            //$wd->manage()->timeouts()->implicitlyWait(3);
+            echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;                                               
+            $this->waitForId($impostazioni_id);
+            // oppure
+            // $this->waitForClassName('logo-lg');
         }
         echo "End of do_login()" . PHP_EOL;
     }
@@ -371,9 +362,11 @@ class FatturatuttoTest extends Web_TestCase {
     private function check_webpage($expected_url, $expected_title=null) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
+        echo "Current url: " . $url . PHP_EOL;       
         $this->assertEquals($expected_url, $url);
         if($expected_title){
             $title = $wd->getTitle();
+            echo "Current page title: " . $title . PHP_EOL;
             $this->assertContains($expected_title, $title);
         }
     }
