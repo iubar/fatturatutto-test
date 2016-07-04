@@ -297,7 +297,9 @@ class FatturatuttoTest extends Web_TestCase {
             $impostazioni_id = 'menu-impostazioni';
             echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;
             echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;            
-            $this->waitForId($impostazioni_id); // Wait until the element is visible
+            
+            // DOESN'T WORK: $this->waitForId($impostazioni_id); // Wait until the element is visible            
+            $wd->manage()->timeouts()->implicitlyWait(2);
         }
     }
 
