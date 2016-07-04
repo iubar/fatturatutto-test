@@ -306,7 +306,7 @@ class FatturatuttoTest extends Web_TestCase {
             echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;
             echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;            
             
-            $this->waitForTag('body');            
+            $this->waitForClassName('logo-lg');            
             //$wd->manage()->timeouts()->implicitlyWait(3);
         }
     }
