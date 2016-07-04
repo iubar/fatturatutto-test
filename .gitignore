@@ -68,3 +68,4 @@ logs/
 tests/build/debug.log
 tests/build/config.ini
 
+tests/build/config.ini
