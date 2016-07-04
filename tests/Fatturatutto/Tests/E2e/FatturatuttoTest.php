@@ -181,12 +181,14 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertNotNull($impostazioni_button);
         $impostazioni_button->click();
         
+        $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
         
         $url = $wd->getCurrentURL();
         $title = $wd->getTitle();
-        echo "You're on the url: " . $url . " The page title is " . $title . PHP_EOL;
+        echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;        
+        echo "I'm waiting for the xpath: " . $imp_generali_path . PHP_EOL;
         
-        $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+        
         // Wait for the menu animation to complete
         $wait = new WebDriverWait($wd, 2);
         $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
@@ -291,10 +293,10 @@ class FatturatuttoTest extends Web_TestCase {
         if($right_account){
             
             $url = $wd->getCurrentURL();
-            $title = $wd->getTitle();
-            echo "You're on the url: " . $url . " The page title is " . $title . PHP_EOL;
-            
+            $title = $wd->getTitle();            
             $impostazioni_id = 'menu-impostazioni';
+            echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;
+            echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;            
             $this->waitForId($impostazioni_id); // Wait until the element is visible
         }
     }
