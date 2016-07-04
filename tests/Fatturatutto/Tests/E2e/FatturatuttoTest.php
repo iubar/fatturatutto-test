@@ -67,8 +67,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     public function testSiteHome() {
         $wd = $this->getWd();
-        
-        $this->do_login(); // Make the login        
+           
         $wd->get($this->getSiteHome() . '/'); // Navigate to SITE_HOME
         $this->waitSiteHome();
         
@@ -104,7 +103,7 @@ class FatturatuttoTest extends Web_TestCase {
             // oppure
             $url = $this->getAppHome() . '/' . self::ROUTE_LOGOUT;
             $wd->get($url); // Navigate to ROUTE_LOGOUT
-            $wd->manage()->timeouts()->implicitlyWait(2);
+            $wd->manage()->timeouts()->implicitlyWait(3);
         }
                 
         $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
@@ -170,8 +169,7 @@ class FatturatuttoTest extends Web_TestCase {
     public function testImpostazioni() {
         $wd = $this->getWd();
         
-        $this->do_login(); // Make the login
-        
+        $this->do_login(); 
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
@@ -299,7 +297,7 @@ class FatturatuttoTest extends Web_TestCase {
             echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;            
             
             // DOESN'T WORK: $this->waitForId($impostazioni_id); // Wait until the element is visible            
-            $wd->manage()->timeouts()->implicitlyWait(2);
+            $wd->manage()->timeouts()->implicitlyWait(3);
         }
     }
 
@@ -315,7 +313,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd->get($login_url); // Navigate to ROUTE_LOGIN
                               
         // Implicit waits: I don't know which page it is. If user is already logged-in, the browser is automatically redirected 
-        $wd->manage()->timeouts()->implicitlyWait(2);
+        $wd->manage()->timeouts()->implicitlyWait(4);
         
         $current_url = $wd->getCurrentURL();
         
