@@ -68,8 +68,7 @@ class FatturatuttoTest extends Web_TestCase {
     public function testSiteHome() {
         $wd = $this->getWd();
         
-        $this->do_login(); // Make the login
-        $this->waitSituazione();
+        $this->do_login(); // Make the login        
         $wd->get($this->getSiteHome() . '/'); // Navigate to SITE_HOME
         $this->waitSiteHome();
         
@@ -99,21 +98,23 @@ class FatturatuttoTest extends Web_TestCase {
         // Edge: @config[:capabilities]['ensureCleanSession'] = true
         
         if (self::$browser != self::SAFARI) {
-            $wd->manage()->deleteAllCookies();  // codice non comptibile con SAFARI
+            $wd->manage()->deleteAllCookies();  // TODFO: da riprovare con SAFARI 
         }else{        
-            // $this->deleteAllCookies(); // TODO: testare se con Chrom il metodo deleteAllCookies() funziona
+            // $this->deleteAllCookies(); // TODO: testare se con Chrome il metodo deleteAllCookies() funziona
             // oppure
             $url = $this->getAppHome() . '/' . self::ROUTE_LOGOUT;
             $wd->get($url); // Navigate to ROUTE_LOGOUT
+            $wd->manage()->timeouts()->implicitlyWait(2);
         }
                 
         $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($url); // Navigate to ROUTE_LOGIN
         
-        $wd->manage()->timeouts()->implicitlyWait(1);
+        // Poichè ho preventivamente cancellato tutti i cookies sono sicuro che l'url precedente mi indiriizzerà direttamente alla form di login senza alcun redirect
+        $this->waitLoginForm(); // oppure $wd->manage()->timeouts()->implicitlyWait(1);
         
-        $expected_url = $wd->getCurrentURL();
-        $this->assertEquals($expected_url, $url);
+        $current_url = $wd->getCurrentURL();
+        $this->assertEquals($url, $current_url);
         
         // 1) Wrong login
         $user = 'utente@inesistente';
@@ -130,14 +131,12 @@ class FatturatuttoTest extends Web_TestCase {
         $this->assertContains(self::LOGIN_ERR_MSG, $incorrectData->getText());
  
         
-
+        // 2) Real login
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_LOGIN, self::LOGIN_TITLE);
         
-        // 2) Real login
         $this->do_login();
-        $this->waitSituazione();
         
         // Verify to be enter and that welcome msg is show
         $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; // dialog compile your data
@@ -154,12 +153,7 @@ class FatturatuttoTest extends Web_TestCase {
     public function testAsideNavigationBar() {
         $wd = $this->getWd();
         
-        $this->do_login(); // Make the login
-        $this->waitSituazione();
-        
-        // Matteo ho commkentato le due seguenti righe: che ne pensi ? sembrano esserci ripetizioni di codice ?
-        // $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
-        // $this->waitSituazione();
+        $this->do_login();
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
@@ -177,8 +171,6 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login(); // Make the login
-        $this->waitSituazione();
-        // $wd->get($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE); // Navigate to ROUTE_SITUAZIONE
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
@@ -188,7 +180,6 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
         $impostazioni_button->click();
-        
         
         
         $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
@@ -212,12 +203,11 @@ class FatturatuttoTest extends Web_TestCase {
     public function testImportazioneFattura() {
         $wd = $this->getWd();
         
-        $this->do_login(); // Make the login
-        $this->waitSituazione();
+        $this->do_login();
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         $this->check_webpage($excpected_url);
-        $this->waitStrumentiImportazione();
+        $this->waitStrumentiImportazione();        
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
@@ -264,8 +254,7 @@ class FatturatuttoTest extends Web_TestCase {
         if (self::$browser != self::MARIONETTE) {  // FIXME: codice non comptibile con 'marionette' (can't read the console)
             $wd = $this->getWd();
             
-            $this->do_login(); // Make the login
-            $this->waitSituazione();
+            $this->do_login();
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
@@ -290,10 +279,14 @@ class FatturatuttoTest extends Web_TestCase {
     /**
      * Call the login() function with the global params username and password
      */
-    private function do_login() {
+    private function do_login($right_account=true) {
         $user = self::$app_username;
         $password = self::$app_password;
         $this->login($user, $password);
+        if($right_account){
+            $impostazioni_id = 'menu-impostazioni';
+            $this->waitForId($impostazioni_id); // Wait until the element is visible
+        }
     }
 
     /**
@@ -307,13 +300,13 @@ class FatturatuttoTest extends Web_TestCase {
         $login_url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($login_url); // Navigate to ROUTE_LOGIN
                               
-        // Implicit waits: I don't know which page it is
+        // Implicit waits: I don't know which page it is. If user is already logged-in, the browser is automatically redirected 
         $wd->manage()->timeouts()->implicitlyWait(2);
         
-        $expected_url = $wd->getCurrentURL();
+        $current_url = $wd->getCurrentURL();
         
         // if I'm not already log-in do the login
-        if ($expected_url == $login_url) {
+        if ($current_url == $login_url) {
             // select email method to enter
             $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
             $this->waitForXpath($email_button_path); // Wait until the element is visible
@@ -485,14 +478,6 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     /**
-     * Wait for an elem in page ROUTE_SITUAZIONE
-     */
-    private function waitSituazione() {
-        $impostazioni_id = 'menu-impostazioni';
-        $this->waitForId($impostazioni_id); // Wait until the element is visible
-    }
-
-    /**
      * Wait for an elem in page SiteHome
      */
     private function waitSiteHome() {
@@ -506,7 +491,7 @@ class FatturatuttoTest extends Web_TestCase {
     /**
      * Wait for an elem in page ROUTE_LOGIN
      */
-    private function waitLogin() {
+    private function waitLoginForm() {
         // $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
         // $this->waitForXpath($email_button_path); // Wait until the element is visible
         
