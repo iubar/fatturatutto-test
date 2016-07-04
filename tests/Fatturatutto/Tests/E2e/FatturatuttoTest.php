@@ -189,7 +189,7 @@ class FatturatuttoTest extends Web_TestCase {
         $url = $wd->getCurrentURL();
         $title = $wd->getTitle();
         echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;        
-        echo "I'm waiting for the xpath: " . $imp_generali_path . PHP_EOL;
+//        echo "I'm waiting for the xpath: " . $imp_generali_path . PHP_EOL;
         
         // FIXME: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
         // TODO: da riprovare con PHANTOMJS perchè sono state fatte modifiche migliorative al codice
@@ -198,6 +198,8 @@ class FatturatuttoTest extends Web_TestCase {
 //            $this->waitForXpath($imp_generali_path); // Wait until the element is visible
 //            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
 
+            echo "I'm waitForPartialLinkText: " . 'Generale' . PHP_EOL;
+            
             $this->waitForPartialLinkText('Generale');
             $imp_generali = $wd->findElement(WebDriverBy::partialLinkText('Generale'));
             
@@ -208,7 +210,9 @@ class FatturatuttoTest extends Web_TestCase {
            // $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
             
             $imp_generali->click();
+            
         }
+        echo "End of testImpostazioni()" . PHP_EOL;
     }
 
     /**
@@ -309,6 +313,7 @@ class FatturatuttoTest extends Web_TestCase {
             $this->waitForClassName('logo-lg');            
             //$wd->manage()->timeouts()->implicitlyWait(3);
         }
+        echo "End of do_login()" . PHP_EOL;
     }
 
     /**
