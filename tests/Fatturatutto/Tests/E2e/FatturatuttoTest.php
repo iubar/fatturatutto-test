@@ -182,6 +182,10 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_button->click();
         
         
+        $url = $wd->getCurrentURL();
+        $title = $wd->getTitle();
+        echo "You're on the url: " . $url . " The page title is " . $title . PHP_EOL;
+        
         $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
         // Wait for the menu animation to complete
         $wait = new WebDriverWait($wd, 2);
