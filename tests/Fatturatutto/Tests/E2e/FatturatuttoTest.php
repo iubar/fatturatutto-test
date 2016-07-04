@@ -180,7 +180,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
         $wait = new WebDriverWait($wd, 2);
-        $wait->until(WebDriverExpectedCondition::elementToBeClickable($impostazioni_button));
+        $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
         
         $impostazioni_button->click();
         
@@ -200,7 +200,7 @@ class FatturatuttoTest extends Web_TestCase {
             
             echo "Waiting to be clickable: " . $imp_generali_path . PHP_EOL;            
             $wait = new WebDriverWait($wd, 2);
-            $wait->until(WebDriverExpectedCondition::elementToBeClickable($imp_generali));
+            $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
             
             $imp_generali->click();
         }
