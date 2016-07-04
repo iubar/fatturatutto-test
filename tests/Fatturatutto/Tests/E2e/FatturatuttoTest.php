@@ -286,8 +286,14 @@ class FatturatuttoTest extends Web_TestCase {
     private function do_login($right_account=true) {
         $user = self::$app_username;
         $password = self::$app_password;
-        $this->login($user, $password);
+        $this->login($user, $password);                
+        
         if($right_account){
+            
+            $url = $wd->getCurrentURL();
+            $title = $wd->getTitle();
+            echo "You're on the url: " . $url . " The page title is " . $title . PHP_EOL;
+            
             $impostazioni_id = 'menu-impostazioni';
             $this->waitForId($impostazioni_id); // Wait until the element is visible
         }
