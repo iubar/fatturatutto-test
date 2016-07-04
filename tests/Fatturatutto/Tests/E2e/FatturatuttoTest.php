@@ -186,11 +186,11 @@ class FatturatuttoTest extends Web_TestCase {
 
         
 
-        if (self::$browser == self::CHROME) {
+        if (self::$browser == self::CHROME || self::$browser == self::FIREFOX) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button            
-        }else {
+        }else { // eg: MARIONETTE
             // Ho commenato il codice che non funziona
             // $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';            
             // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
@@ -211,12 +211,14 @@ class FatturatuttoTest extends Web_TestCase {
      * Try to import an invoice in ROUTE_STRUMENTI_IMPORTAZIONE
      */
     public function testImportazioneFattura() {
+        echo "Begin testImportazioneFattura()..." . PHP_EOL;
         $wd = $this->getWd();
         
         $this->do_login();
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         $this->check_webpage($excpected_url);
+        echo "Calling waitStrumentiImportazione()..." . PHP_EOL;
         $this->waitStrumentiImportazione();        
         
         // checking that we are in the right page
@@ -226,6 +228,7 @@ class FatturatuttoTest extends Web_TestCase {
         $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
         $this->assertNotNull($drop_area);
         
+        echo "Calling clearBrowserConsole()..." . PHP_EOL;
         $this->clearBrowserConsole(); // clean the browser console log
                                       
         // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
@@ -239,6 +242,7 @@ class FatturatuttoTest extends Web_TestCase {
         self::$files_to_del[] = $tmp_file;
         
         // execute the js script to upload the invoice
+        echo "Calling dragfileToUpload()..." . PHP_EOL;
         $this->dragfileToUpload($drop_area, $tmp_file);
         
         // click on 'avanti'
@@ -253,6 +257,7 @@ class FatturatuttoTest extends Web_TestCase {
         $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
         $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
         
+        echo "Calling assertNoErrorsOnConsole()..." . PHP_EOL;
         $this->assertNoErrorsOnConsole();
     }
 
