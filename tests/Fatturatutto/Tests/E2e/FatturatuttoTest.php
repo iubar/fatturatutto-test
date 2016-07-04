@@ -301,8 +301,8 @@ class FatturatuttoTest extends Web_TestCase {
             echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;
             echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;            
             
-            // DOESN'T WORK: $this->waitForId($impostazioni_id); // Wait until the element is visible            
-            $wd->manage()->timeouts()->implicitlyWait(3);
+            $this->waitForXpath('/html/body/div[1]/header');            
+            //$wd->manage()->timeouts()->implicitlyWait(3);
         }
     }
 
