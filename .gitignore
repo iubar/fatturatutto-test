@@ -65,8 +65,5 @@ composer.lock
 # LOGS folder
 logs/
 
-#ini file
-tests/build/config.ini
-
-#debug
 tests/build/debug.log
+tests/build/config.ini
