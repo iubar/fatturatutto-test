@@ -2,7 +2,7 @@
 echo:
 echo:
 echo Setting enviroments...
-call %~dp0env.bat
+call %~dp0config.bat
 echo:
 echo BROWSER: %BROWSER%
 echo SELENIUM SERVER: %SELENIUM_SERVER%

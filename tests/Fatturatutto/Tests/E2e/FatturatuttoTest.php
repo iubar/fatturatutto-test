@@ -291,7 +291,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->login($user, $password);                
         
         if($right_account){
-            
+            $wd = $this->getWd();
             $url = $wd->getCurrentURL();
             $title = $wd->getTitle();            
             $impostazioni_id = 'menu-impostazioni';
