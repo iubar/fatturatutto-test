@@ -194,13 +194,18 @@ class FatturatuttoTest extends Web_TestCase {
         // FIXME: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
         // TODO: da riprovare con PHANTOMJS perchè sono state fatte modifiche migliorative al codice
         if (self::$browser != self::PHANTOMJS) {            
-            $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+
+//            $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+//            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+
+            $this->waitForPartialLinkText('Generale');
+            $imp_generali = $wd->findElement(WebDriverBy::partialLinkText('Generale'));
+            
             $this->assertNotNull($imp_generali);
             
-            echo "Waiting to be clickable: " . $imp_generali_path . PHP_EOL;            
-            $wait = new WebDriverWait($wd, 2);
-            $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
+           // echo "Waiting to be clickable: " . $imp_generali_path . PHP_EOL;            
+           // $wait = new WebDriverWait($wd, 2);
+           // $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
             
             $imp_generali->click();
         }
@@ -301,7 +306,7 @@ class FatturatuttoTest extends Web_TestCase {
             echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;
             echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;            
             
-            $this->waitForXpath('/html/body/div[1]/header');            
+            $this->waitForTag('body');            
             //$wd->manage()->timeouts()->implicitlyWait(3);
         }
     }
