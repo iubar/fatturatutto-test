@@ -177,6 +177,11 @@ class FatturatuttoTest extends Web_TestCase {
         $this->waitForId($impostazioni_id); // Wait until the element is visible
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
+        
+        echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
+        $wait = new WebDriverWait($wd, 2);
+        $wait->until(WebDriverExpectedCondition::elementToBeClickable($impostazioni_button));
+        
         $impostazioni_button->click();
         
         $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
@@ -186,17 +191,17 @@ class FatturatuttoTest extends Web_TestCase {
         echo "Current url: " . $url . " Page title: " . $title . PHP_EOL;        
         echo "I'm waiting for the xpath: " . $imp_generali_path . PHP_EOL;
         
-        
-        // Wait for the menu animation to complete
-        $wait = new WebDriverWait($wd, 2);
-        $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
-        
         // FIXME: probabile bug di phantomjs nell'eseguire il codice seguente (vedi: http://superuser.com/questions/855710/selenium-with-phantomjs-click-not-working)
         // TODO: da riprovare con PHANTOMJS perchè sono state fatte modifiche migliorative al codice
         if (self::$browser != self::PHANTOMJS) {            
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             $this->assertNotNull($imp_generali);
+            
+            echo "Waiting to be clickable: " . $imp_generali_path . PHP_EOL;            
+            $wait = new WebDriverWait($wd, 2);
+            $wait->until(WebDriverExpectedCondition::elementToBeClickable($imp_generali));
+            
             $imp_generali->click();
         }
     }
