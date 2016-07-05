@@ -204,8 +204,12 @@ class FatturatuttoTest extends Web_TestCase {
                  // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
                  // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             
-            $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
+            //$imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
+            $imp_generali_sel = '.menu-open > li:nth-child(1) > a';
+            //$imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a';
+            //$imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a:nth-child(1)';
             
+
             $this->waitForCssToBeClickable($imp_generali_sel); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
         }
