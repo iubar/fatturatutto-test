@@ -35,7 +35,7 @@ class FatturatuttoTest extends Web_TestCase {
     const LOGIN_TITLE = "Login";
 
     const ROUTE_LOGIN = "login";
-    
+
     const ROUTE_LOGOUT = "logout";
 
     const ROUTE_SITUAZIONE = "situazione";
@@ -67,7 +67,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     public function testSiteHome() {
         $wd = $this->getWd();
-           
+        
         $wd->get($this->getSiteHome() . '/'); // Navigate to SITE_HOME
         $this->waitSiteHome();
         
@@ -90,25 +90,27 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         // Se ils eguente metodo non funziona:
-        // Verificare le opzioni seguenti per singolo browser        
+        // Verificare le opzioni seguenti per singolo browser
         // Safari : @config[:capabilities]['safari.options'] = { cleanSession: true }
         // IE : @config[:capabilities]['ie.ensureCleanSession'] = true
         // Firefox: @config[:capabilities][:profile] = Selenium::WebDriver::Firefox::Profile.new
         // Edge: @config[:capabilities]['ensureCleanSession'] = true
         
         if (self::$browser != self::SAFARI) {
-            $wd->manage()->deleteAllCookies();  // TODFO: da riprovare con SAFARI 
-        }else{        
+            $wd->manage()->deleteAllCookies(); // TODFO: da riprovare con SAFARI
+        } else {
             // $this->deleteAllCookies(); // TODO: testare se con Chrome il metodo deleteAllCookies() funziona
             // oppure
             $url = $this->getAppHome() . '/' . self::ROUTE_LOGOUT;
             $wd->get($url); // Navigate to ROUTE_LOGOUT
-            $wd->manage()->timeouts()->implicitlyWait(3);
+            $wd->manage()
+                ->timeouts()
+                ->implicitlyWait(3);
         }
-                
+        
         $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($url); // Navigate to ROUTE_LOGIN
-        
+                        
         // Poichè ho preventivamente cancellato tutti i cookies sono sicuro che l'url precedente mi indiriizzerà direttamente alla form di login senza alcun redirect
         $this->waitLoginForm(); // oppure $wd->manage()->timeouts()->implicitlyWait(1);
         
@@ -118,7 +120,7 @@ class FatturatuttoTest extends Web_TestCase {
         // 1) Wrong login
         $user = 'utente@inesistente';
         $this->login($user, $user);
- 
+        
         // Verify the error msg show
         // $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
         // $this->waitForXpath($login_error_msg); // Wait until the element is visible
@@ -128,7 +130,6 @@ class FatturatuttoTest extends Web_TestCase {
         $incorrectData = $wd->findElement(WebDriverBy::className($login_error_class)); // Find the first element matching the class name argument.
         $this->assertNotNull($incorrectData);
         $this->assertContains(self::LOGIN_ERR_MSG, $incorrectData->getText());
- 
         
         // 2) Real login
         
@@ -169,7 +170,7 @@ class FatturatuttoTest extends Web_TestCase {
     public function testImpostazioni() {
         $wd = $this->getWd();
         
-        $this->do_login(); 
+        $this->do_login();
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
@@ -178,31 +179,29 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
         
-//         echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
-//         $wait = new WebDriverWait($wd, 2);
-//         $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
+        // echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
+        // $wait = new WebDriverWait($wd, 2);
+        // $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
         
         $impostazioni_button->click();
-
         
-
-        if (self::$browser == self::CHROME || self::$browser == self::FIREFOX) {
+        if (self::$browser == self::CHROME || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button            
-        }else { // eg: MARIONETTE
+            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+        } else { // eg: MARIONETTE
+                 
             // Ho commenato il codice che non funziona
-            // $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';            
-            // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-            // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+                 // $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';
+                 // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+                 // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             
             $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
             $this->waitForCss($imp_generali_sel); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
         }
-             $this->assertNotNull($imp_generali);
-             $imp_generali->click();
-            
+        $this->assertNotNull($imp_generali);
+        $imp_generali->click();
         
         echo "End of testImpostazioni()" . PHP_EOL;
     }
@@ -219,14 +218,21 @@ class FatturatuttoTest extends Web_TestCase {
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         $this->check_webpage($excpected_url);
         echo "Calling waitStrumentiImportazione()..." . PHP_EOL;
-        $this->waitStrumentiImportazione();        
+        $this->waitStrumentiImportazione();
         
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
         
-        $import_box_path = '//*[@id="import-box"]/div[1]';
-        $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
-        $this->assertNotNull($drop_area);
+        if (self::$browser == self::MARIONETTE) {
+            $import_box_css = '.drop-box';
+            // $import_box_css = '#import-box';
+            $drop_area = $wd->findElement(WebDriverBy::cssSelector($import_box_css)); // the 'import-box' area of the invoice
+            $this->assertNotNull($drop_area);
+        } else {
+            $import_box_path = '//*[@id="import-box"]/div[1]';
+            $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
+            $this->assertNotNull($drop_area);
+        }
         
         echo "Calling clearBrowserConsole()..." . PHP_EOL;
         $this->clearBrowserConsole(); // clean the browser console log
@@ -244,14 +250,16 @@ class FatturatuttoTest extends Web_TestCase {
         // execute the js script to upload the invoice
         echo "Calling dragfileToUpload()..." . PHP_EOL;
         $this->dragfileToUpload($drop_area, $tmp_file);
+        echo "...file upload done." . PHP_EOL;
         
         // click on 'avanti'
+        echo "Waiting the 'Avanti' button..." . PHP_EOL;
         $avanti_button = '//*[@id="fatture"]/div[2]/button';
         $this->waitForXpath($avanti_button); // Wait until the element is visible
         $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
         $this->assertNotNull($button);
         $button->click();
-
+        
         // wait for elenco-fatture page is ready
         $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
         $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
@@ -265,8 +273,8 @@ class FatturatuttoTest extends Web_TestCase {
      * Test the read of the console in ROUTE_MODELLI_FATTURA
      */
     public function testConsole() {
-        //  'marionette'
-        if (self::$browser != self::MARIONETTE) {  // FIXME: codice non comptibile con 'marionette' (can't read the console)
+        // 'marionette'
+        if (self::$browser != self::MARIONETTE) { // FIXME: codice non comptibile con 'marionette' (can't read the console)
             $wd = $this->getWd();
             
             $this->do_login();
@@ -294,17 +302,17 @@ class FatturatuttoTest extends Web_TestCase {
     /**
      * Call the login() function with the global params username and password
      */
-    private function do_login($right_account=true) {
+    private function do_login($right_account = true) {
         $user = self::$app_username;
         $password = self::$app_password;
-        $this->login($user, $password);                
+        $this->login($user, $password);
         
-        if($right_account){
+        if ($right_account) {
             $wd = $this->getWd();
             $url = $wd->getCurrentURL();
-            $title = $wd->getTitle();            
+            $title = $wd->getTitle();
             $impostazioni_id = 'menu-impostazioni';
-            echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;                                               
+            echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;
             $this->waitForId($impostazioni_id);
             // oppure
             // $this->waitForClassName('logo-lg');
@@ -323,8 +331,10 @@ class FatturatuttoTest extends Web_TestCase {
         $login_url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($login_url); // Navigate to ROUTE_LOGIN
                               
-        // Implicit waits: I don't know which page it is. If user is already logged-in, the browser is automatically redirected 
-        $wd->manage()->timeouts()->implicitlyWait(4);
+        // Implicit waits: I don't know which page it is. If user is already logged-in, the browser is automatically redirected
+        $wd->manage()
+            ->timeouts()
+            ->implicitlyWait(4);
         
         $current_url = $wd->getCurrentURL();
         
@@ -353,7 +363,7 @@ class FatturatuttoTest extends Web_TestCase {
             $this->waitForXpath($login_button_path); // Wait until the element is visible
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
             $accedi_button->click();
-        }else{
+        } else {
             echo "You're already logged" . PHP_EOL;
         }
     }
@@ -364,12 +374,12 @@ class FatturatuttoTest extends Web_TestCase {
      * @param string $url the url of the webpage
      * @param string $title the title of the webpage
      */
-    private function check_webpage($expected_url, $expected_title=null) {
+    private function check_webpage($expected_url, $expected_title = null) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
-        echo "Current url: " . $url . PHP_EOL;       
+        echo "Current url: " . $url . PHP_EOL;
         $this->assertEquals($expected_url, $url);
-        if($expected_title){
+        if ($expected_title) {
             $title = $wd->getTitle();
             echo "Current page title: " . $title . PHP_EOL;
             $this->assertContains($expected_title, $title);
