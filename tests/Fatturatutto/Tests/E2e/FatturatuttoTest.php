@@ -183,7 +183,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
        
-       
+        echo "waitForPresenceOfId()..." . PHP_EOL;
         // TODO: creare metodo waitForPresenceOfId() in suoperclasse
         $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
         // NOTA:  la soluzione $this->waitForId($impostazioni_id); // Wait until the element is visible
@@ -197,10 +197,11 @@ class FatturatuttoTest extends Web_TestCase {
         // $wait = new WebDriverWait($wd, 2);
         // $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
         
+        echo "clicking..." . PHP_EOL;
         $impostazioni_button->click();
         
   
-            
+        $imp_generali = null;
         if(false){
         //if (self::$browser == self::CHROME || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
@@ -229,6 +230,9 @@ class FatturatuttoTest extends Web_TestCase {
 //            $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
 //            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
             
+//              $wait = new WebDriverWait($wd, 2);
+//              $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
+             
             
         }
         $this->assertNotNull($imp_generali);
