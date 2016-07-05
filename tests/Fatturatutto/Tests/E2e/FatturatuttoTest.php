@@ -182,7 +182,10 @@ class FatturatuttoTest extends Web_TestCase {
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
-        $this->waitForId($impostazioni_id); // Wait until the element is visible
+       // $this->waitForId($impostazioni_id); // Wait until the element is visible
+        $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
+            
+            
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
         
@@ -217,6 +220,8 @@ class FatturatuttoTest extends Web_TestCase {
         $imp_generali->click();
         self::$climate->lightGreen('Fine testImpostazioni()');
     }
+    
+
 
     /**
      * Try to import an invoice in ROUTE_STRUMENTI_IMPORTAZIONE
