@@ -192,11 +192,12 @@ class FatturatuttoTest extends Web_TestCase {
         
         $impostazioni_button->click();
         
-        if (self::$browser == self::CHROME || self::$browser == self::PHANTOMJS || (self::$browser == self::FIREFOX /*&& !self::$sauce_access_key*/)) {
+        if(false){
+        //if (self::$browser == self::CHROME || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
-        } else { // eg: MARIONETTE
+        } else { // eg: MARIONETTE,SAFARI and FIREFOX ON SAUCELABS.com
                  
             // Ho commenato il codice che non funziona
                  // $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';
@@ -204,7 +205,8 @@ class FatturatuttoTest extends Web_TestCase {
                  // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             
             $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
-            $this->waitForCss($imp_generali_sel); // Wait until the element is visible
+            
+            $this->waitForCssToBeClickable($imp_generali_sel); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
         }
         $this->assertNotNull($imp_generali);
