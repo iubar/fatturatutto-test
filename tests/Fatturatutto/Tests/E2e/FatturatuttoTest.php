@@ -203,7 +203,7 @@ class FatturatuttoTest extends Web_TestCase {
   
         $imp_generali = null;
         if(false){
-        //if (self::$browser == self::CHROME || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
+        if (self::$browser == self::CHROME){ // || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
@@ -222,26 +222,31 @@ class FatturatuttoTest extends Web_TestCase {
             // $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
             
             
-             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
-             $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath($imp_generali_path)));
-             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
+             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a[1]';
+           //  $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath($imp_generali_path)));
+           // 
 
 //            $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
 //            $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
 //            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
             
-//              $wait = new WebDriverWait($wd, 2);
-//              $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
-             
+
+             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
+             $wait = new WebDriverWait($wd, 10, 250);
+             $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
+            //  $wait->until(WebDriverExpectedCondition::visibilityOf($imp_generali));
+
             
         }
         $this->assertNotNull($imp_generali);
-        $imp_generali->click();
-        
+        if (self::$browser != self::PHANTOMJS){  
+         $imp_generali->click();
+        }
 
         
+      
+            self::$climate->lightGreen('Fine testImpostazioni()');
         
-        self::$climate->lightGreen('Fine testImpostazioni()');
         
         
     }
