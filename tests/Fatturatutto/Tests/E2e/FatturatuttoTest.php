@@ -187,25 +187,28 @@ class FatturatuttoTest extends Web_TestCase {
         // TODO: creare metodo waitForPresenceOfId() in superclasse...
         // NON VA $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
        
-        $this->waitForId($impostazioni_id); // Wait until the element is visible
-           
+
+        echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
+        if ($this->isChromeOnSaucelabs()){
+            $wait = new WebDriverWait($wd, 3);
+            $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
+        }else{
+            $this->waitForId($impostazioni_id);
             
-            
+        }
+        
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
-        
-        // echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
-        // $wait = new WebDriverWait($wd, 2);
-        // $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
-        
         echo "clicking..." . PHP_EOL;
         $impostazioni_button->click();
         
   
         $imp_generali = null;
+        $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+        
         if (self::$browser != self::PHANTOMJS){
         if (self::$browser == self::CHROME){ // || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
-            $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+            
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
         } else { // eg: MARIONETTE,SAFARI and FIREFOX ON SAUCELABS.com
@@ -223,7 +226,7 @@ class FatturatuttoTest extends Web_TestCase {
             // $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
             
             
-             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a[1]';
+ 
            //  $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath($imp_generali_path)));
            // 
 
