@@ -66,6 +66,7 @@ class FatturatuttoTest extends Web_TestCase {
      * SiteHome and AppHome test
      */
     public function testSiteHome() {
+        self::$climate->lightGreen('Inizio testSiteHome()');
         $wd = $this->getWd();
         
         $wd->get($this->getSiteHome() . '/'); // Navigate to SITE_HOME
@@ -81,12 +82,14 @@ class FatturatuttoTest extends Web_TestCase {
                                                                                    
         // FIXME: probabile bug di marionette nell'identificarte l'elemento precedente con il metodo findElement() (vedi: https://github.com/seleniumhq/selenium/issues/1202)
         $start_button->click();
+        self::$climate->lightGreen('Fine testSiteHome()');
     }
 
     /**
      * Login test with wrong and real params
      */
     public function testLogin() {
+        self::$climate->lightGreen('Inizio testLogin()');
         $wd = $this->getWd();
         
         // Se ils eguente metodo non funziona:
@@ -145,12 +148,14 @@ class FatturatuttoTest extends Web_TestCase {
         if (!isset($welcome_msg)) {
             $this->compile_dialog();
         }
+        self::$climate->lightGreen('Fine testLogin()');
     }
 
     /**
      * Test the aside navigation bar
      */
     public function testAsideNavigationBar() {
+        self::$climate->lightGreen('Inizio testAsideNavigationBar()');
         $wd = $this->getWd();
         
         $this->do_login();
@@ -162,12 +167,14 @@ class FatturatuttoTest extends Web_TestCase {
         foreach (self::$navigation_bar_elem_id as $key => $value) {
             $this->check_nav_bar($value, $key);
         }
+        self::$climate->lightGreen('Fine testAsideNavigationBar()');
     }
 
     /**
      * Test 'impostazioni' section in the aside navigation bar
      */
     public function testImpostazioni() {
+        self::$climate->lightGreen('Inizio testImpostazioni()');
         $wd = $this->getWd();
         
         $this->do_login();
@@ -202,15 +209,14 @@ class FatturatuttoTest extends Web_TestCase {
         }
         $this->assertNotNull($imp_generali);
         $imp_generali->click();
-        
-        echo "End of testImpostazioni()" . PHP_EOL;
+        self::$climate->lightGreen('Fine testImpostazioni()');
     }
 
     /**
      * Try to import an invoice in ROUTE_STRUMENTI_IMPORTAZIONE
      */
     public function testImportazioneFattura() {
-        echo "Begin testImportazioneFattura()..." . PHP_EOL;
+        self::$climate->lightGreen('Inizio testImportazioneFattura()');
         $wd = $this->getWd();
         
         $this->do_login();
@@ -269,13 +275,14 @@ class FatturatuttoTest extends Web_TestCase {
             echo "Calling assertNoErrorsOnConsole()..." . PHP_EOL;
             $this->assertNoErrorsOnConsole();
         }
+        self::$climate->lightGreen('Fine testImportazioneFattura()');
     }
 
     /**
      * Test the read of the console in ROUTE_MODELLI_FATTURA
      */
     public function testConsole() {
-        // 'marionette'
+        self::$climate->lightGreen('Inizio testConsole()');
         if (self::$browser != self::MARIONETTE) { // FIXME: codice non comptibile con 'marionette' (can't read the console)
             $wd = $this->getWd();
             
@@ -295,6 +302,7 @@ class FatturatuttoTest extends Web_TestCase {
                 $this->assertNoErrorsOnConsole();
             }
         }
+        self::$climate->lightGreen('Fine testConsole()');
     }
 
     public function testFinish() {
