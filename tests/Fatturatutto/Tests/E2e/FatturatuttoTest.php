@@ -202,7 +202,7 @@ class FatturatuttoTest extends Web_TestCase {
         
   
         $imp_generali = null;
-     
+        if (self::$browser != self::PHANTOMJS){
         if (self::$browser == self::CHROME){ // || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
@@ -239,10 +239,10 @@ class FatturatuttoTest extends Web_TestCase {
             
         }
         $this->assertNotNull($imp_generali);
-        if (self::$browser != self::PHANTOMJS){  
+        
          $imp_generali->click();
+       
         }
-
         
       
             self::$climate->lightGreen('Fine testImpostazioni()');
