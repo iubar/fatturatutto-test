@@ -183,6 +183,8 @@ class FatturatuttoTest extends Web_TestCase {
         
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
        // $this->waitForId($impostazioni_id); // Wait until the element is visible
+       
+        // TODO: creare metodo waitForPresenceOfId() in suoperclasse
         $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
             
             
@@ -208,8 +210,8 @@ class FatturatuttoTest extends Web_TestCase {
                  // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             
             //$imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
-            $imp_generali_sel = '.menu-open > li:nth-child(1) > a';
-            //$imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a';
+            //$imp_generali_sel = '.menu-open > li:nth-child(1) > a';
+            $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a';
             //$imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a:nth-child(1)';
             
 
