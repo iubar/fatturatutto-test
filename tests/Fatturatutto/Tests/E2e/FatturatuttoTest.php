@@ -234,9 +234,11 @@ class FatturatuttoTest extends Web_TestCase {
             $this->assertNotNull($drop_area);
         }
         
-        echo "Calling clearBrowserConsole()..." . PHP_EOL;
-        $this->clearBrowserConsole(); // clean the browser console log
-                                      
+        if (self::$browser != self::MARIONETTE) { // FIXME: codice non comptibile con 'marionette' (can't read the console)
+            echo "Calling clearBrowserConsole()..." . PHP_EOL;
+            $this->clearBrowserConsole(); // clean the browser console log
+        }
+        
         // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
         $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
         if (!is_string($data)) {
