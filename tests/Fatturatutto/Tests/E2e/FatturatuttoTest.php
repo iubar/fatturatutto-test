@@ -185,7 +185,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         $impostazioni_button->click();
         
-        if (self::$browser == self::CHROME || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
+        if (self::$browser == self::CHROME || self::$browser == self::PHANTOMJS || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
@@ -234,41 +234,41 @@ class FatturatuttoTest extends Web_TestCase {
             $this->assertNotNull($drop_area);
         }
         
-        if (self::$browser != self::MARIONETTE) { // FIXME: codice non comptibile con 'marionette' (can't read the console)
+        if (self::$browser != self::MARIONETTE) { // FIXME: (can't read the console and sendkey don't work on Marionette)
             echo "Calling clearBrowserConsole()..." . PHP_EOL;
             $this->clearBrowserConsole(); // clean the browser console log
+                                          
+            // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
+            $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
+            if (!is_string($data)) {
+                $this->fail("Can't read the invoice: " . self::EXAMPLE_FATTURA_URL);
+            }
+            $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
+            file_put_contents($tmp_file, $data);
+            
+            self::$files_to_del[] = $tmp_file;
+            
+            // execute the js script to upload the invoice
+            echo "Calling dragfileToUpload()..." . PHP_EOL;
+            $this->dragfileToUpload($drop_area, $tmp_file);
+            echo "...file upload done." . PHP_EOL;
+            
+            // click on 'avanti'
+            echo "Waiting the 'Avanti' button..." . PHP_EOL;
+            $avanti_button = '//*[@id="fatture"]/div[2]/button';
+            $this->waitForXpath($avanti_button); // Wait until the element is visible
+            $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
+            $this->assertNotNull($button);
+            $button->click();
+            
+            // wait for elenco-fatture page is ready
+            $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
+            $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
+            $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
+            
+            echo "Calling assertNoErrorsOnConsole()..." . PHP_EOL;
+            $this->assertNoErrorsOnConsole();
         }
-        
-        // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
-        $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
-        if (!is_string($data)) {
-            $this->fail("Can't read the invoice: " . self::EXAMPLE_FATTURA_URL);
-        }
-        $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
-        file_put_contents($tmp_file, $data);
-        
-        self::$files_to_del[] = $tmp_file;
-        
-        // execute the js script to upload the invoice
-        echo "Calling dragfileToUpload()..." . PHP_EOL;
-        $this->dragfileToUpload($drop_area, $tmp_file);
-        echo "...file upload done." . PHP_EOL;
-        
-        // click on 'avanti'
-        echo "Waiting the 'Avanti' button..." . PHP_EOL;
-        $avanti_button = '//*[@id="fatture"]/div[2]/button';
-        $this->waitForXpath($avanti_button); // Wait until the element is visible
-        $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
-        $this->assertNotNull($button);
-        $button->click();
-        
-        // wait for elenco-fatture page is ready
-        $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
-        $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
-        $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
-        
-        echo "Calling assertNoErrorsOnConsole()..." . PHP_EOL;
-        $this->assertNoErrorsOnConsole();
     }
 
     /**
