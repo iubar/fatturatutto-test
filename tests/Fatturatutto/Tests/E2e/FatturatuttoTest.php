@@ -182,10 +182,12 @@ class FatturatuttoTest extends Web_TestCase {
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
-       // $this->waitForId($impostazioni_id); // Wait until the element is visible
+       
        
         // TODO: creare metodo waitForPresenceOfId() in suoperclasse
         $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
+        // NOTA:  la soluzione $this->waitForId($impostazioni_id); // Wait until the element is visible
+        // dava problemi con i test su saucelabs.com        
             
             
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
@@ -197,6 +199,8 @@ class FatturatuttoTest extends Web_TestCase {
         
         $impostazioni_button->click();
         
+  
+            
         if(false){
         //if (self::$browser == self::CHROME || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
@@ -209,18 +213,33 @@ class FatturatuttoTest extends Web_TestCase {
                  // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
                  // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
             
-            //$imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
-            //$imp_generali_sel = '.menu-open > li:nth-child(1) > a';
-            $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a';
-            //$imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a:nth-child(1)';
+             
+            // $imp_generali_sel = '.menu-open > li:nth-child(1) > a';
+            // $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a';
+            // $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a:nth-child(1)';
+            // $this->waitForCssToBeClickable($imp_generali_sel); // Wait until the element is visible
+            // $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
             
+            
+             $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+             $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath($imp_generali_path)));
+             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
 
-            $this->waitForCssToBeClickable($imp_generali_sel); // Wait until the element is visible
-            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
+//            $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
+//            $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
+//            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
+            
+            
         }
         $this->assertNotNull($imp_generali);
         $imp_generali->click();
+        
+
+        
+        
         self::$climate->lightGreen('Fine testImpostazioni()');
+        
+        
     }
     
 
