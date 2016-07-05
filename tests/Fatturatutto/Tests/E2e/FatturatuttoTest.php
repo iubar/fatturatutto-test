@@ -183,11 +183,12 @@ class FatturatuttoTest extends Web_TestCase {
         
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
        
-        echo "waitForPresenceOfId()..." . PHP_EOL;
-        // TODO: creare metodo waitForPresenceOfId() in suoperclasse
-        $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
-        // NOTA:  la soluzione $this->waitForId($impostazioni_id); // Wait until the element is visible
-        // dava problemi con i test su saucelabs.com        
+        // echo "waitForPresenceOfId(): " . $impostazioni_id . PHP_EOL;
+        // TODO: creare metodo waitForPresenceOfId() in superclasse...
+        // NON VA $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
+       
+        $this->waitForId($impostazioni_id); // Wait until the element is visible
+           
             
             
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
@@ -232,6 +233,7 @@ class FatturatuttoTest extends Web_TestCase {
             
 
              $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
+             // TODO: creare metodo...
              $wait = new WebDriverWait($wd, 10, 250);
              $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
             //  $wait->until(WebDriverExpectedCondition::visibilityOf($imp_generali));
