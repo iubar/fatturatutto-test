@@ -15,6 +15,7 @@ env:
     - BROWSER="safari"
     #- BROWSER="phantomjs"
 before_script:
+  php ./script/before_script.php
   # - composer self-update
   - composer install --prefer-source --no-interaction --dev
   # Download and run Selenium (+ https://github.com/jarib/selenium-travis)
@@ -25,7 +26,7 @@ before_script:
   #- "sh -e /etc/init.d/xvfb start"
   #- sleep 3 # give xvfb some time to start 
   #
-  # BrowserStack (da riportare su script basch, vedi https://github.com/travis-ci/travis-ci/issues/879)
+  # BrowserStack (da riportare su script bash, vedi https://github.com/travis-ci/travis-ci/issues/879)
   # - wget http://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
   # - unzip BrowserStackLocal-linux-x64.zip
   # - ./BrowserStackLocal $BROWSERSTACK_ACCESS_KEY localhost,8001,0 > /dev/null &
