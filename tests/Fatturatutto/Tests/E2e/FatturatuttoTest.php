@@ -307,7 +307,7 @@ class FatturatuttoTest extends Web_TestCase {
             if ($this->isOnSaucelabs()) {
                 $tag = 'h2';
                 self::$climate->white("I'm waiting for the tag: " . $tag);
-                $this->waitForTag($tag);
+                $this->waitForTagWithText($tag, "Situazione");
             } else {
                 $impostazioni_id = 'menu-impostazioni';
                 self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
