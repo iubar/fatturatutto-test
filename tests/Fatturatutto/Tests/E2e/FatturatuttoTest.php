@@ -70,7 +70,9 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $wd->get($this->getSiteHome() . '/'); // Navigate to SITE_HOME
-        $this->waitSiteHome();
+        $tag = "h1";
+        $substr = "fattura elettronica";
+        $this->waitForTagWithText($tag, $substr);
         
         // SITE HOME
         $this->check_webpage($this->getSiteHome() . '/', self::SITE_TITLE);
@@ -115,7 +117,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd->get($url); // Navigate to ROUTE_LOGIN
                         
         // Poichè ho preventivamente cancellato tutti i cookies sono sicuro che l'url precedente mi indiriizzerà direttamente alla form di login senza alcun redirect
-        $this->waitLoginForm(); // oppure $wd->manage()->timeouts()->implicitlyWait(1);
+        $this->waitForClassName("login-box"); // oppure $wd->manage()->timeouts()->implicitlyWait(1);
         
         $current_url = $wd->getCurrentURL();
         $this->assertEquals($url, $current_url);
@@ -197,9 +199,9 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
-        echo "clicking on " . $impostazioni_id . "..." . PHP_EOL;
+        self::$climate->white("clicking on " . $impostazioni_id);
         $impostazioni_button->click();
-        echo "...clicked" . PHP_EOL;
+        self::$climate->white("clicked");
         
         $imp_generali = null;
         
@@ -235,9 +237,9 @@ class FatturatuttoTest extends Web_TestCase {
                 $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
             }
             $this->assertNotNull($imp_generali);
-            echo "clicking..." . PHP_EOL;
+            elf::$climate->white("clicking on " . $imp_generali);
             $imp_generali->click();
-            echo "...clicked" . PHP_EOL;
+            self::$climate->white("clicked");
         }
         
         self::$climate->lightGreen('Fine testImpostazioni()');
@@ -254,9 +256,10 @@ class FatturatuttoTest extends Web_TestCase {
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         
-        echo "Calling waitStrumentiImportazione()..." . PHP_EOL;
-        $this->waitStrumentiImportazione();
-        
+        self::$climate->white("Calling waitStrumentiImportazione()...");
+        $import_box_id = 'import-box';
+        $this->waitForId($import_box_id); // Wait until the element is visible
+                                          
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
         
@@ -272,7 +275,7 @@ class FatturatuttoTest extends Web_TestCase {
         }
         
         if (self::$browser != self::MARIONETTE) { // FIXME: (can't read the console
-            echo "Calling clearBrowserConsole()..." . PHP_EOL;
+            self::$climate->white("Calling clearBrowserConsole()...");
             $this->clearBrowserConsole(); // clean the browser console log
         }
         
@@ -287,12 +290,12 @@ class FatturatuttoTest extends Web_TestCase {
         self::$files_to_del[] = $tmp_file;
         
         // execute the js script to upload the invoice
-        echo "Calling dragfileToUpload()..." . PHP_EOL;
+        self::$climate->white("Calling dragfileToUpload()...");
         $this->dragfileToUpload($drop_area, $tmp_file);
-        echo "...file upload done." . PHP_EOL;
+        self::$climate->white("...file upload done.");
         
         // click on 'avanti'
-        echo "Waiting the 'Avanti' button..." . PHP_EOL;
+        self::$climate->white("Waiting the 'Avanti' button...");
         $avanti_button = '//*[@id="fatture"]/div[2]/button';
         $this->waitForXpathToBeClickable($avanti_button); // Wait until the element is visible
         $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
@@ -304,7 +307,7 @@ class FatturatuttoTest extends Web_TestCase {
         $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
         $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
         
-        echo "Calling assertNoErrorsOnConsole()..." . PHP_EOL;
+        self::$climate->white("Calling assertNoErrorsOnConsole()...");
         $this->assertNoErrorsOnConsole();
         self::$climate->lightGreen('Fine testImportazioneFattura()');
     }
@@ -321,7 +324,9 @@ class FatturatuttoTest extends Web_TestCase {
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
-            $this->waitModelliFattura();
+            $tag = "h2";
+            $substr = "Modelli fattura";
+            $this->waitForTagWithText($tag, $substr);
             
             // checking that we are in the right page
             $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
@@ -356,18 +361,18 @@ class FatturatuttoTest extends Web_TestCase {
             
             if ($this->isOnSaucelabs()) {
                 $tag = 'h2';
-                echo "I'm waiting for the tag: " . $tag . PHP_EOL;
+                self::$climate->white("I'm waiting for the tag: " . $tag);
                 $this->waitForTag($tag);
             } else {
                 $impostazioni_id = 'menu-impostazioni';
-                echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;
+                self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
                 $this->waitForId($impostazioni_id);
             }
             
             // oppure
             // $this->waitForClassName('logo-lg');
         }
-        echo "End of do_login()" . PHP_EOL;
+        self::$climate->white("End of do_login()");
     }
 
     /**
@@ -414,7 +419,7 @@ class FatturatuttoTest extends Web_TestCase {
             $accedi_button = $wd->findElement(WebDriverBy::xpath($login_button_path)); // Button "Accedi"
             $accedi_button->click();
         } else {
-            echo "You're already logged" . PHP_EOL;
+            self::$climate->white("You're already logged");
         }
     }
 
@@ -427,11 +432,11 @@ class FatturatuttoTest extends Web_TestCase {
     private function check_webpage($expected_url, $expected_title = null) {
         $wd = $this->getWd();
         $url = $wd->getCurrentURL();
-        echo "Current url: " . $url . PHP_EOL;
+        self::$climate->white("Current url: " . $url);
         $this->assertEquals($expected_url, $url);
         if ($expected_title) {
             $title = $wd->getTitle();
-            echo "Current page title: " . $title . PHP_EOL;
+            self::$climate->white("Current page title: " . $title);
             $this->assertContains($expected_title, $title);
         }
     }
@@ -560,48 +565,5 @@ class FatturatuttoTest extends Web_TestCase {
             $this->fail("Temp dir not writable: " . $tmp_dir);
         }
         return $tmp_dir;
-    }
-
-    /**
-     * Wait for an elem in page SiteHome
-     */
-    private function waitSiteHome() {
-        // $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
-        // $this->waitForXpath($inizia_button_path); // Wait until the element is visible
-        $tag = "h1";
-        $substr = "fattura elettronica";
-        $this->waitForTagWithText($tag, $substr);
-    }
-
-    /**
-     * Wait for an elem in page ROUTE_LOGIN
-     */
-    private function waitLoginForm() {
-        // $email_button_path = '/html/body/div[1]/div[1]/div/div/div[2]/div[2]/button';
-        // $this->waitForXpath($email_button_path); // Wait until the element is visible
-        
-        // $tag = "button";
-        // $substr = "email";
-        // $this->waitForTagWithText($tag, $substr);
-        $this->waitForClassName("login-box");
-    }
-
-    /**
-     * Wait for an elem in page ROUTE_STRUMENTI_IMPORTAZIONE
-     */
-    private function waitStrumentiImportazione() {
-        $import_box_id = 'import-box';
-        $this->waitForId($import_box_id); // Wait until the element is visible
-    }
-
-    /**
-     * Wait for an elem in page ROUTE_MODELLI_FATTURA
-     */
-    private function waitModelliFattura() {
-        // $aggiungi_button_path = '/html/body/div[1]/div/section/div/div/div[2]/button'; ?
-        // $this->waitForXpath($aggiungi_button_path); // Wait until the element is visible
-        $tag = "h2";
-        $substr = "Modelli fattura";
-        $this->waitForTagWithText($tag, $substr);
     }
 }
