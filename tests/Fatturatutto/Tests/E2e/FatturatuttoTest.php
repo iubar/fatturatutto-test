@@ -266,7 +266,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login();
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
-        $this->check_webpage($excpected_url);
+
         echo "Calling waitStrumentiImportazione()..." . PHP_EOL;
         $this->waitStrumentiImportazione();
         
@@ -357,14 +357,15 @@ class FatturatuttoTest extends Web_TestCase {
      * Call the login() function with the global params username and password
      */
     private function do_login($right_account = true) {
+        echo "Begin of do_login()" . PHP_EOL;
         $user = self::$app_username;
         $password = self::$app_password;
         $this->login($user, $password);
         
         if ($right_account) {
-            $wd = $this->getWd();
-            $url = $wd->getCurrentURL();
-            $title = $wd->getTitle();
+            // $wd = $this->getWd();
+            //$url = $wd->getCurrentURL();
+            //$title = $wd->getTitle();
             $impostazioni_id = 'menu-impostazioni';
             echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;
             $this->waitForId($impostazioni_id);
@@ -388,7 +389,7 @@ class FatturatuttoTest extends Web_TestCase {
         // Implicit waits: I don't know which page it is. If user is already logged-in, the browser is automatically redirected
         $wd->manage()
             ->timeouts()
-            ->implicitlyWait(4);
+            ->implicitlyWait(6);
         
         $current_url = $wd->getCurrentURL();
         
