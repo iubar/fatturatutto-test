@@ -227,7 +227,7 @@ class FatturatuttoTest extends Web_TestCase {
                 $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
             }
             $this->assertNotNull($imp_generali);
-            self::$climate->white("clicking on " . $imp_generali);
+            self::$climate->white("clicking on generali");
             $imp_generali->click();
             self::$climate->white("clicked");
         }
