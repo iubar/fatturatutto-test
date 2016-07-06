@@ -282,27 +282,29 @@ class FatturatuttoTest extends Web_TestCase {
         
         self::$files_to_del[] = $tmp_file;
         
-        // execute the js script to upload the invoice
-        self::$climate->white("Calling dragfileToUpload()...");
-        $this->dragfileToUpload($drop_area, $tmp_file);
-        self::$climate->white("...file upload done.");
-        
-        // click on 'avanti'
-        self::$climate->white("Waiting the 'Avanti' button...");
-        $avanti_button = '//*[@id="fatture"]/div[2]/button';
-        $this->waitForXpathToBeClickable($avanti_button); // Wait until the element is visible
-        $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
-        $this->assertNotNull($button);
-        $button->click();
-        
-        // wait for elenco-fatture page is ready
-        $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
-        $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
-        $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
-        
-        self::$climate->white("Calling assertNoErrorsOnConsole()...");
-        $this->assertNoErrorsOnConsole();
-        self::$climate->lightGreen('Fine testImportazioneFattura()');
+        if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) {
+            // execute the js script to upload the invoice
+            self::$climate->white("Calling dragfileToUpload()...");
+            $this->dragfileToUpload($drop_area, $tmp_file);
+            self::$climate->white("...file upload done.");
+            
+            // click on 'avanti'
+            self::$climate->white("Waiting the 'Avanti' button...");
+            $avanti_button = '//*[@id="fatture"]/div[2]/button';
+            $this->waitForXpathToBeClickable($avanti_button); // Wait until the element is visible
+            $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
+            $this->assertNotNull($button);
+            $button->click();
+            
+            // wait for elenco-fatture page is ready
+            $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
+            $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
+            $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
+            
+            self::$climate->white("Calling assertNoErrorsOnConsole()...");
+            $this->assertNoErrorsOnConsole();
+            self::$climate->lightGreen('Fine testImportazioneFattura()');
+        }
     }
 
     /**
