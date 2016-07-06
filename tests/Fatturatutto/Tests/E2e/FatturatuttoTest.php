@@ -151,9 +151,6 @@ class FatturatuttoTest extends Web_TestCase {
         
         $this->do_login();
         
-        // checking that we are in the right page
-        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
-        
         // checking that all the section of the navigation bar are ok
         foreach (self::$navigation_bar_elem_id as $key => $value) {
             $this->check_nav_bar($value, $key);
@@ -169,20 +166,6 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login();
-        
-        // checking that we are in the right page
-        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
-        
-        // echo "waitForPresenceOfId(): " . $impostazioni_id . PHP_EOL;
-        // TODO: creare metodo waitForPresenceOfId() in superclasse...
-        // NON VA $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
-        
-        // echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
-        // if ($this->isChromeOnSaucelabs()){
-        // $wait = new WebDriverWait($wd, 3);
-        // $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
-        // }else{
-        // $this->waitForId($impostazioni_id);
         
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
@@ -219,6 +202,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login();
+        
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         
@@ -285,7 +269,7 @@ class FatturatuttoTest extends Web_TestCase {
             $wd = $this->getWd();
             
             $this->do_login();
-            // Qui sono in ROUTE_SITUAZIONE
+
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
@@ -318,7 +302,7 @@ class FatturatuttoTest extends Web_TestCase {
         $user = self::$app_username;
         $password = self::$app_password;
         $this->login($user, $password);
-        
+        // Sono su pagina situazione
         if ($right_account) {
             if ($this->isOnSaucelabs()) {
                 $tag = 'h2';
@@ -329,7 +313,11 @@ class FatturatuttoTest extends Web_TestCase {
                 self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
                 $this->waitForId($impostazioni_id);
             }
+
+            // checking that we are in the right page
+            $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         }
+        
         self::$climate->white("End of do_login()");
     }
 
