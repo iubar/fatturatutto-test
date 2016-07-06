@@ -206,11 +206,11 @@ class FatturatuttoTest extends Web_TestCase {
         
   
         $imp_generali = null;
-        $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+        
         
         if (self::$browser != self::PHANTOMJS){
-        if (self::$browser == self::CHROME){ // || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
-            
+        if (!$this->isOnSaucelabs()){ // || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
+            $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
             $this->waitForXpath($imp_generali_path); // Wait until the element is visible
             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
         } else { // eg: MARIONETTE,SAFARI and FIREFOX ON SAUCELABS.com
@@ -236,6 +236,7 @@ class FatturatuttoTest extends Web_TestCase {
 //            $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
 //            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
             
+              $imp_generali_path = '//a[contains(.," Generale")]';
              $this->waitForXpathToBeClickable($imp_generali_path);
              $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
 
@@ -366,9 +367,17 @@ class FatturatuttoTest extends Web_TestCase {
             // $wd = $this->getWd();
             //$url = $wd->getCurrentURL();
             //$title = $wd->getTitle();
-            $impostazioni_id = 'menu-impostazioni';
-            echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;
-            $this->waitForId($impostazioni_id);
+            
+            if($this->isOnSaucelabs()){
+                $title_xpath = '//h2[contains(.,"Situazione")]';
+                echo "I'm waiting for the xpath: " . $title_xpath . PHP_EOL;
+                $this->waitForXpath($title_xpath);                
+            }else{
+                $impostazioni_id = 'menu-impostazioni';
+                echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;
+                $this->waitForId($impostazioni_id);
+            }
+            
             // oppure
             // $this->waitForClassName('logo-lg');
         }
