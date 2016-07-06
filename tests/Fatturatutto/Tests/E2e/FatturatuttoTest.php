@@ -256,13 +256,7 @@ class FatturatuttoTest extends Web_TestCase {
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         
-        self::$climate->white("Calling waitStrumentiImportazione()...");
-        $import_box_id = 'import-box';
-        $this->waitForId($import_box_id); // Wait until the element is visible
-                                          
-        // checking that we are in the right page
-        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
-        
+                                                     
         if (self::$browser == self::MARIONETTE) {
             $import_box_css = '.drop-box';
             // $import_box_css = '#import-box';
@@ -273,6 +267,9 @@ class FatturatuttoTest extends Web_TestCase {
             $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
             $this->assertNotNull($drop_area);
         }
+        
+        // checking that we are in the right page
+        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
         
         if (self::$browser != self::MARIONETTE) { // FIXME: (can't read the console
             self::$climate->white("Calling clearBrowserConsole()...");
