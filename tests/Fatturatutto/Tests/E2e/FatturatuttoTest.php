@@ -200,7 +200,7 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
-        echo "clicking..." . PHP_EOL;
+        echo "clicking on " . $impostazioni_id . "..." . PHP_EOL;
         $impostazioni_button->click();
         echo "...clicked" . PHP_EOL;
         
@@ -236,11 +236,11 @@ class FatturatuttoTest extends Web_TestCase {
 //            $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
 //            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
             
-              $imp_generali_path = '//a[contains(.," Generale")]';
-             $this->waitForXpathToBeClickable($imp_generali_path);
-             $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
-
-
+            // $imp_generali_path = '//a[contains(.," Generale")]';
+            // $this->waitForXpathToBeClickable($imp_generali_path);
+            // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
+            $this->waitForPartialLinkTextToBeClickable($imp_generali_path);
+             $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
 
             
         }
@@ -369,9 +369,9 @@ class FatturatuttoTest extends Web_TestCase {
             //$title = $wd->getTitle();
             
             if($this->isOnSaucelabs()){
-                $title_xpath = '//h2[contains(.,"Situazione")]';
-                echo "I'm waiting for the xpath: " . $title_xpath . PHP_EOL;
-                $this->waitForXpath($title_xpath);                
+                $tag = 'h2';
+                echo "I'm waiting for the tag: " . $tag . PHP_EOL;
+                $this->waitForTag($tag);                
             }else{
                 $impostazioni_id = 'menu-impostazioni';
                 echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;
