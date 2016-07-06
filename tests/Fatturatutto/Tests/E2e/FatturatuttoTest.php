@@ -181,26 +181,28 @@ class FatturatuttoTest extends Web_TestCase {
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
-        $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
+        
        
         // echo "waitForPresenceOfId(): " . $impostazioni_id . PHP_EOL;
         // TODO: creare metodo waitForPresenceOfId() in superclasse...
         // NON VA $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
        
 
-        echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
-        if ($this->isChromeOnSaucelabs()){
-            $wait = new WebDriverWait($wd, 3);
-            $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
-        }else{
-            $this->waitForId($impostazioni_id);
+//         echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
+//         if ($this->isChromeOnSaucelabs()){
+//             $wait = new WebDriverWait($wd, 3);
+//             $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
+//         }else{
+//             $this->waitForId($impostazioni_id);
             
-        }
-        
+//         }
+
+        $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
         echo "clicking..." . PHP_EOL;
         $impostazioni_button->click();
+        echo "...clicked" . PHP_EOL;
         
   
         $imp_generali = null;
@@ -244,8 +246,9 @@ class FatturatuttoTest extends Web_TestCase {
             
         }
         $this->assertNotNull($imp_generali);
-        
+        echo "clicking..." . PHP_EOL;
          $imp_generali->click();
+         echo "...clicked" . PHP_EOL;
        
         }
         
