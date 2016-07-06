@@ -221,8 +221,20 @@ class FatturatuttoTest extends Web_TestCase {
                 // $imp_generali_path = '//a[contains(.," Generale")]';
                      // $this->waitForXpathToBeClickable($imp_generali_path);
                      // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
-                $this->waitForPartialLinkTextToBeClickable("Generale");
-                $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
+                
+                if(self::$browser != self::SAFARI ){
+                    $this->waitForPartialLinkTextToBeClickable("Generale");
+                     $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
+                }else{
+  
+                    
+                    $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';
+                    $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+                    $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+        
+
+                }
+                
             }
             $this->assertNotNull($imp_generali);
             self::$climate->white("clicking on generali");
