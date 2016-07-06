@@ -236,12 +236,10 @@ class FatturatuttoTest extends Web_TestCase {
 //            $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
 //            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
             
-
+             $this->waitForXpathToBeClickable($imp_generali_path);
              $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
-             // TODO: creare metodo...
-             $wait = new WebDriverWait($wd, 10, 250);
-             $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::xpath($imp_generali_path)));
-            //  $wait->until(WebDriverExpectedCondition::visibilityOf($imp_generali));
+
+
 
             
         }
@@ -309,7 +307,7 @@ class FatturatuttoTest extends Web_TestCase {
         // click on 'avanti'
         echo "Waiting the 'Avanti' button..." . PHP_EOL;
         $avanti_button = '//*[@id="fatture"]/div[2]/button';
-        $this->waitForXpath($avanti_button); // Wait until the element is visible
+        $this->waitForXpathToBeClickable($avanti_button); // Wait until the element is visible
         $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
         $this->assertNotNull($button);
         $button->click();
