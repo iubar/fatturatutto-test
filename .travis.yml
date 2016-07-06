@@ -15,7 +15,7 @@ env:
     - BROWSER="safari"
     #- BROWSER="phantomjs"
 before_script:
-  php ./script/before_script.php
+  - php ./script/before_script.php
   # - composer self-update
   - composer install --prefer-source --no-interaction --dev
   #
