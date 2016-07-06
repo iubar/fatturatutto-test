@@ -243,7 +243,7 @@ class FatturatuttoTest extends Web_TestCase {
             
             // click on 'avanti'
             self::$climate->white("Waiting the 'Avanti' button...");
-            $avanti_button = '//*[@id="fatture"]/div[2]/button';
+            $avanti_button = '//*[@id="fatture"]/div[2]/button';            
             $this->waitForXpathToBeClickable($avanti_button); // Wait until the element is visible
             $button = $wd->findElement(WebDriverBy::xpath($avanti_button)); // button 'avanti'
             $this->assertNotNull($button);
