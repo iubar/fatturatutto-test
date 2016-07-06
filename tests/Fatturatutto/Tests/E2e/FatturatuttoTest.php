@@ -94,18 +94,10 @@ class FatturatuttoTest extends Web_TestCase {
         self::$climate->lightGreen('Inizio testLogin()');
         $wd = $this->getWd();
         
-        // Se ils eguente metodo non funziona:
-        // Verificare le opzioni seguenti per singolo browser
-        // Safari : @config[:capabilities]['safari.options'] = { cleanSession: true }
-        // IE : @config[:capabilities]['ie.ensureCleanSession'] = true
-        // Firefox: @config[:capabilities][:profile] = Selenium::WebDriver::Firefox::Profile.new
-        // Edge: @config[:capabilities]['ensureCleanSession'] = true
-        
+        // $this->deleteAllCookies(); non funziona con SAFARI
         if (self::$browser != self::SAFARI) {
-            $wd->manage()->deleteAllCookies(); // TODFO: da riprovare con SAFARI
+            $wd->manage()->deleteAllCookies();
         } else {
-            // $this->deleteAllCookies(); // TODO: testare se con Chrome il metodo deleteAllCookies() funziona
-            // oppure
             $url = $this->getAppHome() . '/' . self::ROUTE_LOGOUT;
             $wd->get($url); // Navigate to ROUTE_LOGOUT
             $wd->manage()
@@ -116,8 +108,8 @@ class FatturatuttoTest extends Web_TestCase {
         $url = $this->getAppHome() . '/' . self::ROUTE_LOGIN;
         $wd->get($url); // Navigate to ROUTE_LOGIN
                         
-        // Poichè ho preventivamente cancellato tutti i cookies sono sicuro che l'url precedente mi indiriizzerà direttamente alla form di login senza alcun redirect
-        $this->waitForClassName("login-box"); // oppure $wd->manage()->timeouts()->implicitlyWait(1);
+        // Poichè ho preventivamente cancellato tutti i cookies sono sicuro che l'url precedente mi indirizzerà direttamente alla form di login senza alcun redirect
+        $this->waitForClassName("login-box");
         
         $current_url = $wd->getCurrentURL();
         $this->assertEquals($url, $current_url);
@@ -127,11 +119,8 @@ class FatturatuttoTest extends Web_TestCase {
         $this->login($user, $user);
         
         // Verify the error msg show
-        // $login_error_msg = '/html/body/div[1]/div[1]/div/div/div[3]/div[1]';
-        // $this->waitForXpath($login_error_msg); // Wait until the element is visible
-        // $incorrectData = $wd->findElement(WebDriverBy::xpath($login_error_msg)); // Text "Email o password errati"
         $login_error_class = 'text-danger';
-        $this->waitForClassName($login_error_class);
+        $this->waitForClassName($login_error_class); // Text "Email o password errati"
         $incorrectData = $wd->findElement(WebDriverBy::className($login_error_class)); // Find the first element matching the class name argument.
         $this->assertNotNull($incorrectData);
         $this->assertContains(self::LOGIN_ERR_MSG, $incorrectData->getText());
@@ -180,6 +169,7 @@ class FatturatuttoTest extends Web_TestCase {
         $wd = $this->getWd();
         
         $this->do_login();
+        
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
@@ -206,7 +196,7 @@ class FatturatuttoTest extends Web_TestCase {
         $imp_generali = null;
         
         if (self::$browser != self::PHANTOMJS) {
-            if (!$this->isOnSaucelabs()) { // || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
+            if (!$this->isOnSaucelabs()) {
                 $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
                 $this->waitForXpath($imp_generali_path); // Wait until the element is visible
                 $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
@@ -256,7 +246,6 @@ class FatturatuttoTest extends Web_TestCase {
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         
-                                                     
         if (self::$browser == self::MARIONETTE) {
             $import_box_css = '.drop-box';
             // $import_box_css = '#import-box';
@@ -271,7 +260,7 @@ class FatturatuttoTest extends Web_TestCase {
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
         
-        if (self::$browser != self::MARIONETTE) { // FIXME: (can't read the console
+        if (self::$browser != self::MARIONETTE) { // FIXME: (can't read the console)
             self::$climate->white("Calling clearBrowserConsole()...");
             $this->clearBrowserConsole(); // clean the browser console log
         }
@@ -346,16 +335,12 @@ class FatturatuttoTest extends Web_TestCase {
      * Call the login() function with the global params username and password
      */
     private function do_login($right_account = true) {
-        echo "Begin of do_login()" . PHP_EOL;
+        self::$climate->white("Begin of do_login()");
         $user = self::$app_username;
         $password = self::$app_password;
         $this->login($user, $password);
         
         if ($right_account) {
-            // $wd = $this->getWd();
-            // $url = $wd->getCurrentURL();
-            // $title = $wd->getTitle();
-            
             if ($this->isOnSaucelabs()) {
                 $tag = 'h2';
                 self::$climate->white("I'm waiting for the tag: " . $tag);
@@ -365,9 +350,6 @@ class FatturatuttoTest extends Web_TestCase {
                 self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
                 $this->waitForId($impostazioni_id);
             }
-            
-            // oppure
-            // $this->waitForClassName('logo-lg');
         }
         self::$climate->white("End of do_login()");
     }
@@ -386,7 +368,7 @@ class FatturatuttoTest extends Web_TestCase {
         // Implicit waits: I don't know which page it is. If user is already logged-in, the browser is automatically redirected
         $wd->manage()
             ->timeouts()
-            ->implicitlyWait(6);
+            ->implicitlyWait(4);
         
         $current_url = $wd->getCurrentURL();
         
