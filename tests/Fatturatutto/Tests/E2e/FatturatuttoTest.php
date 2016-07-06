@@ -193,45 +193,14 @@ class FatturatuttoTest extends Web_TestCase {
         
         $imp_generali = null;
         
-        if (self::$browser != self::PHANTOMJS) {
+        if (self::$browser != self::PHANTOMJS && self::$browser != self::SAFARI ) { // FIXME: impossibile individuare il link "Generale" usando PHANTOMJS o SAFARI
             if (!$this->isOnSaucelabs()) {
                 $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
                 $this->waitForXpath($imp_generali_path); // Wait until the element is visible
                 $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
-            } else { // eg: MARIONETTE,SAFARI and FIREFOX ON SAUCELABS.com
-                     
-                // Ho commenato il codice che non funziona
-                     // $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';
-                     // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-                     // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
-                     
-                // $imp_generali_sel = '.menu-open > li:nth-child(1) > a';
-                     // $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a';
-                     // $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a:nth-child(1)';
-                     // $this->waitForCssToBeClickable($imp_generali_sel); // Wait until the element is visible
-                     // $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
-                     
-                // $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath($imp_generali_path)));
-                     //
-                     
-                // $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
-                     // $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
-                     // $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
-                     
-                // $imp_generali_path = '//a[contains(.," Generale")]';
-                     // $this->waitForXpathToBeClickable($imp_generali_path);
-                     // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
-                
-                if(self::$browser != self::SAFARI ){
-                    $this->waitForPartialLinkTextToBeClickable("Generale");
-                     $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
-                }else{
-  
-                    return true;
-                    
-
-                }
-                
+            } else {
+              $this->waitForPartialLinkTextToBeClickable("Generale");
+              $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
             }
             $this->assertNotNull($imp_generali);
             self::$climate->white("clicking on generali");
@@ -282,7 +251,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         self::$files_to_del[] = $tmp_file;
         
-        if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) {
+        if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI
             // execute the js script to upload the invoice
             self::$climate->white("Calling dragfileToUpload()...");
             $this->dragfileToUpload($drop_area, $tmp_file);
@@ -316,6 +285,7 @@ class FatturatuttoTest extends Web_TestCase {
             $wd = $this->getWd();
             
             $this->do_login();
+            // Qui sono in ROUTE_SITUAZIONE
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
