@@ -181,22 +181,19 @@ class FatturatuttoTest extends Web_TestCase {
         // checking that we are in the right page
         $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         
-        
-       
         // echo "waitForPresenceOfId(): " . $impostazioni_id . PHP_EOL;
         // TODO: creare metodo waitForPresenceOfId() in superclasse...
         // NON VA $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::id($impostazioni_id)));
-       
-
-//         echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
-//         if ($this->isChromeOnSaucelabs()){
-//             $wait = new WebDriverWait($wd, 3);
-//             $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
-//         }else{
-//             $this->waitForId($impostazioni_id);
-            
-//         }
-
+        
+        // echo "Waiting to be clickable: " . $impostazioni_id . PHP_EOL;
+        // if ($this->isChromeOnSaucelabs()){
+        // $wait = new WebDriverWait($wd, 3);
+        // $wait->until(WebDriverExpectedCondition::elementToBeClickable(WebDriverBy::id($impostazioni_id)));
+        // }else{
+        // $this->waitForId($impostazioni_id);
+        
+        // }
+        
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
@@ -204,58 +201,47 @@ class FatturatuttoTest extends Web_TestCase {
         $impostazioni_button->click();
         echo "...clicked" . PHP_EOL;
         
-  
         $imp_generali = null;
         
-        
-        if (self::$browser != self::PHANTOMJS){
-        if (!$this->isOnSaucelabs()){ // || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
-            $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
-            $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
-        } else { // eg: MARIONETTE,SAFARI and FIREFOX ON SAUCELABS.com
-                 
-            // Ho commenato il codice che non funziona
-                 // $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';
-                 // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-                 // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
-            
-             
-            // $imp_generali_sel = '.menu-open > li:nth-child(1) > a';
-            // $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a';
-            // $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a:nth-child(1)';
-            // $this->waitForCssToBeClickable($imp_generali_sel); // Wait until the element is visible
-            // $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
-            
-            
- 
-           //  $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath($imp_generali_path)));
-           // 
-
-//            $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
-//            $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
-//            $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
-            
-            // $imp_generali_path = '//a[contains(.," Generale")]';
-            // $this->waitForXpathToBeClickable($imp_generali_path);
-            // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
-            $this->waitForPartialLinkTextToBeClickable($imp_generali_path);
-             $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
-
-            
-        }
-        $this->assertNotNull($imp_generali);
-        echo "clicking..." . PHP_EOL;
-         $imp_generali->click();
-         echo "...clicked" . PHP_EOL;
-       
+        if (self::$browser != self::PHANTOMJS) {
+            if (!$this->isOnSaucelabs()) { // || (self::$browser == self::FIREFOX && !self::$sauce_access_key)) {
+                $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+                $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+                $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+            } else { // eg: MARIONETTE,SAFARI and FIREFOX ON SAUCELABS.com
+                     
+                // Ho commenato il codice che non funziona
+                     // $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';
+                     // $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+                     // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+                     
+                // $imp_generali_sel = '.menu-open > li:nth-child(1) > a';
+                     // $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a';
+                     // $imp_generali_sel = 'treeview-menu menu-open > li:nth-child(1) > a:nth-child(1)';
+                     // $this->waitForCssToBeClickable($imp_generali_sel); // Wait until the element is visible
+                     // $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel)); // aside 'impostazioni->generale' button
+                     
+                // $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::xpath($imp_generali_path)));
+                     //
+                     
+                // $imp_generali_sel = '.menu-open > li:nth-child(1) > a:nth-child(1)';
+                     // $wd->wait(self::DEFAULT_WAIT_TIMEOUT, self::DEFAULT_WAIT_INTERVAL)->until(WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($imp_generali_sel)));
+                     // $imp_generali = $wd->findElement(WebDriverBy::cssSelector($imp_generali_sel));
+                     
+                // $imp_generali_path = '//a[contains(.," Generale")]';
+                     // $this->waitForXpathToBeClickable($imp_generali_path);
+                     // $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path));
+                $this->waitForPartialLinkTextToBeClickable("Generale");
+                $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
+            }
+            $this->assertNotNull($imp_generali);
+            echo "clicking..." . PHP_EOL;
+            $imp_generali->click();
+            echo "...clicked" . PHP_EOL;
         }
         
-      
-            self::$climate->lightGreen('Fine testImpostazioni()');
- 
+        self::$climate->lightGreen('Fine testImpostazioni()');
     }
-
 
     /**
      * Try to import an invoice in ROUTE_STRUMENTI_IMPORTAZIONE
@@ -267,7 +253,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login();
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
-
+        
         echo "Calling waitStrumentiImportazione()..." . PHP_EOL;
         $this->waitStrumentiImportazione();
         
@@ -365,14 +351,14 @@ class FatturatuttoTest extends Web_TestCase {
         
         if ($right_account) {
             // $wd = $this->getWd();
-            //$url = $wd->getCurrentURL();
-            //$title = $wd->getTitle();
+            // $url = $wd->getCurrentURL();
+            // $title = $wd->getTitle();
             
-            if($this->isOnSaucelabs()){
+            if ($this->isOnSaucelabs()) {
                 $tag = 'h2';
                 echo "I'm waiting for the tag: " . $tag . PHP_EOL;
-                $this->waitForTag($tag);                
-            }else{
+                $this->waitForTag($tag);
+            } else {
                 $impostazioni_id = 'menu-impostazioni';
                 echo "I'm waiting for the id: " . $impostazioni_id . PHP_EOL;
                 $this->waitForId($impostazioni_id);
