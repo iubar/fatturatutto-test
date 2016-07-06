@@ -227,11 +227,8 @@ class FatturatuttoTest extends Web_TestCase {
                      $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
                 }else{
   
+                    return true;
                     
-                    $imp_generali_path = '//*[@class="menu-open"]/li[1]/a[1]';
-                    $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-                    $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
-        
 
                 }
                 
