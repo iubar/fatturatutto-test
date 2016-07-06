@@ -184,8 +184,6 @@ class FatturatuttoTest extends Web_TestCase {
         // }else{
         // $this->waitForId($impostazioni_id);
         
-        // }
-        
         $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
