@@ -81,8 +81,7 @@ class FatturatuttoTest extends Web_TestCase {
         $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
         $this->waitForXpath($inizia_button_path); // Wait until the element is visible
         $start_button = $wd->findElement(WebDriverBy::xpath($inizia_button_path)); // Button "Inizia"
-                                                                                   
-        // FIXME: probabile bug di marionette nell'identificarte l'elemento precedente con il metodo findElement() (vedi: https://github.com/seleniumhq/selenium/issues/1202)
+
         $start_button->click();
         self::$climate->lightGreen('Fine testSiteHome()');
     }
