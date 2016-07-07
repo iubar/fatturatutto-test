@@ -20,7 +20,7 @@ use Iubar\Tests\Web_TestCase;
  */
 class FatturatuttoTest extends Web_TestCase {
 
-    const EXAMPLE_FATTURA_URL = 'http://app.fatturatutto.it/public/resources/xml/1.1/examples/IT01234567890_11002.xml';
+    const EXAMPLE_FATTURA_URL = '/public/resources/xml/1.1/examples/IT01234567890_11002.xml';
 
     const SITE_TITLE = "FatturaTutto.it";
 
@@ -226,9 +226,10 @@ class FatturatuttoTest extends Web_TestCase {
         }
         
         // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
-        $data = file_get_contents(self::EXAMPLE_FATTURA_URL);
+        $content_url = $this->getAppHome() . self::EXAMPLE_FATTURA_URL;
+        $data = file_get_contents($content_url);
         if (!is_string($data)) {
-            $this->fail("Can't read the invoice: " . self::EXAMPLE_FATTURA_URL);
+            $this->fail("Can't read the invoice: " . $content_url);
         }
         $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
         file_put_contents($tmp_file, $data);
