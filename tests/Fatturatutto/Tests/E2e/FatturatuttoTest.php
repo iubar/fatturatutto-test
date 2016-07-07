@@ -177,14 +177,15 @@ class FatturatuttoTest extends Web_TestCase {
         $imp_generali = null;
         
         if (self::$browser != self::PHANTOMJS && self::$browser != self::SAFARI ) { // FIXME: impossibile individuare il link "Generale" usando PHANTOMJS o SAFARI
-            if (!$this->isOnSaucelabs()) {
-                $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
-                $this->waitForXpath($imp_generali_path); // Wait until the element is visible
-                $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
-            } else {
-              $this->waitForPartialLinkTextToBeClickable("Generale");
-              $imp_generali = $wd->findElement(WebDriverBy::partialLinkText("Generale"));
-            }
+                        
+            $imp_generali_path = '//*[@id="menu-impostazioni"]/ul/li[1]/a';
+            $this->waitForXpath($imp_generali_path); // Wait until the element is visible
+            $imp_generali = $wd->findElement(WebDriverBy::xpath($imp_generali_path)); // aside 'impostazioni->generale' button
+            // oppure
+            // $find = "Generale";
+            // $this->waitForPartialLinkTextToBeClickable($find);
+            // $imp_generali = $wd->findElement(WebDriverBy::partialLinkText($find));
+            
             $this->assertNotNull($imp_generali);
             self::$climate->white("clicking on generali");
             $imp_generali->click();
@@ -238,8 +239,8 @@ class FatturatuttoTest extends Web_TestCase {
         
         if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI
             // execute the js script to upload the invoice
-            self::$climate->white("Calling dragfileToUpload()...");
-            $this->dragfileToUpload($drop_area, $tmp_file);
+            self::$climate->white("Calling dragFileToUpload()...");
+            $this->dragFileToUpload($drop_area, $tmp_file);
             self::$climate->white("...file upload done.");
             
             // click on 'avanti'
@@ -305,16 +306,15 @@ class FatturatuttoTest extends Web_TestCase {
         $this->login($user, $password);
         // Sono su pagina situazione
         if ($right_account) {
-            if ($this->isOnSaucelabs()) {
-                $tag = 'h2';
-                self::$climate->white("I'm waiting for the tag: " . $tag);
-                $this->waitForTagWithText($tag, "Situazione");
-            } else {
-                $impostazioni_id = 'menu-impostazioni';
-                self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
-                $this->waitForId($impostazioni_id);
-            }
-
+                        
+            $impostazioni_id = 'menu-impostazioni';
+            self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
+            $this->waitForId($impostazioni_id);
+            // oppure...
+            // $tag = 'h2';
+            // self::$climate->white("I'm waiting for the tag: " . $tag);
+            // $this->waitForTagWithText($tag, "Situazione");
+           
             // checking that we are in the right page
             $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
         }

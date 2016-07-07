@@ -15,13 +15,13 @@ use League\CLImate\CLImate;
  */
 class SecurityTest extends RestApi_TestCase {
 
-    const BASE_URI = "https://www.fatturatutto.it";
+    const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it";
 
-    const APP_HOME = "http://app.fatturatutto.it/";
+    const FATTURATUTTO_WEBAPP = "http://app.fatturatutto.it/";
 
-    const DATASLANG = "http://www.dataslang.com";
+    const DATASLANG_WEBSITE = "http://www.dataslang.com";
 
-    const IUBAR = "http://www.iubar.it";
+    const IUBAR_WEBSITE = "http://www.iubar.it";
     
     // http status code
     const OK = 200;
@@ -52,7 +52,7 @@ class SecurityTest extends RestApi_TestCase {
         // Base URI is used with relative requests
         // You can set any number of default request options.
         $this->client = new Client([
-            'base_uri' => self::BASE_URI,
+            'base_uri' => self::FATTURATUTTO_WEBSITE,
             'timeout' => self::TIMEOUT
         ]);
     }
@@ -64,18 +64,18 @@ class SecurityTest extends RestApi_TestCase {
         // the status code and the relative address to check
         $urls = [
             self::FORBIDDEN => array(
-                self::BASE_URI . "/app/logs/",
-                self::APP_HOME . "/logs",
-                self::APP_HOME . "/vendor"
+                self::FATTURATUTTO_WEBSITE . "/app/logs/",
+                self::FATTURATUTTO_WEBAPP . "/logs",
+                self::FATTURATUTTO_WEBAPP . "/vendor"
             ),
             self::UNAUTHORIZED => array(
-                self::DATASLANG . "/wp-login.php"
+                self::DATASLANG_WEBSITE . "/wp-login.php"
             ),
             self::OK => array(
-                self::IUBAR . '/bugtracker'
+                self::IUBAR_WEBSITE . '/bugtracker'
             ),
             self::NOT_FOUND => array(
-                self::BASE_URI . "/app/vendor"
+                self::FATTURATUTTO_WEBSITE . "/app/vendor"
             )
         ];
         
