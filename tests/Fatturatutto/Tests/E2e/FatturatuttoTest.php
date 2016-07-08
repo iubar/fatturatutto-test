@@ -22,36 +22,28 @@ class FatturatuttoTest extends Web_TestCase {
 
     const EXAMPLE_FATTURA_URL = '/public/resources/xml/1.1/examples/IT01234567890_11002.xml';
 
-    const SITE_TITLE = "FatturaTutto.it";
-
-    const APP_SITUAZIONE_TITLE = "Situazione";
-
-    const APP_IMPORTAZIONE_TITLE = "Importazione";
-
-    const APP_ELENCO_TITLE = "Elenco";
-
-    const APP_MODELLI_TITLE = "Modelli";
-
-    const LOGIN_TITLE = "Login";
-
-    const ROUTE_LOGIN = "login";
-
-    const ROUTE_LOGOUT = "logout";
-
-    const ROUTE_SITUAZIONE = "situazione";
-
-    const ROUTE_STRUMENTI_IMPORTAZIONE = "strumenti/importazione";
-
-    const ROUTE_ELENCO_FATTURE = "elenco-fatture";
-
-    const ROUTE_MODELLI_FATTURA = "modelli-fattura";
-
-    const DIALOG_WELCOME_MSG = "Benvenuto su FatturaTutto";
-
-    const LOGIN_ERR_MSG = "Email o password errati";
+    // Page titles
+    const TITLE_SITE = "FatturaTutto.it";
+    const TITLE_SITUAZIONE = "Situazione";
+    const TITLE_IMPORTAZIONE = "Importazione";
+    const TITLE_ELENCO = "Elenco";
+    const TITLE_MODELLI = "Modelli";
+    const TITLE_LOGIN = "Login";
     
-    // the title (key) and the id (value) of each elem of the aside navigation bar
-    private static $navigation_bar_elem_id = array(
+    // Routes
+    const ROUTE_LOGIN = "login";
+    const ROUTE_LOGOUT = "logout";
+    const ROUTE_SITUAZIONE = "situazione";
+    const ROUTE_STRUMENTI_IMPORTAZIONE = "strumenti/importazione";
+    const ROUTE_ELENCO_FATTURE = "elenco-fatture";
+    const ROUTE_MODELLI_FATTURA = "modelli-fattura";
+    
+    // Messages
+    const MSG_WELCOME_DIALOG = "Benvenuto su FatturaTutto";
+    const MSG_LOGIN_ERROR = "Email o password errati";
+    
+    // Menu
+    private static $nav_menu = array(
         'Situazione' => 'menu-situazione',
         'Anagrafica' => 'menu-anagrafica',
         'Clienti' => 'menu-clienti',
@@ -75,7 +67,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->waitForTagWithText($tag, $substr);
         
         // SITE HOME
-        $this->check_webpage($this->getSiteHome() . '/', self::SITE_TITLE);
+        $this->check_webpage($this->getSiteHome() . '/', self::TITLE_SITE);
         
         // select button 'Inizia'
         $inizia_button_path = '//*[@id="slider"]/div/div[1]/div/a/p';
@@ -122,12 +114,12 @@ class FatturatuttoTest extends Web_TestCase {
         $this->waitForClassName($login_error_class); // Text "Email o password errati"
         $incorrectData = $wd->findElement(WebDriverBy::className($login_error_class)); // Find the first element matching the class name argument.
         $this->assertNotNull($incorrectData);
-        $this->assertContains(self::LOGIN_ERR_MSG, $incorrectData->getText());
+        $this->assertContains(self::MSG_LOGIN_ERROR, $incorrectData->getText());
         
         // 2) Real login
         
         // checking that we are in the right page
-        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_LOGIN, self::LOGIN_TITLE);
+        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_LOGIN, self::TITLE_LOGIN);
         
         $this->do_login();
         
@@ -151,7 +143,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->do_login();
         
         // checking that all the section of the navigation bar are ok
-        foreach (self::$navigation_bar_elem_id as $key => $value) {
+        foreach (self::$nav_menu as $key => $value) {
             $this->check_nav_bar($value, $key);
         }
         self::$climate->lightGreen('Fine testAsideNavigationBar()');
@@ -166,7 +158,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         $this->do_login();
         
-        $impostazioni_id = self::$navigation_bar_elem_id['Impostazioni'];
+        $impostazioni_id = self::$nav_menu['Impostazioni'];
         $impostazioni_button = $wd->findElement(WebDriverBy::id($impostazioni_id)); // aside 'impostazioni' button
         $this->assertNotNull($impostazioni_button);
         self::$climate->white("clicking on " . $impostazioni_id);
@@ -206,19 +198,16 @@ class FatturatuttoTest extends Web_TestCase {
         $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
         $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         
-        if (self::$browser == self::MARIONETTE) {
-            $import_box_css = '.drop-box';
-            // $import_box_css = '#import-box';
-            $drop_area = $wd->findElement(WebDriverBy::cssSelector($import_box_css)); // the 'import-box' area of the invoice
-            $this->assertNotNull($drop_area);
-        } else {
             $import_box_path = '//*[@id="import-box"]/div[1]';
-            $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice
+            $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice            
+            // in alternativa
+            // $import_box_css = '.drop-box';
+            // $import_box_css = '#import-box';
+            // $drop_area = $wd->findElement(WebDriverBy::cssSelector($import_box_css)); // the 'import-box' area of the invoice
             $this->assertNotNull($drop_area);
-        }
         
         // checking that we are in the right page
-        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::APP_IMPORTAZIONE_TITLE);
+        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::TITLE_IMPORTAZIONE);
         
         if (self::$browser != self::MARIONETTE) { // FIXME: can't read the console with MARIONETTE
             self::$climate->white("Calling clearBrowserConsole()...");
@@ -236,7 +225,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         self::$files_to_del[] = $tmp_file;
         
-        if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI
+        if (self::$browser != self::MARIONETTE) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI
             // execute the js script to upload the invoice
             self::$climate->white("Calling dragFileToUpload()...");
             $this->dragFileToUpload($drop_area, $tmp_file);
@@ -251,9 +240,9 @@ class FatturatuttoTest extends Web_TestCase {
             $button->click();
             
             // wait for elenco-fatture page is ready
-            $this->waitForTagWithText("h2", self::APP_ELENCO_TITLE); // Wait until the element is visible
+            $this->waitForTagWithText("h2", self::TITLE_ELENCO); // Wait until the element is visible
             $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
-            $this->assertContains(self::APP_ELENCO_TITLE, $title->getText());
+            $this->assertContains(self::TITLE_ELENCO, $title->getText());
                         
             $console_error = $this->countErrorsOnConsole();
             self::$climate->white("Errors on console: " . $console_error . " on page " . $wd->getCurrentURL());
@@ -281,7 +270,7 @@ class FatturatuttoTest extends Web_TestCase {
             $this->waitForTagWithText($tag, $substr);
             
             // checking that we are in the right page
-            $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::APP_MODELLI_TITLE);
+            $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA, self::TITLE_MODELLI);
 
             // Counting errors on console
             $console_error = $this->countErrorsOnConsole();
@@ -291,9 +280,7 @@ class FatturatuttoTest extends Web_TestCase {
         self::$climate->lightGreen('Fine testConsole()');
     }
 
-    public function testFinish() {
-        self::$climate->info('FINE TEST FATTURATUTTO WEBDRIVER OK!!!!!!!!');
-    }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Call the login() function with the global params username and password
@@ -315,7 +302,7 @@ class FatturatuttoTest extends Web_TestCase {
             // $this->waitForTagWithText($tag, "Situazione");
            
             // checking that we are in the right page
-            $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::APP_SITUAZIONE_TITLE);
+            $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::TITLE_SITUAZIONE);
         }
         
         self::$climate->white("End of do_login()");
@@ -425,17 +412,17 @@ class FatturatuttoTest extends Web_TestCase {
         $avanti_button = $wd->findElement(WebDriverBy::xpath($avanti_button_path)); // Button "Avanti"
         $avanti_button->click();
         
-        $this->check_prova('denominazione', 'aaaaaaaaaaa');
-        $this->check_prova('piva', '22222222222');
-        $this->check_prova('cf', '1111111111111111');
-        $this->check_prova('indirizzo', '11111');
-        $this->check_prova('civico', '111');
-        $this->check_prova('cap', '11111');
-        $this->check_prova('provincia', 'Ancona');
-        $this->check_prova('comune', 'Ancona');
-        $this->check_prova('telefono', '111111');
-        $this->check_prova('fax', '11111111111111');
-        $this->check_prova('email', 'ppp@gma.it');
+        $this->fillField('denominazione', 'aaaaaaaaaaa');
+        $this->fillField('piva', '22222222222');
+        $this->fillField('cf', '1111111111111111');
+        $this->fillField('indirizzo', '11111');
+        $this->fillField('civico', '111');
+        $this->fillField('cap', '11111');
+        $this->fillField('provincia', 'Ancona');
+        $this->fillField('comune', 'Ancona');
+        $this->fillField('telefono', '111111');
+        $this->fillField('fax', '11111111111111');
+        $this->fillField('email', 'ppp@gma.it');
         
         $ordinario_button_path = '//*[@id="ngdialog1"]/div[2]/div/div[3]/form/div[6]/div[2]/select';
         $this->waitForXpath($ordinario_button_path); // Ordinario
@@ -459,7 +446,7 @@ class FatturatuttoTest extends Web_TestCase {
      * @param string $id the id of the elem
      * @param string $sendKey what do you wanna write in the elem
      */
-    private function check_prova($id, $sendKey) {
+    private function fillField($id, $sendKey) {
         $wd = $this->getWd();
         $this->waitForId($id); // Wait until the element is visible
         $elem = $wd->findElement(WebDriverBy::id($id));
