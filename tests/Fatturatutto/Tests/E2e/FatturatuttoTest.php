@@ -84,9 +84,9 @@ class FatturatuttoTest extends Web_TestCase {
     public function testLogin() {
         self::$climate->lightGreen('Inizio testLogin()');
         $wd = $this->getWd();
-        
-        // $this->deleteAllCookies(); non funziona con SAFARI
+                
         if (self::$browser != self::SAFARI) {
+            // $this->deleteAllCookies(); non funziona con SAFARI
             $wd->manage()->deleteAllCookies();
         } else {
             $url = $this->getAppHome() . '/' . self::ROUTE_LOGOUT;
@@ -225,10 +225,10 @@ class FatturatuttoTest extends Web_TestCase {
         
         self::$files_to_del[] = $tmp_file;
         
-        if (self::$browser != self::MARIONETTE) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI
+        if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI                                                                                      
             // execute the js script to upload the invoice
             self::$climate->white("Calling dragFileToUpload()...");
-            $this->dragFileToUpload($drop_area, $tmp_file);
+            $this->dragFileToUpload($drop_area, $tmp_file);                         // FIXME: SAGARI qui restituisce ElementNotVisibleException
             self::$climate->white("...file upload done.");
             
             // click on 'avanti'
