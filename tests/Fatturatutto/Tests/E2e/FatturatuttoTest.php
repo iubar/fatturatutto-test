@@ -245,8 +245,9 @@ class FatturatuttoTest extends Web_TestCase {
             $this->assertContains(self::TITLE_ELENCO, $title->getText());
                         
             $console_error = $this->countErrorsOnConsole();
-            self::$climate->white("Errors on console: " . $console_error . " on page " . $wd->getCurrentURL());
-            $this->assertLessThan(5, $console_error);
+            $max = 2; // FIXME: perchè con CHROME ci sono errori che variano casualmente ?
+            self::$climate->white("Errors on console: " . $console_error . "(max " . $max . ") on page " . $wd->getCurrentURL());
+            $this->assertLessThan($max, $console_error);
             
             self::$climate->lightGreen('Fine testImportazioneFattura()');
         }
@@ -262,6 +263,7 @@ class FatturatuttoTest extends Web_TestCase {
             
             $this->do_login();
 
+            self::$climate->white("Calling clearBrowserConsole()...");
             $this->clearBrowserConsole(); // clean the browser console log
             
             $wd->get($this->getAppHome() . '/' . self::ROUTE_MODELLI_FATTURA);
@@ -274,8 +276,8 @@ class FatturatuttoTest extends Web_TestCase {
 
             // Counting errors on console
             $console_error = $this->countErrorsOnConsole();
-            self::$climate->white("Errors on console: " . $console_error . " on page " . $wd->getCurrentURL());
-            $this->assertLessThan(5, $console_error);
+            self::$climate->white("Errors on console: " . $console_error . "(max " . $max . ") on page " . $wd->getCurrentURL());
+            $this->assertLessThan($max, $console_error);
         }
         self::$climate->lightGreen('Fine testConsole()');
     }
