@@ -228,7 +228,7 @@ class FatturatuttoTest extends Web_TestCase {
         
         self::$files_to_del[] = $tmp_file;
         
-        if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI                                                                                      
+        if (self::$browser != self::MARIONETTE && self::$browser == self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI                                                                                      
             // execute the js script to upload the invoice
             self::$climate->white("Calling dragFileToUpload()...");
             $this->dragFileToUpload($drop_area, $tmp_file);                         // FIXME: SAGARI qui restituisce ElementNotVisibleException
