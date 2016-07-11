@@ -192,13 +192,16 @@ class FatturatuttoTest extends Web_TestCase {
      * Try to import an invoice in ROUTE_STRUMENTI_IMPORTAZIONE
      */
     public function testImportazioneFattura() {
-        self::$climate->lightGreen('Inizio testImportazioneFattura()');
-        $wd = $this->getWd();
         
-        $this->do_login();
-        
-        $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
-        $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
+        if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE e SAFARI
+            
+            self::$climate->lightGreen('Inizio testImportazioneFattura()');
+            $wd = $this->getWd();
+            
+            $this->do_login();
+            
+            $excpected_url = $this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE;
+            $wd->get($excpected_url); // Navigate to ROUTE_STRUMENTI_IMPORTAZIONE
         
             // $import_box_path = '//*[@id="import-box"]/div[1]';
             // $drop_area = $wd->findElement(WebDriverBy::xpath($import_box_path)); // the 'import-box' area of the invoice            
@@ -210,28 +213,34 @@ class FatturatuttoTest extends Web_TestCase {
             $this->assertNotNull($drop_area);
         
         // checking that we are in the right page
-        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::TITLE_IMPORTAZIONE);
-        
-        if (self::$browser != self::MARIONETTE) { // FIXME: can't read the console with MARIONETTE
-            self::$climate->white("Calling clearBrowserConsole()...");
-            $this->clearBrowserConsole(); // clean the browser console log
-        }
-        
-        // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
-        $content_url = $this->getAppHome() . self::EXAMPLE_FATTURA_URL;
-        $data = file_get_contents($content_url);
-        if (!is_string($data)) {
-            $this->fail("Can't read the invoice: " . $content_url);
-        }
-        $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
-        file_put_contents($tmp_file, $data);
-        
-        self::$files_to_del[] = $tmp_file;
-        
-        if (self::$browser != self::MARIONETTE && self::$browser == self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE E SAFARI                                                                                      
+            $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_STRUMENTI_IMPORTAZIONE, self::TITLE_IMPORTAZIONE);
+            
+            if (self::$browser != self::MARIONETTE) { // NOTE: can't read the console with MARIONETTE: https://github.com/mozilla/geckodriver/issues/144
+                self::$climate->white("Calling clearBrowserConsole()...");
+                $this->clearBrowserConsole(); // clean the browser console log
+            }
+            
+            // take an invoice.xml from the webpage EXAMPLE_FATTURA_URL
+            $content_url = $this->getAppHome() . self::EXAMPLE_FATTURA_URL;
+            $data = file_get_contents($content_url);
+            if (!is_string($data)) {
+                $this->fail("Can't read the invoice: " . $content_url);
+            }
+            $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
+            file_put_contents($tmp_file, $data);
+            
+            self::$files_to_del[] = $tmp_file;
+                                                                                              
             // execute the js script to upload the invoice
             self::$climate->white("Calling dragFileToUpload()...");
-            $this->dragFileToUpload($drop_area, $tmp_file);                         // FIXME: SAGARI qui restituisce ElementNotVisibleException
+            $this->dragFileToUpload($drop_area, $tmp_file);                         // FIXME: SAFARI qui restituisce:
+                                                                                    // "ElementNotVisibleException: InvalidStateError: DOM Exception 11 (WARNING: The server did not provide any stacktrace information)"
+                                                                                    // This error is also thrown when attempting to modify the value property of a <input type="file".
+                                                                                    // This is a security check.
+                                                                                    // For obvious security purposes, you cannot modify the value field of a file input field in JavaScript
+                                                                                    // Otherwise that would allow any script to upload random files from the user computer to their server without any action on the user part. 
+                                                                                    // Thus, when trying to update the property, the browser will throw an exception
+                                                                                    // (http://stackoverflow.com/questions/3488698/invalid-state-err-dom-exception-11-webkit)
             self::$climate->white("...file upload done.");
             
             // click on 'avanti'
@@ -243,13 +252,15 @@ class FatturatuttoTest extends Web_TestCase {
             $button->click();
             
             // wait for elenco-fatture page is ready
-            $this->waitForTagWithText("h2", self::TITLE_ELENCO); // Wait until the element is visible
-            $title = $wd->findElement(WebDriverBy::tagName("h2")); // the tag h2 'Elenco fatture'
+            $this->waitForTagWithText("h2", self::TITLE_ELENCO);    // Wait until the element is visible
+            $title = $wd->findElement(WebDriverBy::tagName("h2"));  // the tag h2 'Elenco fatture'
             $this->assertContains(self::TITLE_ELENCO, $title->getText());
                         
-            $console_error = $this->countErrorsOnConsole();
-            self::$climate->white("Errors on console: " . $console_error . "(max " . self::$max_errors_on_console . ") on page " . $wd->getCurrentURL());
-            $this->assertLessThan(self::$max_errors_on_console, $console_error);
+            if (self::$browser != self::MARIONETTE){ // NOTE: can't read the console with MARIONETTE: https://github.com/mozilla/geckodriver/issues/144
+                $console_error = $this->countErrorsOnConsole();
+                self::$climate->white("Errors on console: " . $console_error . "(max " . self::$max_errors_on_console . ") on page " . $wd->getCurrentURL());
+                $this->assertLessThan(self::$max_errors_on_console, $console_error);
+            }
             
             self::$climate->lightGreen('Fine testImportazioneFattura()');
         }
@@ -260,7 +271,7 @@ class FatturatuttoTest extends Web_TestCase {
      */
     public function testConsole() {
         self::$climate->lightGreen('Inizio testConsole()');
-        if (self::$browser != self::MARIONETTE) { // FIXME: codice non comptibile con 'marionette' (can't read the console)
+        if (self::$browser != self::MARIONETTE) { // NOTE: can't read the console with MARIONETTE: https://github.com/mozilla/geckodriver/issues/144
             $wd = $this->getWd();
             
             $this->do_login();
