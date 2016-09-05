@@ -62,9 +62,7 @@ composer.lock
 # You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
 # composer.lock
 
-# LOGS folder
+# IUBAR
 logs/
-
-tests/build/debug.log
-
-tests/build/config.ini
+debug.log
+config.ini

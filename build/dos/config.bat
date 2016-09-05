@@ -2,7 +2,7 @@
 
 REM USEAGE: chrome, firefox, marionette, phantomjs
 SET BROWSER=chrome
-SET SCREENSHOTS_PATH=%~dp0..\..\..\logs\screenshots
+SET SCREENSHOTS_PATH=%~dp0..\..\logs\screenshots
 SET SELENIUM_SERVER=localhost:4444
 SET SELENIUM_PATH=C:\Users\Daniele\PortableApps\MyApps\selenium
 SET APP_HOST=fatturatutto.it

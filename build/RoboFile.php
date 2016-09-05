@@ -4,7 +4,7 @@
  *
  * @see http://robo.li/
  */
-require_once ('../../vendor/autoload.php');
+require_once ('../vendor/autoload.php');
 
 class RoboFile extends Iubar\Build\RoboFile {
     

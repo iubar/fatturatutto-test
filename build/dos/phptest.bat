@@ -27,7 +27,7 @@ IF %BROWSER%==phantomjs (
 	)
 echo:
 echo Starting phpunit ...
-call phpunit -c  "%~dp0..\..\..\phpunit.xml"
+call phpunit -c  "%~dp0..\..\phpunit.xml"
 echo:
 echo Stopping Selenium ...
 start "" "http://%SELENIUM_SERVER%/selenium-server/driver/?cmd=shutDownSeleniumServer"
