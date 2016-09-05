@@ -1,0 +1,37 @@
+language: php
+php:
+- 5.5
+env:
+  global:
+    - SELENIUM_SERVER="ondemand.saucelabs.com"
+    - SCREENSHOTS_PATH=""
+    - APP_HOST="fatturatutto.it"
+  matrix:
+    # Test should be runned in sequence and not in parallel because there are some security checks (about sessions management) on the login feature of the webapp
+    # see: https://blog.travis-ci.com/2014-07-18-per-repository-concurrency-setting/
+    - BROWSER="chrome"
+    - BROWSER="firefox"
+    - BROWSER="safari"
+    #- BROWSER="phantomjs"
+before_script:
+  - php ./script/before_script.php
+  # - composer self-update
+  - composer install --prefer-source --no-interaction --dev  
+script: phpunit
+addons:
+  sauce_connect: true
+notifications:
+  email:
+    recipients:
+      - ${EMAIL_BORGO}
+    on_success: change # default: change
+    on_failure: always # default: always
+  webhooks: 
+    urls:
+      - http://95.224.129.129:81/notification?secret=${IUBAR_WH_TOKEN}
+      - https://webhooks.gitter.im/e/${GITTER_IM_TOKEN}
+    on_success: change  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: always
+    
+
