@@ -30,7 +30,7 @@ class SecurityTest extends RestApi_TestCase {
     /**
      * Create a Client
      */
-    public function setUpBeforeClass() {
+    public static function setUpBeforeClass() {
         self::$climate = new CLImate();
         // Base URI is used with relative requests
         // You can set any number of default request options.
