@@ -1,4 +1,5 @@
 <?php
+
 namespace Fatturatutto\E2e;
 
 use Facebook\WebDriver\WebDriverBy;

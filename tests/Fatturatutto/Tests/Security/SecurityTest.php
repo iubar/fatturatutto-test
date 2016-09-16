@@ -1,4 +1,5 @@
 <?php
+
 namespace Fatturatutto\Security;
 
 use GuzzleHttp\Client;
