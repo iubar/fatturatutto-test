@@ -34,7 +34,7 @@ class SecurityTest extends RestApi_TestCase {
         self::$climate = new CLImate();
         // Base URI is used with relative requests
         // You can set any number of default request options.
-        self::$client = factoryClient(self::FATTURATUTTO_WEBSITE);
+        self::$client = self::factoryClient(self::FATTURATUTTO_WEBSITE);
     }
 
     /**
