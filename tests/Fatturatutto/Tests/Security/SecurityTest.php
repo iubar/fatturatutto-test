@@ -16,7 +16,8 @@ use League\CLImate\CLImate;
  */
 class SecurityTest extends RestApi_TestCase {
 
-    const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it";
+    //const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it";
+    const FATTURATUTTO_WEBSITE = "http://www.fatturatutto.it";
 
     const FATTURATUTTO_WEBAPP = "http://app.fatturatutto.it";
 
@@ -83,14 +84,20 @@ class SecurityTest extends RestApi_TestCase {
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
                         $bOk = true;
-                    } catch (ClientException $e) { // for 400-level errors
+                    } catch (ConnectException $e) { // Is thrown in the event of a networking error. (This exception extends from GuzzleHttp\Exception\RequestException.)
+                        $this->handleException($e);
+                    } catch (ClientException $e) { // Is thrown for 400 level errors if the http_errors request option is set to true.
                         $response = $e->getResponse();
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
                         $bOk = true;
-                    } catch (ServerException $e) { // for 500-level errors
-                        $this->fail('500-level errors');
+                    } catch (RequestException $e) { // In the event of a networking error (connection timeout, DNS errors, etc.), a GuzzleHttp\Exception\RequestException is thrown.
+                        $this->handleException($e);
+                    } catch (ServerException $e) { // Is thrown for 500 level errors if the http_errors request option is set to true.
+                        $this->handleException($e);
                     }
+                    
+                    
                 }
             }
         }
