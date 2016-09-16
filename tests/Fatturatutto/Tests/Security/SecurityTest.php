@@ -30,11 +30,11 @@ class SecurityTest extends RestApi_TestCase {
     /**
      * Create a Client
      */
-    public function setUp() {
+    public function setUpBeforeClass() {
         self::$climate = new CLImate();
         // Base URI is used with relative requests
         // You can set any number of default request options.
-        $this->client = factoryClient(self::FATTURATUTTO_WEBSITE);
+        self::$client = factoryClient(self::FATTURATUTTO_WEBSITE);
     }
 
     /**
@@ -73,7 +73,7 @@ class SecurityTest extends RestApi_TestCase {
                     // GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
                     
                     try {
-                        $response = $this->client->send($request, [
+                        $response = self::$client->send($request, [
                             'timeout' => self::TIMEOUT,
                             // if status code is MOVED this makes redirects automatically
                             'allow_redirects' => true
