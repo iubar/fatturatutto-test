@@ -9,6 +9,8 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use League\CLImate\CLImate;
 
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
 /**
  * Test Security Address
  *
@@ -16,9 +18,10 @@ use League\CLImate\CLImate;
  */
 class SecurityTest extends RestApi_TestCase {
 
-    //const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it";   // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received. 
-                                                                    // (see http://curl.haxx.se/libcurl/c/libcurl-errors.html)
-    const FATTURATUTTO_WEBSITE = "http://www.fatturatutto.it";
+    const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it";   // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received. 
+                                                                    // @see: http://curl.haxx.se/libcurl/c/libcurl-errors.html
+                                                                    // @see: http://unitstep.net/blog/2009/05/05/using-curl-in-php-to-access-https-ssltls-protected-sites/
+    //const FATTURATUTTO_WEBSITE = "http://www.fatturatutto.it";
 
     const FATTURATUTTO_WEBAPP = "http://app.fatturatutto.it";
 
@@ -33,6 +36,7 @@ class SecurityTest extends RestApi_TestCase {
      * Create a Client
      */
     public static function setUpBeforeClass() {
+        
         self::$climate = new CLImate();
         // Base URI is used with relative requests
         // You can set any number of default request options.
