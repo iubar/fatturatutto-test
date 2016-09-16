@@ -46,9 +46,9 @@ class FatturatuttoTest extends Web_TestCase {
     private static $nav_menu = array(
         'Situazione' => 'menu-situazione',
         'Anagrafica' => 'menu-anagrafica',
-        'Clienti' => 'menu-clienti',
         'Articoli - servizi' => 'menu-articoli-servizi',
         'Fatture' => 'menu-fatture',
+        'Fatture proforma' => 'menu-fatture-proforma',
         'Modelli' => 'menu-modelli',
         'Strumenti' => 'menu-strumenti',
         'Impostazioni' => 'menu-impostazioni'
@@ -227,8 +227,8 @@ class FatturatuttoTest extends Web_TestCase {
                 $this->fail("Can't read the invoice: " . $content_url);
             }
             $tmp_file = $this->getTmpDir() . DIRECTORY_SEPARATOR . 'esempio_fattura.xml';
-            file_put_contents($tmp_file, $data);
-            
+            file_put_contents($tmp_file, $data);            
+            self::checkFile($tmp_file);           
             self::$files_to_del[] = $tmp_file;
                                                                                               
             // execute the js script to upload the invoice

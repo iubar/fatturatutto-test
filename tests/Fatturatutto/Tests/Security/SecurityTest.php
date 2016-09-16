@@ -3,7 +3,7 @@ namespace Fatturatutto\Security;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use Iubar\RestApi_TestCase;
+use Iubar\Tests\RestApi_TestCase;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use League\CLImate\CLImate;
@@ -17,29 +17,11 @@ class SecurityTest extends RestApi_TestCase {
 
     const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it";
 
-    const FATTURATUTTO_WEBAPP = "http://app.fatturatutto.it/";
+    const FATTURATUTTO_WEBAPP = "http://app.fatturatutto.it";
 
     const DATASLANG_WEBSITE = "http://www.dataslang.com";
 
     const IUBAR_WEBSITE = "http://www.iubar.it";
-    
-    // http status code
-    const OK = 200;
-
-    const MOVED = 301;
-
-    const UNAUTHORIZED = 401;
-
-    const FORBIDDEN = 403;
-
-    const NOT_FOUND = 404;
-
-    const GET = 'get';
-    
-    // seconds
-    const TIMEOUT = 4;
-
-    protected $client = null;
     
     // easily output colored text and special formatting
     protected static $climate;
@@ -51,10 +33,7 @@ class SecurityTest extends RestApi_TestCase {
         self::$climate = new CLImate();
         // Base URI is used with relative requests
         // You can set any number of default request options.
-        $this->client = new Client([
-            'base_uri' => self::FATTURATUTTO_WEBSITE,
-            'timeout' => self::TIMEOUT
-        ]);
+        $this->client = factoryClient(self::FATTURATUTTO_WEBSITE);
     }
 
     /**
@@ -63,18 +42,18 @@ class SecurityTest extends RestApi_TestCase {
     public function testForbidden() {
         // the status code and the relative address to check
         $urls = [
-            self::FORBIDDEN => array(
+            self::HTTP_FORBIDDEN => array(
                 self::FATTURATUTTO_WEBSITE . "/app/logs/",
                 self::FATTURATUTTO_WEBAPP . "/logs",
                 self::FATTURATUTTO_WEBAPP . "/vendor"
             ),
-            self::UNAUTHORIZED => array(
+            self::HTTP_UNAUTHORIZED => array(
                 self::DATASLANG_WEBSITE . "/wp-login.php"
             ),
-            self::OK => array(
+            self::HTTP_OK => array(
                 self::IUBAR_WEBSITE . '/bugtracker'
             ),
-            self::NOT_FOUND => array(
+            self::HTTP_NOT_FOUND => array(
                 self::FATTURATUTTO_WEBSITE . "/app/vendor"
             )
         ];
