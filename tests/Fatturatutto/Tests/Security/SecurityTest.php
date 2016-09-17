@@ -25,9 +25,6 @@ class SecurityTest extends RestApi_TestCase {
 
     const IUBAR_WEBSITE = "http://www.iubar.it";
     
-    // easily output colored text and special formatting
-    protected static $climate;
-
     /**
      * Create a Client
      */
