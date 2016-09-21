@@ -86,14 +86,18 @@ class SecurityTest extends RestApi_TestCase {
 //                             ],
 //                         ]);
                         
-                        $response = self::$client->request('GET', $value_uri, ['verify' => false,
-//                             'curl' => [
-//                                 CURLOPT_SSLVERSION => 3,
-//                              //   CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
-//                                 CURLOPT_SSL_VERIFYPEER => false
-//                             ]
-                            ]
-                            );
+                        
+                        if (getenv('TRAVIS')) {
+                            $path = getenv('TRAVIS_BUILD_DIR');
+                            $cert_file = $path . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+                            if(!is_file($cert_file)){
+                                $this->fail('File not found: ' . $cert_file);
+                            }
+                        }else{
+                            $cert_file = "";
+                        }
+                        
+                        $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file]);
                         
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
