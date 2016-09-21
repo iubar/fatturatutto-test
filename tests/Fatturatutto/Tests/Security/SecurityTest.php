@@ -86,11 +86,14 @@ class SecurityTest extends RestApi_TestCase {
 //                             ],
 //                         ]);
                         
-                        $response = $client->request('GET', $value_uri, ['verify' => false, 'curl' => [
-                                CURLOPT_SSLVERSION => 3,
-                             //   CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
-                                CURLOPT_SSL_VERIFYPEER => false
-                            ],]);
+                        $response = self::$client->request('GET', $value_uri, ['verify' => false,
+//                             'curl' => [
+//                                 CURLOPT_SSLVERSION => 3,
+//                              //   CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
+//                                 CURLOPT_SSL_VERIFYPEER => false
+//                             ]
+                            ]
+                            );
                         
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
