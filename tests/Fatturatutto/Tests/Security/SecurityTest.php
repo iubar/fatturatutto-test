@@ -76,13 +76,17 @@ class SecurityTest extends RestApi_TestCase {
                     $cert_file = false;
                     if (getenv('TRAVIS')) {
                     
-                        // https://docs.travis-ci.com/user/environment-variables/
-                        self::$climate->comment('Travis os: ' . getenv('TRAVIS_OS_NAME'));
-                        self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION'));
-                        self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR'));
+                        self::$climate->comment('Travis os: ' . getenv('TRAVIS_OS_NAME')); // https://docs.travis-ci.com/user/ci-environment/
+                        self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION')); // https://docs.travis-ci.com/user/environment-variables/ 
+                        self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR')); // https://docs.travis-ci.com/user/environment-variables/
                         $cert_file = getenv('TRAVIS_BUILD_DIR') . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
                         if(!is_file($cert_file)){
                             $this->fail('Cert file not found: ' . $cert_file . ' (please see the .travis.yml script)');
+                            
+                            $cert_file = '/home/travis/build' . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+                            if(is_file($cert_file)){
+                               $this->fail("TROVATO !!!!!!"); 
+                            }
                         }else{
                             $cert_file = realpath($cert_file);
                             self::$climate->comment('Cert file: ' . $cert_file);
@@ -102,20 +106,22 @@ class SecurityTest extends RestApi_TestCase {
                     
                     try {
                         $response = null;
+                        
                         if(true){
-                        $response = self::$client->send($request, [
-                           'timeout' => self::TIMEOUT,
-                           // 'allow_redirects' => true,  // if status code is MOVED this makes redirects automatically
-                            'verify' => $cert_file, // Why am I getting an SSL verification error ?
-                                                    // @see: http://docs.guzzlephp.org/en/latest/faq.html#why-am-i-getting-an-ssl-verification-error
-                                                    // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
-                            'curl' => $curl_options,
-                            'stream_context' => [
-                                'ssl' => [
-                                    'allow_self_signed' => true
-                                ],
-                            ]
-                         ]);
+                            
+                            $response = self::$client->send($request, [
+                               'timeout' => self::TIMEOUT,
+                               // 'allow_redirects' => true,  // if status code is MOVED this makes redirects automatically
+                                'verify' => $cert_file, // Why am I getting an SSL verification error ?
+                                                        // @see: http://docs.guzzlephp.org/en/latest/faq.html#why-am-i-getting-an-ssl-verification-error
+                                                        // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
+                                'curl' => $curl_options,
+                                'stream_context' => [
+                                    'ssl' => [
+                                        'allow_self_signed' => true
+                                    ],
+                                ]
+                             ]);
                         
                         }else{
                                                         
