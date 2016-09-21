@@ -1,6 +1,6 @@
 #sudo: required
 #https://docs.travis-ci.com/user/ci-environment/
-dist: trusty
+dist: trusty # 14.04 LTS
 language: php
 php:
 - 5.5.9
@@ -20,7 +20,7 @@ env:
     #- BROWSER="phantomjs"
 before_script:
   - php ./script/before_script.php
-  - vget http://www.fatturatutto.it/2_fatturatutto.it.crt
+  - wget http://www.fatturatutto.it/2_fatturatutto.it.crt
   # - composer self-update
   - composer install --prefer-source --no-interaction --dev
   #
