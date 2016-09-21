@@ -88,13 +88,15 @@ class SecurityTest extends RestApi_TestCase {
                         
                         
                         if (getenv('TRAVIS')) {
-                            $path = getenv('TRAVIS_BUILD_DIR');
-                            $cert_file = $path . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+                            // https://docs.travis-ci.com/user/environment-variables/
+                            self::$climate->comment('Travis oS: ' . getenv('TRAVIS_OS_NAME'));
+                            self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION'));
+                            self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR'));
+                            $cert_file = __DIR__ . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";                            
                             if(!is_file($cert_file)){
-                                $cert_file = __DIR__ . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
-                                if(!is_file($cert_file)){
-                                    $this->fail('File not found: ' . $cert_file);
-                                }
+                               $this->fail('Cert file not found: ' . $cert_file . ' (please see the .travis.yml script)');
+                            }else{
+                                $cert_file = realpath($cert_file);
                             }
                         }else{
                             $cert_file = false;
