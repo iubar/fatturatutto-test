@@ -64,7 +64,7 @@ class SecurityTest extends RestApi_TestCase {
             foreach ($url as $value_uri) {
                 $bOk = false;
                 while ($status_code == null || $bOk == false) {
-                    $request = new Request(self::GET, $value_uri);
+                    //$request = new Request(self::GET, $value_uri);
                     
                     // Guzzle 6.x
                     // Per the docs, the exception types you may need to catch are:
@@ -73,18 +73,25 @@ class SecurityTest extends RestApi_TestCase {
                     // GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
                     
                     try {
-                        $response = self::$client->send($request, [
-                            'timeout' => self::TIMEOUT,
-                            // if status code is MOVED this makes redirects automatically
-                            'allow_redirects' => true,
-                            'verify' => false,  // Ignora la verifica dei certificati SSL (obbligatorio per accesso a risorse https)
-                                                // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
-                            'curl' => [
-                                // CURLOPT_SSLVERSION => 3
-                                CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
-                                // CURLOPT_SSL_VERIFYPEER => false
-                            ],
-                        ]);
+//                         $response = self::$client->send($request, [
+//                             'timeout' => self::TIMEOUT,
+//                             // if status code is MOVED this makes redirects automatically
+//                             'allow_redirects' => true,
+//                             'verify' => false,  // Ignora la verifica dei certificati SSL (obbligatorio per accesso a risorse https)
+//                                                 // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
+//                             'curl' => [
+//                                 // CURLOPT_SSLVERSION => 3
+//                                 CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
+//                                 // CURLOPT_SSL_VERIFYPEER => false
+//                             ],
+//                         ]);
+                        
+                        $response = $client->request('GET', $value_uri, ['verify' => false, 'curl' => [
+                                CURLOPT_SSLVERSION => 3,
+                             //   CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
+                                CURLOPT_SSL_VERIFYPEER => false
+                            ],]);
+                        
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
                         $status_code = $response->getStatusCode();
