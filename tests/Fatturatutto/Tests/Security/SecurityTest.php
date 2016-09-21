@@ -59,9 +59,44 @@ class SecurityTest extends RestApi_TestCase {
             )
         ];
         
+        
+        $curl_options = array();
+        $cert_file = false;
+        if (getenv('TRAVIS')) {
+        
+            self::$climate->comment('Travis os: ' . getenv('TRAVIS_OS_NAME')); // https://docs.travis-ci.com/user/ci-environment/
+            self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION')); // https://docs.travis-ci.com/user/environment-variables/
+            self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR')); // https://docs.travis-ci.com/user/environment-variables/
+            $cert_file = getenv('TRAVIS_BUILD_DIR') . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+            if(!is_file($cert_file)){
+                $this->fail('Cert file not found: ' . $cert_file . ' (please see the .travis.yml script)');
+        
+                $cert_file = '/home/travis/build' . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+                if(is_file($cert_file)){
+                    $this->fail("TROVATO !!!!!!");
+                }
+            }else{
+                $cert_file = realpath($cert_file);
+                self::$climate->comment('Cert file: ' . $cert_file);
+            }
+        
+            // How can I add custom cURL options ? - http://docs.guzzlephp.org/en/latest/faq.html#how-can-i-add-custom-curl-options
+            $curl_options = array(
+                //'CURLOPT_SSLVERSION' => 3
+                // 'CURLOPT_SSLVERSION' => CURL_SSLVERSION_DEFAULT,
+                'CURLOPT_SSL_VERIFYHOST' => false,
+                'CURLOPT_SSL_VERIFYPEER' => false,
+                // 'CURLOPT_HTTPAUTH' => CURLAUTH_BASIC,
+                // 'CURLOPT_USERPWD' =>
+                // $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
+            );
+        }
+        
+        
         foreach ($urls as $error_code => $url) {
             $status_code = null;
             foreach ($url as $value_uri) {
+                self::$climate->comment('Url: ' . $url);
                 $bOk = false;
                 while ($status_code == null || $bOk == false) {
 
@@ -70,38 +105,6 @@ class SecurityTest extends RestApi_TestCase {
                     // GuzzleHttp\Exception\ClientException for 400-level errors
                     // GuzzleHttp\Exception\ServerException for 500-level errors
                     // GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
-                    
-                    $curl_options = array();
-                    $cert_file = false;
-                    if (getenv('TRAVIS')) {
-                    
-                        self::$climate->comment('Travis os: ' . getenv('TRAVIS_OS_NAME')); // https://docs.travis-ci.com/user/ci-environment/
-                        self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION')); // https://docs.travis-ci.com/user/environment-variables/ 
-                        self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR')); // https://docs.travis-ci.com/user/environment-variables/
-                        $cert_file = getenv('TRAVIS_BUILD_DIR') . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
-                        if(!is_file($cert_file)){
-                            $this->fail('Cert file not found: ' . $cert_file . ' (please see the .travis.yml script)');
-                            
-                            $cert_file = '/home/travis/build' . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
-                            if(is_file($cert_file)){
-                               $this->fail("TROVATO !!!!!!"); 
-                            }
-                        }else{
-                            $cert_file = realpath($cert_file);
-                            self::$climate->comment('Cert file: ' . $cert_file);
-                        }
-                                                
-                        // How can I add custom cURL options ? - http://docs.guzzlephp.org/en/latest/faq.html#how-can-i-add-custom-curl-options
-                        $curl_options = array(
-                            //'CURLOPT_SSLVERSION' => 3
-                            // 'CURLOPT_SSLVERSION' => CURL_SSLVERSION_DEFAULT,
-                            'CURLOPT_SSL_VERIFYHOST' => false,
-                            'CURLOPT_SSL_VERIFYPEER' => false,
-                            // 'CURLOPT_HTTPAUTH' => CURLAUTH_BASIC,
-                            // 'CURLOPT_USERPWD' =>
-                            // $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
-                        );
-                    }
                     
                     try {
                         $response = null;
