@@ -80,9 +80,9 @@ class SecurityTest extends RestApi_TestCase {
                             'verify' => false,  // Ignora la verifica dei certificati SSL (obbligatorio per accesso a risorse https)
                                                 // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
                             'curl' => [
-                                //CURLOPT_SSLVERSION => 3
+                                CURLOPT_SSLVERSION => 3
                                 //CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
-                                CURLOPT_SSL_VERIFYPEER => false
+                                // CURLOPT_SSL_VERIFYPEER => false
                             ],
                         ]);
                         
