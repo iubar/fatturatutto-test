@@ -28,9 +28,8 @@ class SecurityTest extends RestApi_TestCase {
     /**
      * Create a Client
      */
-    public static function setUpBeforeClass() {
-        
-        self::$climate = new CLImate();
+    public static function setUpBeforeClass() {        
+        self::init();
         // Base URI is used with relative requests
         // You can set any number of default request options.        
         putenv("HTTP_HOST=" . self::FATTURATUTTO_WEBSITE);
@@ -76,7 +75,9 @@ class SecurityTest extends RestApi_TestCase {
                         $response = self::$client->send($request, [
                             'timeout' => self::TIMEOUT,
                             // if status code is MOVED this makes redirects automatically
-                            'allow_redirects' => true
+                            'allow_redirects' => true,
+                            'verify' => false,  // Ignora la verifica dei certificati SSL (obbligatorio per accesso a risorse https)
+                                                // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
                         ]);
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
@@ -100,9 +101,5 @@ class SecurityTest extends RestApi_TestCase {
                 }
             }
         }
-    }
-
-    public function testFinish() {
-        self::$climate->info('FINE TEST SECURITY OK!!!!!!!!');
     }
 }
