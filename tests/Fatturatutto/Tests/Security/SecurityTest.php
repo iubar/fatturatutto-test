@@ -17,9 +17,9 @@ use League\CLImate\CLImate;
 
 class SecurityTest extends RestApi_TestCase {
 
-    const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it";   // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received. 
-                                                                    // @see: http://curl.haxx.se/libcurl/c/libcurl-errors.html
-                                                                    // @see: http://unitstep.net/blog/2009/05/05/using-curl-in-php-to-access-https-ssltls-protected-sites/
+    const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it"; // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received. 
+                                                                // @see: http://curl.haxx.se/libcurl/c/libcurl-errors.html
+                                                                // @see: http://unitstep.net/blog/2009/05/05/using-curl-in-php-to-access-https-ssltls-protected-sites/
     const FATTURATUTTO_WEBAPP = "http://app.fatturatutto.it";
 
     const DATASLANG_WEBSITE = "http://www.dataslang.com";
@@ -64,8 +64,7 @@ class SecurityTest extends RestApi_TestCase {
             foreach ($url as $value_uri) {
                 $bOk = false;
                 while ($status_code == null || $bOk == false) {
-                    //$request = new Request(self::GET, $value_uri);
-                    
+
                     // Guzzle 6.x
                     // Per the docs, the exception types you may need to catch are:
                     // GuzzleHttp\Exception\ClientException for 400-level errors
@@ -108,7 +107,7 @@ class SecurityTest extends RestApi_TestCase {
                         $response = null;
                         
                         if(true){
-                            
+                            $request = new Request(self::GET, $value_uri);
                             $response = self::$client->send($request, [
                                'timeout' => self::TIMEOUT,
                                // 'allow_redirects' => true,  // if status code is MOVED this makes redirects automatically
@@ -144,8 +143,7 @@ class SecurityTest extends RestApi_TestCase {
                     } catch (ServerException $e) { // Is thrown for 500 level errors if the http_errors request option is set to true.
                         $this->handleException($e);
                     }
-                    
-                    
+                                       
                 }
             }
         }
