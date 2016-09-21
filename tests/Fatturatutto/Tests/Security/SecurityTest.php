@@ -91,13 +91,16 @@ class SecurityTest extends RestApi_TestCase {
                             $path = getenv('TRAVIS_BUILD_DIR');
                             $cert_file = $path . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
                             if(!is_file($cert_file)){
-                                $this->fail('File not found: ' . $cert_file);
+                                $cert_file = __DIR__ . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+                                if(!is_file($cert_file)){
+                                    $this->fail('File not found: ' . $cert_file);
+                                }
                             }
                         }else{
-                            $cert_file = "";
+                            $cert_file = false;
                         }
-                        
                         $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file]);
+                        
                         
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
