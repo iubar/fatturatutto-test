@@ -15,8 +15,6 @@ use League\CLImate\CLImate;
  * @author Matteo
  */
 
-curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
-
 class SecurityTest extends RestApi_TestCase {
 
     const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it";   // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received. 
