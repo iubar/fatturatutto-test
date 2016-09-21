@@ -73,21 +73,41 @@ class SecurityTest extends RestApi_TestCase {
                     // GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
                     
                     try {
-//                         $response = self::$client->send($request, [
-//                             'timeout' => self::TIMEOUT,
+                        $response = null;
+                        if(true){
+                        $response = self::$client->send($request, [
+                            'timeout' => self::TIMEOUT,
 //                             // if status code is MOVED this makes redirects automatically
 //                             'allow_redirects' => true,
-//                             'verify' => false,  // Ignora la verifica dei certificati SSL (obbligatorio per accesso a risorse https)
-//                                                 // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
+                             'verify' => false,  // Ignora la verifica dei certificati SSL (obbligatorio per accesso a risorse https)
+                                                 // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
 //                             'curl' => [
 //                                 // CURLOPT_SSLVERSION => 3
 //                                 CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
 //                                 // CURLOPT_SSL_VERIFYPEER => false
 //                             ],
-//                         ]);
+                        'stream_context' => [
+                            'ssl' => [
+                                'allow_self_signed' => true
+                            ],
+                        ]
+                         ]);
                         
+                        }else{
+                            
                         
+                        $curl_options = array();
                         if (getenv('TRAVIS')) {
+                            
+                            // this does...
+                            $curl_options = array(
+                                    'CURLOPT_SSL_VERIFYHOST' => false,
+                                    'CURLOPT_SSL_VERIFYPEER' => false,
+//                                     'CURLOPT_HTTPAUTH' => CURLAUTH_BASIC,
+//                                     'CURLOPT_USERPWD' =>
+//                                     $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
+                            );
+                            
                             // https://docs.travis-ci.com/user/environment-variables/
                             self::$climate->comment('Travis oS: ' . getenv('TRAVIS_OS_NAME'));
                             self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION'));
@@ -101,9 +121,8 @@ class SecurityTest extends RestApi_TestCase {
                         }else{
                             $cert_file = false;
                         }
-                        $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file]);
-                        
-                        
+                        $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file, 'curl' => $curl_options]);                                           
+                        }
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
                         $status_code = $response->getStatusCode();
