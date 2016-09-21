@@ -90,13 +90,12 @@ class SecurityTest extends RestApi_TestCase {
                 // 'CURLOPT_USERPWD' =>
                 // $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
             );
-        }
+        }        
         
-        
-        foreach ($urls as $error_code => $url) {
+        foreach ($urls as $error_code => $urls) {
             $status_code = null;
-            foreach ($url as $value_uri) {
-                self::$climate->comment('Url: ' . $url);
+            foreach ($urls as $value_uri) {
+                self::$climate->comment('Url: ' . $value_uri);
                 $bOk = false;
                 while ($status_code == null || $bOk == false) {
 
