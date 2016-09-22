@@ -63,7 +63,7 @@ composer.lock
 # composer.lock
 
 # IUBAR
-logs/
-debug.log
-config.ini
+/build
 config.bat
+config.ini
+logs/*
