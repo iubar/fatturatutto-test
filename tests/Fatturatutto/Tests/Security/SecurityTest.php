@@ -116,7 +116,7 @@ class SecurityTest extends RestApi_TestCase {
                                 'verify' => $cert_file, // Why am I getting an SSL verification error ?
                                                         // @see: http://docs.guzzlephp.org/en/latest/faq.html#why-am-i-getting-an-ssl-verification-error
                                                         // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
-                                'curl' => $curl_options,
+                               // 'curl' => $curl_options,
                                 'stream_context' => [
                                     'ssl' => [
                                         'allow_self_signed' => true
@@ -126,7 +126,7 @@ class SecurityTest extends RestApi_TestCase {
                         
                         }else{
                                                         
-                            $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file]);                                           
+                            $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file, 'curl' => $curl_options]);                                           
                         }
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
