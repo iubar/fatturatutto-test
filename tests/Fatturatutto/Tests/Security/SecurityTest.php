@@ -137,9 +137,8 @@ class SecurityTest extends RestApi_TestCase {
                              ]);
                         
                         }else{
-                                                        
-                            // $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file, 'curl' => $curl_options]);
-                            $response = self::$client->request('GET', $value_uri, ['verify' => true]);
+                            $cert_file = false;
+                            $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file, 'curl' => $curl_options]);
                         }
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
