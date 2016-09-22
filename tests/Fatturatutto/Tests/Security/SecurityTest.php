@@ -93,11 +93,13 @@ class SecurityTest extends RestApi_TestCase {
 //             CURL_SSLVERSION_TLSv1_2: Force TLSv1.2 (Added in 7.34.0)
             
             
-            $curl_options = array(
+            $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
                 //CURLOPT_SSLVERSION => 3
                 //CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
-                CURLOPT_SSL_VERIFYHOST => false,
-                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 1, // oppure false
+                CURLOPT_SSL_VERIFYPEER => true, // oppure false
+                CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
+                CURLOPT_VERBOSE => true
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 //CURLOPT_USERPWD =>
                 // $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
@@ -137,7 +139,6 @@ class SecurityTest extends RestApi_TestCase {
                              ]);
                         
                         }else{
-                            $cert_file = false;
                             $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file, 'curl' => $curl_options]);
                         }
                         

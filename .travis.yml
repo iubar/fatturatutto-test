@@ -3,7 +3,7 @@
 dist: trusty # 14.04 LTS
 language: php
 php:
-# - 5.5.9
+# - 5.5.9 # https://docs.travis-ci.com/user/languages/php
 - 5.6
 env:
   global:
@@ -22,6 +22,7 @@ env:
 before_script:
   - php ./script/before_script.php
   - wget http://www.fatturatutto.it/2_fatturatutto.it.crt
+  - wget http://www.fatturatutto.it/1_root_bundle.crt
   # - composer self-update
   - composer install --prefer-source --no-interaction --dev
   #
