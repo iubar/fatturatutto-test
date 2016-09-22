@@ -108,7 +108,7 @@ class SecurityTest extends RestApi_TestCase {
                     try {
                         $response = null;
                         
-                        if(false){
+                        if(true){
                             $request = new Request(self::GET, $value_uri);
                             $response = self::$client->send($request, [
                                'timeout' => self::TIMEOUT,
