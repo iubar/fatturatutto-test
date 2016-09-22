@@ -82,12 +82,12 @@ class SecurityTest extends RestApi_TestCase {
         
             // How can I add custom cURL options ? - http://docs.guzzlephp.org/en/latest/faq.html#how-can-i-add-custom-curl-options
             $curl_options = array(
-                //'CURLOPT_SSLVERSION' => 3
-                // 'CURLOPT_SSLVERSION' => CURL_SSLVERSION_DEFAULT,
-                'CURLOPT_SSL_VERIFYHOST' => false,
-                'CURLOPT_SSL_VERIFYPEER' => false,
-                // 'CURLOPT_HTTPAUTH' => CURLAUTH_BASIC,
-                // 'CURLOPT_USERPWD' =>
+                //CURLOPT_SSLVERSION => 3
+                //CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_SSL_VERIFYPEER => false,
+                //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+                //CURLOPT_USERPWD =>
                 // $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
             );
         }        
@@ -116,7 +116,7 @@ class SecurityTest extends RestApi_TestCase {
                                 'verify' => $cert_file, // Why am I getting an SSL verification error ?
                                                         // @see: http://docs.guzzlephp.org/en/latest/faq.html#why-am-i-getting-an-ssl-verification-error
                                                         // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
-                               // 'curl' => $curl_options,
+                                'curl' => $curl_options,
                                 'stream_context' => [
                                     'ssl' => [
                                         'allow_self_signed' => true
