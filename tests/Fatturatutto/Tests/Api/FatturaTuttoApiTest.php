@@ -1,5 +1,7 @@
 <?php
 
+namespace Fatturatutto\Api;
+
 /**
  * 
  * @author Daniele
@@ -10,7 +12,7 @@
 class FatturaTuttoApiTest extends SafeRestApi_TestCase {
 
 
-    private $url = 'http://www.fatturatutto.it/app/api/test/fattura-esempio/1'; // eg: limit=10
+    private $url = 'https://app.fatturatutto.it/api/test/fattura-esempio/1'; // eg: limit=10
 
     
 }

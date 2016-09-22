@@ -81,6 +81,18 @@ class SecurityTest extends RestApi_TestCase {
             }
         
             // How can I add custom cURL options ? - http://docs.guzzlephp.org/en/latest/faq.html#how-can-i-add-custom-curl-options
+            
+//             The cURL docs further describe CURLOPT_SSLVERSION:
+//         
+//             CURL_SSLVERSION_DEFAULT: The default action. This will attempt to figure out the remote SSL protocol version, i.e. either SSLv3 or TLSv1 (but not SSLv2, which became disabled by default with 7.18.1).
+//             CURL_SSLVERSION_TLSv1: Force TLSv1.x
+//             CURL_SSLVERSION_SSLv2: Force SSLv2
+//             CURL_SSLVERSION_SSLv3: Force SSLv3
+//             CURL_SSLVERSION_TLSv1_0: Force TLSv1.0 (Added in 7.34.0)
+//             CURL_SSLVERSION_TLSv1_1: Force TLSv1.1 (Added in 7.34.0)
+//             CURL_SSLVERSION_TLSv1_2: Force TLSv1.2 (Added in 7.34.0)
+            
+            
             $curl_options = array(
                 //CURLOPT_SSLVERSION => 3
                 //CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
@@ -126,7 +138,8 @@ class SecurityTest extends RestApi_TestCase {
                         
                         }else{
                                                         
-                            $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file, 'curl' => $curl_options]);                                           
+                            // $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file, 'curl' => $curl_options]);
+                            $response = self::$client->request('GET', $value_uri, ['verify' => true]);
                         }
                         
                         // the execution continues only if there isn't any errors 4xx or 5xx
