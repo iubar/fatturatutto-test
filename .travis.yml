@@ -23,6 +23,7 @@ before_script:
   - php ./script/before_script.php
   - wget http://www.fatturatutto.it/2_fatturatutto.it.crt
   - wget http://www.fatturatutto.it/1_root_bundle.crt
+  - curl -s http://www.fatturatutto.it/1_root_bundle.crt | sudo tee -a /etc/ssl/certs/ca-certificates.crt
   # - composer self-update
   - composer install --prefer-source --no-interaction --dev
   #
