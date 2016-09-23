@@ -33,7 +33,7 @@
  			<file>./tests/Fatturatutto/Tests/Security/SecurityTest.php</file>
 		</testsuite>
 		<testsuite name="Fatturatutto App">
-<!-- 			<file>./tests/Fatturatutto/Tests/E2e/FatturatuttoTest.php</file> -->
+			<file>./tests/Fatturatutto/Tests/E2e/FatturatuttoTest.php</file>
 		</testsuite>		
 		<!-- <testsuite name="All Tests"> -->
 		<!-- <directory suffix=".php">./tests/</directory> -->
