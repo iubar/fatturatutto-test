@@ -72,10 +72,10 @@ class SecurityTest extends RestApi_TestCase {
 //             CURL_SSLVERSION_TLSv1_1: Force TLSv1.1 (Added in 7.34.0)
 //             CURL_SSLVERSION_TLSv1_2: Force TLSv1.2 (Added in 7.34.0)
 
-        // Verificare con comando segbuente:
+        // E' possibile effettuare il debug di curl e dei certificati installati sul server con i comandi segbuenti:
         // openssl s_client -showcerts -connect www.fatturatutto.it:443
         // openssl s_client -showcerts -cert C:\Users\Daniele\workspace_php\fatturatutto-test\tests\Fatturatutto\Tests\Security\2_fatturatutto.it.crt -connect www.fatturatutto.it:443
-        // openssl s_client -connect www.fatturatutto.it:443 -showcerts -CAfile mozilla-root-certs.crt C:\Users\Daniele\workspace_php\fatturatutto-test\tests\Fatturatutto\Tests\Security\1_root_bundle.crt
+        // openssl s_client -connect www.fatturatutto.it:443 -showcerts -CAfile mozilla-root-certs.crt C:\Users\Daniele\PortableApps\MyApps\EasyPHP-DevServer-14.1VC11\data\cacert.pem
         // curl -vvI https://app.fatturatutto.it (solo da LINUX)
             
         $curl_options = null;
@@ -88,8 +88,7 @@ class SecurityTest extends RestApi_TestCase {
                 CURLOPT_SSL_VERIFYHOST => 2,
                 CURLOPT_SSL_VERIFYPEER => 1,
                 // CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
-               CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/cacert.pem',
-                // CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/1_root_bundle.crt',
+                CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/cacert.pem',
                 CURLOPT_VERBOSE => 0
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 //CURLOPT_USERPWD => $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),

@@ -1,10 +1,10 @@
-sudo: required
+# NO: sudo: required
 #https://docs.travis-ci.com/user/ci-environment/
 dist: trusty # 14.04 LTS
 language: php
 php:
-# - 5.5.9 # https://docs.travis-ci.com/user/languages/php
-- 5.6
+  - 5.5.9 # https://docs.travis-ci.com/user/languages/php
+# - 5.6
 env:
   global:
     - SELENIUM_SERVER="ondemand.saucelabs.com"
@@ -21,10 +21,9 @@ env:
     #- BROWSER="phantomjs"
 before_script:
   - php ./script/before_script.php
-  - sudo apt-get -y remove libcurl4-gnutls-dev
-  - sudo apt-get -y install libcurl4-openssl-dev   
+  # NO: - sudo apt-get -y remove libcurl4-gnutls-dev
+  # NO: - sudo apt-get -y install libcurl4-openssl-dev   
   - wget http://www.fatturatutto.it/2_fatturatutto.it.crt
-  - wget http://www.fatturatutto.it/1_root_bundle.crt
   - wget http://www.fatturatutto.it/cacert.pem
   # - curl -s http://www.fatturatutto.it/1_root_bundle.crt | sudo tee -a /etc/ssl/certs/ca-certificates.crt
   # - composer self-update
