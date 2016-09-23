@@ -21,8 +21,8 @@ env:
     #- BROWSER="phantomjs"
 before_script:
   - php ./script/before_script.php
- - sudo apt-get remove libcurl4-gnutls-dev
- - sudo apt-get install libcurl4-openssl-dev   
+  - sudo apt-get remove libcurl4-gnutls-dev
+  - sudo apt-get install libcurl4-openssl-dev   
   - wget http://www.fatturatutto.it/2_fatturatutto.it.crt
   - wget http://www.fatturatutto.it/1_root_bundle.crt
   - wget http://www.fatturatutto.it/cacert.pem
