@@ -89,8 +89,8 @@ class SecurityTest extends RestApi_TestCase {
                 CURLOPT_SSL_VERIFYHOST => 2, // oppure false
                 CURLOPT_SSL_VERIFYPEER => 1, // oppure false
                 // CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
-               // CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/cacert.pem',
-                 CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/1_root_bundle.crt',
+               CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/cacert.pem',
+                // CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/1_root_bundle.crt',
                 CURLOPT_VERBOSE => 0
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 //CURLOPT_USERPWD => $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
