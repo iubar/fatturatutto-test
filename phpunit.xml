@@ -27,7 +27,7 @@
 
 	<testsuites>
 		<testsuite name="Fatturatutto Api">
-<!-- 		<file>./tests/Fatturatutto/Tests/Api/FatturaTuttoApiTest.php</file> -->
+		<file>./tests/Fatturatutto/Tests/Api/FatturaTuttoApiTest.php</file>
 		</testsuite>
 		<testsuite name="Fatturatutto Security">
  			<file>./tests/Fatturatutto/Tests/Security/SecurityTest.php</file>

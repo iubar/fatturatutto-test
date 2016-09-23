@@ -6,7 +6,9 @@
  */
 require_once ('../vendor/autoload.php');
 
-class RoboFile extends Iubar\Build\RoboFile {
+use Iubar\Build\Selenium_RoboTask;
+
+class RoboFile extends Selenium_RoboTask {
     
   function __construct() {
        parent::__construct(__DIR__);

@@ -4,10 +4,10 @@ namespace Fatturatutto\Security;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use Iubar\Tests\RestApi_TestCase;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use League\CLImate\CLImate;
+use Iubar\Tests\RestApi_TestCase;
 
 /**
  * Test Security Address
@@ -58,8 +58,7 @@ class SecurityTest extends RestApi_TestCase {
                 self::FATTURATUTTO_WEBSITE . "/app/vendor"
             )
         ];
-        
-        
+          
             // How can I add custom cURL options ? - http://docs.guzzlephp.org/en/latest/faq.html#how-can-i-add-custom-curl-options
             
 //             The cURL docs further describe CURLOPT_SSLVERSION:

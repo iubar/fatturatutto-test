@@ -3,8 +3,6 @@
 namespace Fatturatutto\E2e;
 
 use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverWait;
-use Facebook\WebDriver\WebDriverExpectedCondition;
 use Iubar\Tests\Web_TestCase;
 
 /**
