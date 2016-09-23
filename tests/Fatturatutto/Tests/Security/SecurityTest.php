@@ -84,8 +84,8 @@ class SecurityTest extends RestApi_TestCase {
         if (getenv('TRAVIS')) {
             // PER TRAVIS
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
-                //CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3
-                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1,
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3,
+                //CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1,
                 CURLOPT_SSL_VERIFYHOST => 2, // oppure false
                 CURLOPT_SSL_VERIFYPEER => 1, // oppure false
                 // CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
