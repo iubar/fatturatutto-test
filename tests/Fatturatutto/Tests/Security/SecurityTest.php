@@ -84,10 +84,9 @@ class SecurityTest extends RestApi_TestCase {
         if (getenv('TRAVIS')) {
             // PER TRAVIS
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
-                CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3,
-                //CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1,
-                CURLOPT_SSL_VERIFYHOST => 2, // oppure false
-                CURLOPT_SSL_VERIFYPEER => 1, // oppure false
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3,  // NON funziona con CURL_SSLVERSION_TLSv1 in ambiente UBUNTU
+                CURLOPT_SSL_VERIFYHOST => 2,
+                CURLOPT_SSL_VERIFYPEER => 1,
                 // CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
                CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/cacert.pem',
                 // CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/1_root_bundle.crt',
@@ -104,10 +103,9 @@ class SecurityTest extends RestApi_TestCase {
         }else{
             // PER WINDOWS
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
-                //CURLOPT_SSLVERSION => 3
-                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1,
-                CURLOPT_SSL_VERIFYHOST => 2, // oppure false
-                CURLOPT_SSL_VERIFYPEER => 1, // oppure false
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3, // funziona anche con CURL_SSLVERSION_TLSv1
+                CURLOPT_SSL_VERIFYHOST => 2,
+                CURLOPT_SSL_VERIFYPEER => 1,
                 // CURLOPT_CAPATH => 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-DevServer-14.1VC11/data', // Apparently does not work in Windows due to some limitation in openssl !!!
                 CURLOPT_CAINFO => 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-DevServer-14.1VC11/data/cacert.pem',
                 CURLOPT_VERBOSE => 1
@@ -139,7 +137,7 @@ class SecurityTest extends RestApi_TestCase {
                     try {
                         $response = null;
                         
-                        if(false){
+                        if(true){
                             $request = new Request(self::GET, $value_uri);
                             $response = self::$client->send($request, [
                                'timeout' => self::TIMEOUT,
