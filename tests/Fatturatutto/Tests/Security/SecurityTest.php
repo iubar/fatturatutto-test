@@ -60,26 +60,6 @@ class SecurityTest extends RestApi_TestCase {
         ];
         
         
-        $curl_options = array();
-        $cert_file = false;
-        if (getenv('TRAVIS')) {
-        
-            self::$climate->comment('Travis os: ' . getenv('TRAVIS_OS_NAME')); // https://docs.travis-ci.com/user/ci-environment/
-            self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION')); // https://docs.travis-ci.com/user/environment-variables/
-            self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR')); // https://docs.travis-ci.com/user/environment-variables/
-            $cert_file = getenv('TRAVIS_BUILD_DIR') . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
-            if(!is_file($cert_file)){
-                $this->fail('Cert file not found: ' . $cert_file . ' (please see the .travis.yml script)');
-        
-                $cert_file = '/home/travis/build' . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
-                if(is_file($cert_file)){
-                    $this->fail("TROVATO !!!!!!");
-                }
-            }else{
-                $cert_file = realpath($cert_file);
-                self::$climate->comment('Cert file: ' . $cert_file);
-            }
-        
             // How can I add custom cURL options ? - http://docs.guzzlephp.org/en/latest/faq.html#how-can-i-add-custom-curl-options
             
 //             The cURL docs further describe CURLOPT_SSLVERSION:
@@ -91,20 +71,57 @@ class SecurityTest extends RestApi_TestCase {
 //             CURL_SSLVERSION_TLSv1_0: Force TLSv1.0 (Added in 7.34.0)
 //             CURL_SSLVERSION_TLSv1_1: Force TLSv1.1 (Added in 7.34.0)
 //             CURL_SSLVERSION_TLSv1_2: Force TLSv1.2 (Added in 7.34.0)
+
+        // Verificare con comando segbuente:
+        // openssl s_client -showcerts -connect www.fatturatutto.it:443
+        // openssl s_client -showcerts -cert C:\Users\Daniele\workspace_php\fatturatutto-test\tests\Fatturatutto\Tests\Security\2_fatturatutto.it.crt -connect www.fatturatutto.it:443
+        // openssl s_client -connect www.fatturatutto.it:443 -showcerts -CAfile mozilla-root-certs.crt C:\Users\Daniele\workspace_php\fatturatutto-test\tests\Fatturatutto\Tests\Security\1_root_bundle.crt
+        // curl -vvI https://app.fatturatutto.it (solo da LINUX)
             
+        $curl_options = null;
+        
+        $cert_file = false;
+        if (getenv('TRAVIS')) {
+            // PER TRAVIS
+            $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
+                //CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1,
+                CURLOPT_SSL_VERIFYHOST => 2, // oppure false
+                CURLOPT_SSL_VERIFYPEER => 1, // oppure false
+                // CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
+                CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/cacert.pem',
+                // CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/1_root_bundle.crt',
+                CURLOPT_VERBOSE => 0
+                //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+                //CURLOPT_USERPWD => $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
+            );
             
+            self::$climate->comment('Travis os: ' . getenv('TRAVIS_OS_NAME')); // https://docs.travis-ci.com/user/ci-environment/
+            self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION')); // https://docs.travis-ci.com/user/environment-variables/
+            self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR')); // https://docs.travis-ci.com/user/environment-variables/
+            $cert_file = getenv('TRAVIS_BUILD_DIR') . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+        
+        }else{
+            // PER WINDOWS
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
                 //CURLOPT_SSLVERSION => 3
-                CURLOPT_SSLVERSION => CURL_SSLVERSION_DEFAULT,
-                CURLOPT_SSL_VERIFYHOST => 0, // oppure false
-                CURLOPT_SSL_VERIFYPEER => 0, // oppure false
-                CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1,
+                CURLOPT_SSL_VERIFYHOST => 2, // oppure false
+                CURLOPT_SSL_VERIFYPEER => 1, // oppure false
+                // CURLOPT_CAPATH => 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-DevServer-14.1VC11/data', // Apparently does not work in Windows due to some limitation in openssl !!!
+                CURLOPT_CAINFO => 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-DevServer-14.1VC11/data/cacert.pem',
                 CURLOPT_VERBOSE => 1
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-                //CURLOPT_USERPWD =>
-                // $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
+                //CURLOPT_USERPWD => $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
             );
-        }        
+            
+            $cert_file = __DIR__ . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+        }
+        $cert_file = realpath($cert_file);
+        if(!is_file($cert_file)){
+            $this->fail('Cert file not found: ' . $cert_file);
+        }
+        self::$climate->comment('Cert file: ' . $cert_file);
         
         foreach ($urls as $error_code => $urls) {
             $status_code = null;
@@ -130,12 +147,7 @@ class SecurityTest extends RestApi_TestCase {
                                 'verify' => $cert_file, // Why am I getting an SSL verification error ?
                                                         // @see: http://docs.guzzlephp.org/en/latest/faq.html#why-am-i-getting-an-ssl-verification-error
                                                         // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
-                                'curl' => $curl_options,
-                                'stream_context' => [
-                                    'ssl' => [
-                                        'allow_self_signed' => true
-                                    ],
-                                ]
+                                'curl' => $curl_options
                              ]);
                         
                         }else{
