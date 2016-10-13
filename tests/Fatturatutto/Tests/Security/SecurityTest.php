@@ -26,6 +26,10 @@ class SecurityTest extends RestApi_TestCase {
 
     const IUBAR_WEBSITE = "http://www.iubar.it";
     
+    const TEST_WEBSITE = "http://104.155.64.146:81";
+    
+    const RETEPROF_WEBSITE = "http://www.reteprofessionisti.it";
+    
     /**
      * Create a Client
      */
@@ -44,9 +48,11 @@ class SecurityTest extends RestApi_TestCase {
         // the status code and the relative address to check
         $urls = [
             self::HTTP_FORBIDDEN => array(
-                self::FATTURATUTTO_WEBSITE . "/app/logs/",
+                self::FATTURATUTTO_WEBSITE . "/app/logs",
                 self::FATTURATUTTO_WEBAPP . "/logs",
-                self::FATTURATUTTO_WEBAPP . "/vendor"
+                self::FATTURATUTTO_WEBAPP . "/vendor",
+                self::TEST_WEBSITE . "/site/wp-includes/js",
+                self::RETEPROF_WEBSITE . "/site/wp-includes/js"
             ),
             self::HTTP_UNAUTHORIZED => array(
                 self::DATASLANG_WEBSITE . "/wp-login.php"

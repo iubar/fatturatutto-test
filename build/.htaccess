@@ -1,0 +1,11 @@
+# Store your hashed passwords outside of the server root
+# If you can't, remember to instruct apache to forbid the access to that file, in your .htaccess file
+
+# <Files passwords.config.ini>
+#   Order Deny,Allow
+#   Deny from all
+# </Files>
+
+# Oppure blocco l'accesso all'intera cartella
+
+Deny from all
