@@ -48,7 +48,7 @@ class SecurityTest extends RestApi_TestCase {
         // the status code and the relative address to check
         $urls = [
             self::HTTP_FORBIDDEN => array(
-                self::FATTURATUTTO_WEBSITE . "/app/logs",
+                self::FATTURATUTTO_WEBSITE . "/logs",
                 self::FATTURATUTTO_WEBAPP . "/logs",
                 self::FATTURATUTTO_WEBAPP . "/vendor",
                 self::TEST_WEBSITE . "/site/wp-includes/js",
@@ -61,7 +61,7 @@ class SecurityTest extends RestApi_TestCase {
                 self::IUBAR_WEBSITE . '/bugtracker'
             ),
             self::HTTP_NOT_FOUND => array(
-                self::FATTURATUTTO_WEBSITE . "/app/vendor"
+                self::FATTURATUTTO_WEBSITE . "/vendor"
             )
         ];
           
@@ -130,7 +130,7 @@ class SecurityTest extends RestApi_TestCase {
             foreach ($urls as $value_uri) {
                 self::$climate->comment('Url: ' . $value_uri);
                 $bOk = false;
-                while ($status_code == null || $bOk == false) {
+                while ($status_code == null || $bOk == false) { // FIXME: verificare se il while è inutile. In alternativa potrebbe essere sufficiente usare successivamente "'allow_redirects' => true"
 
                     // Guzzle 6.x
                     // Per the docs, the exception types you may need to catch are:
