@@ -52,7 +52,8 @@ class SecurityTest extends RestApi_TestCase {
                 self::FATTURATUTTO_WEBAPP . "/logs",
                 self::FATTURATUTTO_WEBAPP . "/vendor",
              //   self::TEST_WEBSITE . "/site/wp-includes/js",
-                self::RETEPROF_WEBSITE . "/site/wp-includes/js"
+                self::RETEPROF_WEBSITE . "/site/wp-includes/js",
+                self::FATTURATUTTO_WEBSITE . "/vendor"
             ),
             self::HTTP_UNAUTHORIZED => array(
                 self::DATASLANG_WEBSITE . "/wp-login.php"
@@ -61,7 +62,7 @@ class SecurityTest extends RestApi_TestCase {
                 self::IUBAR_WEBSITE . '/bugtracker'
             ),
             self::HTTP_NOT_FOUND => array(
-                self::FATTURATUTTO_WEBSITE . "/vendor"
+                
             )
         ];
           
