@@ -26,7 +26,7 @@ class SecurityTest extends RestApi_TestCase {
 
     const IUBAR_WEBSITE = "http://www.iubar.it";
     
-    const TEST_WEBSITE = "http://104.155.64.146:81";
+   // const TEST_WEBSITE = "http://104.155.64.146:81";
     
     const RETEPROF_WEBSITE = "http://www.reteprofessionisti.it";
     
@@ -51,7 +51,7 @@ class SecurityTest extends RestApi_TestCase {
                 self::FATTURATUTTO_WEBSITE . "/logs",
                 self::FATTURATUTTO_WEBAPP . "/logs",
                 self::FATTURATUTTO_WEBAPP . "/vendor",
-                self::TEST_WEBSITE . "/site/wp-includes/js",
+             //   self::TEST_WEBSITE . "/site/wp-includes/js",
                 self::RETEPROF_WEBSITE . "/site/wp-includes/js"
             ),
             self::HTTP_UNAUTHORIZED => array(
