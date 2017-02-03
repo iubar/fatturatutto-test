@@ -1,6 +1,6 @@
 # NO: sudo: required
 #https://docs.travis-ci.com/user/ci-environment/
-dist: trusty # 14.04 LTS
+# dist: trusty # 14.04 LTS
 language: php
 php:
   - 5.5.9 # https://docs.travis-ci.com/user/languages/php
