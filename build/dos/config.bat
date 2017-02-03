@@ -3,7 +3,8 @@
 REM USEAGE: chrome, firefox, marionette, phantomjs
 SET BROWSER=chrome
 SET SCREENSHOTS_PATH=%~dp0..\..\logs\screenshots
-SET SELENIUM_SERVER=localhost:4444
+SET SELENIUM_SERVER=localhost
+SET SELENIUM_PORT=4444
 SET SELENIUM_PATH=\\apollo\doc\dev\selenium
 SET APP_HOST=fatturatutto.it
 SET /P APP_USERNAME="Please enter the username: "

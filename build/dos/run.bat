@@ -6,6 +6,7 @@ call %~dp0config.bat
 echo:
 echo BROWSER: %BROWSER%
 echo SELENIUM SERVER: %SELENIUM_SERVER%
+echo SELENIUM PORT: %SELENIUM_PORT%
 echo SELENIUM PATH: %SELENIUM_PATH%
 echo SCREENSHOTS_PATH PATH: %SCREENSHOTS_PATH%
 echo:
@@ -30,6 +31,6 @@ echo Starting phpunit ...
 call phpunit -c  "%~dp0..\..\phpunit.xml"
 echo:
 echo Stopping Selenium ...
-start "" "http://%SELENIUM_SERVER%/selenium-server/driver/?cmd=shutDownSeleniumServer"
+start "" "http://%SELENIUM_SERVER%:%SELENIUM_PORT%/selenium-server/driver/?cmd=shutDownSeleniumServer"
 echo:
 pause
