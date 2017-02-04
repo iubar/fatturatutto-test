@@ -300,25 +300,23 @@ class FatturatuttoTest extends Web_TestCase {
     /**
      * Call the login() function with the global params username and password
      */
-    private function do_login($right_account = true) {
+    private function do_login() {
         self::$climate->white("Begin of do_login()");
         $user = self::$app_username;
         $password = self::$app_password;
         $this->login($user, $password);
         // Sono su pagina situazione
-        if ($right_account) {
-                        
-            $impostazioni_id = 'menu-impostazioni';
-            self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
-            $this->waitForId($impostazioni_id);
-            // oppure...
-            // $tag = 'h2';
-            // self::$climate->white("I'm waiting for the tag: " . $tag);
-            // $this->waitForTagWithText($tag, "Situazione");
-           
-            // checking that we are in the right page
-            $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::TITLE_SITUAZIONE);
-        }
+                       
+        $impostazioni_id = 'menu-impostazioni';
+        self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
+        $this->waitForId($impostazioni_id);
+        // oppure...
+        // $tag = 'h2';
+        // self::$climate->white("I'm waiting for the tag: " . $tag);
+        // $this->waitForTagWithText($tag, "Situazione");
+       
+        // checking that we are in the right page
+        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::TITLE_SITUAZIONE);
         
         self::$climate->white("End of do_login()");
     }
