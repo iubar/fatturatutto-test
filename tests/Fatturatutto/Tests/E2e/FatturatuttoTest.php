@@ -11,6 +11,7 @@ use Iubar\Tests\Web_TestCase;
  * @author Matteo
  * @global env BROWSER
  * @global env SELENIUM_SERVER
+ * @global env SELENIUM_PORT 
  * @global env SELENIUM_PATH
  * @global env SCREENSHOTS_PATH
  * @global env APP_HOST
