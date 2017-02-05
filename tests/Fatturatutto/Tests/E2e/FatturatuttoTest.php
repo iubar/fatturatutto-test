@@ -305,8 +305,8 @@ class FatturatuttoTest extends Web_TestCase {
         $user = self::$app_username;
         $password = self::$app_password;
         $this->login($user, $password);
-        // Sono su pagina situazione
-                       
+
+        // Attendo che il login sia completato
         $impostazioni_id = 'menu-impostazioni';
         self::$climate->white("I'm waiting for the id: " . $impostazioni_id);
         $this->waitForId($impostazioni_id);
@@ -454,21 +454,6 @@ class FatturatuttoTest extends Web_TestCase {
     }
 
     /**
-     * Write into the respective field
-     *
-     * @param string $id the id of the elem
-     * @param string $sendKey what do you wanna write in the elem
-     */
-    private function fillField($id, $sendKey) {
-        $wd = $this->getWd();
-        $this->waitForId($id); // Wait until the element is visible
-        $elem = $wd->findElement(WebDriverBy::id($id));
-        $elem->sendKeys($sendKey);
-        $this->assertNotNull($elem);
-        $this->assertContains($expected_title, $elem->getText());
-    }
-
-    /**
      * Unsed, explain only how to use cookies
      */
     private function playWithCookies() {
@@ -497,19 +482,4 @@ class FatturatuttoTest extends Web_TestCase {
         return "https://app." . self::$app_host;
     }
 
-    /**
-     * Take a temporary directory
-     *
-     * @return string the temporary directory
-     */
-    private function getTmpDir() {
-        $tmp_dir = sys_get_temp_dir();
-        if ($this->isTravis()) {
-            $tmp_dir = __DIR__;
-        }
-        if (!is_writable($tmp_dir)) {
-            $this->fail("Temp dir not writable: " . $tmp_dir);
-        }
-        return $tmp_dir;
-    }
 }
