@@ -45,12 +45,12 @@ class FatturatuttoTest extends Web_TestCase {
     // Menu
     private static $nav_menu = array(
         'Situazione' => 'menu-situazione',
-        'Anagrafica' => 'menu-anagrafica',
+        'Clienti' => 'menu-clienti',
         'Articoli - servizi' => 'menu-articoli-servizi',
         'Fatture' => 'menu-fatture',
         'Fatture proforma' => 'menu-fatture-proforma',
         'Modelli' => 'menu-modelli',
-        'Strumenti' => 'menu-strumenti',
+        // 'Strumenti' => 'menu-strumenti',
         'Impostazioni' => 'menu-impostazioni'
     );
     
@@ -125,13 +125,16 @@ class FatturatuttoTest extends Web_TestCase {
         
         $this->do_login();
         
-        // Verify to be enter and that welcome msg is show
-        $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; // dialog compile your data
+        // TODO: il seguente codice è buggato e non è più valido
+        // NB: Una volta effettuato il login se l'utente ha inserito i propri dati la rotta è "situazione", in caso negativo è "impostazioni"
+        
+//         // Verify to be enter and that welcome msg is show
+//         $welcome_msg = '//*[@id="ngdialog1"]/div[2]/div/div[1]'; // dialog compile your data
                                                                  
-        // if you have never compile your data this function do it for you
-        if (!isset($welcome_msg)) {
-            $this->compile_dialog();
-        }
+//         // if you have never compile your data this function do it for you
+//         if (!isset($welcome_msg)) {
+//          //   $this->compile_dialog();
+//         }
         self::$climate->lightGreen('Fine testLogin()');
     }
 
@@ -191,7 +194,7 @@ class FatturatuttoTest extends Web_TestCase {
     /**
      * Try to import an invoice in ROUTE_STRUMENTI_IMPORTAZIONE
      */
-    public function testImportazioneFattura() {
+    public function _testImportazioneFattura() {
         
         if (self::$browser != self::MARIONETTE && self::$browser != self::SAFARI) { // FIXME: la soluzione seguente è incompatibile con MARIONETTE e SAFARI
             
@@ -316,7 +319,7 @@ class FatturatuttoTest extends Web_TestCase {
         // $this->waitForTagWithText($tag, "Situazione");
        
         // checking that we are in the right page
-        $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::TITLE_SITUAZIONE);
+    //    $this->check_webpage($this->getAppHome() . '/' . self::ROUTE_SITUAZIONE, self::TITLE_SITUAZIONE);
         
         self::$climate->white("End of do_login()");
     }
