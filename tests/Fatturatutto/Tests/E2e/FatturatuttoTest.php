@@ -261,7 +261,7 @@ class FatturatuttoTest extends Web_TestCase {
                         
             if (self::$browser != self::MARIONETTE){ // NOTE: can't read the console with MARIONETTE: https://github.com/mozilla/geckodriver/issues/144
                 $console_error = $this->countErrorsOnConsole();
-                self::$climate->white("Errors on console: " . $console_error . "(max " . self::$max_errors_on_console . ") on page " . $wd->getCurrentURL());
+                self::$climate->white("Errors on console: " . $console_error . " (max " . self::$max_errors_on_console . ") on page " . $wd->getCurrentURL());
                 $this->assertLessThan(self::$max_errors_on_console, $console_error);
             }
             

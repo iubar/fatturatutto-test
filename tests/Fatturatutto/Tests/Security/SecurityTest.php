@@ -17,19 +17,11 @@ use Iubar\Tests\RestApi_TestCase;
 
 class SecurityTest extends RestApi_TestCase {
 
-    const FATTURATUTTO_WEBSITE = "https://www.fatturatutto.it"; // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received. 
+    const FATTURATUTTO_WEBSITE = "http://www.fatturatutto.it"; // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received. 
                                                                 // @see: http://curl.haxx.se/libcurl/c/libcurl-errors.html
                                                                 // @see: http://unitstep.net/blog/2009/05/05/using-curl-in-php-to-access-https-ssltls-protected-sites/
-    const FATTURATUTTO_WEBAPP = "http://app.fatturatutto.it";
-
-    const DATASLANG_WEBSITE = "http://www.dataslang.com";
-
-    const IUBAR_WEBSITE = "http://www.iubar.it";
-    
-   // const TEST_WEBSITE = "http://104.155.64.146:81";
-    
-    const RETEPROF_WEBSITE = "http://www.reteprofessionisti.it";
-    
+    const FATTURATUTTO_WEBAPP = "https://app.fatturatutto.it";
+       
     /**
      * Create a Client
      */
@@ -47,22 +39,24 @@ class SecurityTest extends RestApi_TestCase {
     public function testForbidden() {
         // the status code and the relative address to check
         $urls = [
+		
+            self::HTTP_OK => array(
+				  self::FATTURATUTTO_WEBAPP
+       //         self::IUBAR_WEBSITE . '/bugtracker'
+            ),		
             self::HTTP_FORBIDDEN => array(
-                self::FATTURATUTTO_WEBSITE . "/logs",
-                self::FATTURATUTTO_WEBAPP . "/logs",
-                self::FATTURATUTTO_WEBAPP . "/vendor",
+        //        self::FATTURATUTTO_WEBSITE . "/logs",
+              //  self::FATTURATUTTO_WEBAPP . "/vendor",
              //   self::TEST_WEBSITE . "/site/wp-includes/js",
-                self::RETEPROF_WEBSITE . "/site/wp-includes/js",
-                self::FATTURATUTTO_WEBSITE . "/vendor"
+        //        self::RETEPROF_WEBSITE . "/site/wp-includes/js",
+       //         self::FATTURATUTTO_WEBSITE . "/vendor"
             ),
             self::HTTP_UNAUTHORIZED => array(
-                self::DATASLANG_WEBSITE . "/wp-login.php"
+        //        self::DATASLANG_WEBSITE . "/wp-login.php"
             ),
-            self::HTTP_OK => array(
-                self::IUBAR_WEBSITE . '/bugtracker'
-            ),
+
             self::HTTP_NOT_FOUND => array(
-                
+                self::FATTURATUTTO_WEBAPP . "/logs"                
             )
         ];
           
@@ -84,17 +78,22 @@ class SecurityTest extends RestApi_TestCase {
         // openssl s_client -connect www.fatturatutto.it:443 -showcerts -CAfile mozilla-root-certs.crt C:\Users\Daniele\PortableApps\MyApps\EasyPHP-DevServer-14.1VC11\data\cacert.pem
         // curl -vvI https://app.fatturatutto.it (solo da LINUX)
             
-        $curl_options = null;
-        
+        $curl_options = null;        
+		$cacert = null;
         $cert_file = false;
         if (getenv('TRAVIS')) {
             // PER TRAVIS
+			$cacert = realpath(getenv('TRAVIS_BUILD_DIR') . '/cacert.pem');
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
                 CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3,  // NON funziona con CURL_SSLVERSION_TLSv1 in ambiente UBUNTU
-                CURLOPT_SSL_VERIFYHOST => 2,
-                CURLOPT_SSL_VERIFYPEER => 1,
+                CURLOPT_SSL_VERIFYHOST => 2,	// 1 to check the existence of a common name in the SSL peer certificate. 
+												// 2 to check the existence of a common name and also verify that it matches the hostname provided. 
+												// 0 to not check the names. 
+												// In production environments the value of this option should be kept at 2 (default value).
+				
+                CURLOPT_SSL_VERIFYPEER => true,
                 // CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
-                CURLOPT_CAINFO =>  realpath(getenv('TRAVIS_BUILD_DIR')) . '/cacert.pem',
+                CURLOPT_CAINFO =>  $cacert,
                 CURLOPT_VERBOSE => 0
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 //CURLOPT_USERPWD => $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
@@ -107,19 +106,26 @@ class SecurityTest extends RestApi_TestCase {
         
         }else{
             // PER WINDOWS
+			$cacert = 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-Devserver-16.1/cacert.pem';
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
                 CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3, // funziona anche con CURL_SSLVERSION_TLSv1
                 CURLOPT_SSL_VERIFYHOST => 2,
-                CURLOPT_SSL_VERIFYPEER => 1,
-                // CURLOPT_CAPATH => 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-DevServer-14.1VC11/data', // Apparently does not work in Windows due to some limitation in openssl !!!
-                CURLOPT_CAINFO => 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-DevServer-14.1VC11/data/cacert.pem',
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_CAPATH => 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-Devserver-16.1', // Apparently does not work in Windows due to some limitation in openssl !!!
+                CURLOPT_CAINFO => $cacert,
                 CURLOPT_VERBOSE => 1
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 //CURLOPT_USERPWD => $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
             );
             
-            $cert_file = __DIR__ . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
+            $cert_file = "C:/Users/Daniele/workspace_php/php-fatturatutto/www/public" . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
         }
+
+        if(!is_file($cacert)){
+            $this->fail('cacert file not found: ' . $cacert);
+        }
+        self::$climate->comment('cacert file: ' . $cacert);	
+		
         $cert_file = realpath($cert_file);
         if(!is_file($cert_file)){
             $this->fail('Cert file not found: ' . $cert_file);
