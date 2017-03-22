@@ -39,22 +39,15 @@ class SecurityTest extends RestApi_TestCase {
     public function testForbidden() {
         // the status code and the relative address to check
         $urls = [
-		
             self::HTTP_OK => array(
 				  self::FATTURATUTTO_WEBAPP
-       //         self::IUBAR_WEBSITE . '/bugtracker'
             ),		
             self::HTTP_FORBIDDEN => array(
-        //        self::FATTURATUTTO_WEBSITE . "/logs",
-              //  self::FATTURATUTTO_WEBAPP . "/vendor",
-             //   self::TEST_WEBSITE . "/site/wp-includes/js",
-        //        self::RETEPROF_WEBSITE . "/site/wp-includes/js",
-       //         self::FATTURATUTTO_WEBSITE . "/vendor"
+  
             ),
             self::HTTP_UNAUTHORIZED => array(
-        //        self::DATASLANG_WEBSITE . "/wp-login.php"
+    
             ),
-
             self::HTTP_NOT_FOUND => array(
                 self::FATTURATUTTO_WEBAPP . "/logs"                
             )
@@ -73,19 +66,23 @@ class SecurityTest extends RestApi_TestCase {
 //             CURL_SSLVERSION_TLSv1_2: Force TLSv1.2 (Added in 7.34.0)
 
         // E' possibile effettuare il debug di curl e dei certificati installati sul server con i comandi segbuenti:
-        // openssl s_client -showcerts -connect www.fatturatutto.it:443
-        // openssl s_client -showcerts -cert C:\Users\Daniele\workspace_php\fatturatutto-test\tests\Fatturatutto\Tests\Security\2_fatturatutto.it.crt -connect www.fatturatutto.it:443
-        // openssl s_client -connect www.fatturatutto.it:443 -showcerts -CAfile mozilla-root-certs.crt C:\Users\Daniele\PortableApps\MyApps\EasyPHP-DevServer-14.1VC11\data\cacert.pem
-        // curl -vvI https://app.fatturatutto.it (solo da LINUX)
+		// openssl s_client -connect fatturatutto.it:443 -showcerts -servername app.fatturatutto.it -CAfile C:/Users/Daniele/PortableApps/MyApps/EasyPHP-Devserver-16.1/cacert.pem // OK !
+        // curl -vvI https://app.fatturatutto.it (solo da LINUX)		
+		// To be able to use SNI, three conditions are required:
+		// 1) Using a version of Curl that supports it, at least 7.18.1, according to the change logs.
+		// 2) Using a version of Curl compiled against a library that supports SNI, e.g. OpenSSL 0.9.8j (depending on the compilation options some older versions).
+		// 3) Using TLS 1.0 at least (not SSLv3).
+		// More details: SNI sends the hostname inside the TLS handshake (ClientHello). The server then chooses the correct certificate based on this information. Only after the TLS connection is successfully established it will send the HTTP-Request, which contains the Host header you specified.
             
         $curl_options = null;        
 		$cacert = null;
         $cert_file = false;
         if (getenv('TRAVIS')) {
             // PER TRAVIS
+			$cert_file = realpath(getenv('TRAVIS_BUILD_DIR') . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt");
 			$cacert = realpath(getenv('TRAVIS_BUILD_DIR') . '/cacert.pem');
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
-                CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3,  // NON funziona con CURL_SSLVERSION_TLSv1 in ambiente UBUNTU
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1,
                 CURLOPT_SSL_VERIFYHOST => 2,	// 1 to check the existence of a common name in the SSL peer certificate. 
 												// 2 to check the existence of a common name and also verify that it matches the hostname provided. 
 												// 0 to not check the names. 
@@ -102,23 +99,23 @@ class SecurityTest extends RestApi_TestCase {
             self::$climate->comment('Travis os: ' . getenv('TRAVIS_OS_NAME')); // https://docs.travis-ci.com/user/ci-environment/
             self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION')); // https://docs.travis-ci.com/user/environment-variables/
             self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR')); // https://docs.travis-ci.com/user/environment-variables/
-            $cert_file = getenv('TRAVIS_BUILD_DIR') . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
         
         }else{
-            // PER WINDOWS
-			$cacert = 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-Devserver-16.1/cacert.pem';
+            // PER WINDOWS    
+			$user_home = getenv('userprofile');
+			$project_folder = $user_home . "/workspace_php/fatturatutto-site/public";
+            $cert_file = $project_folder . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";			
+			$cacert = $project_folder . DIRECTORY_SEPARATOR . 'cacert.pem';
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
-                CURLOPT_SSLVERSION => CURL_SSLVERSION_SSLv3, // funziona anche con CURL_SSLVERSION_TLSv1
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1, // nota che CURL_SSLVERSION_SSLv3 non supporta SNI
                 CURLOPT_SSL_VERIFYHOST => 2,
                 CURLOPT_SSL_VERIFYPEER => true,
-                CURLOPT_CAPATH => 'C:/Users/Daniele/PortableApps/MyApps/EasyPHP-Devserver-16.1', // Apparently does not work in Windows due to some limitation in openssl !!!
+				//CURLOPT_CAPATH => $project_folder, 
                 CURLOPT_CAINFO => $cacert,
                 CURLOPT_VERBOSE => 1
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 //CURLOPT_USERPWD => $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
             );
-            
-            $cert_file = "C:/Users/Daniele/workspace_php/php-fatturatutto/www/public" . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
         }
 
         if(!is_file($cacert)){
