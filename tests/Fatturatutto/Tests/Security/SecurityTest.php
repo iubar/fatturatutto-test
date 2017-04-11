@@ -17,18 +17,18 @@ use Iubar\Tests\RestApi_TestCase;
 
 class SecurityTest extends RestApi_TestCase {
 
-    const FATTURATUTTO_WEBSITE = "http://www.fatturatutto.it"; // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received. 
+    const FATTURATUTTO_WEBSITE = "http://www.fatturatutto.it"; // Restituisce: GuzzleHttp\Exception\ConnectException: cURL error 35: gnutls_handshake() failed: A TLS warning alert has been received.
                                                                 // @see: http://curl.haxx.se/libcurl/c/libcurl-errors.html
                                                                 // @see: http://unitstep.net/blog/2009/05/05/using-curl-in-php-to-access-https-ssltls-protected-sites/
-    const FATTURATUTTO_WEBAPP = "https://app.fatturatutto.it";
-       
+    const FATTURATUTTO_WEBAPP = "http://app.fatturatutto.it";
+
     /**
      * Create a Client
      */
-    public static function setUpBeforeClass() {        
+    public static function setUpBeforeClass() {
         self::init();
         // Base URI is used with relative requests
-        // You can set any number of default request options.        
+        // You can set any number of default request options.
         putenv("HTTP_HOST=" . self::FATTURATUTTO_WEBSITE);
         self::$client = self::factoryClient();
     }
@@ -41,22 +41,22 @@ class SecurityTest extends RestApi_TestCase {
         $urls = [
             self::HTTP_OK => array(
 				  self::FATTURATUTTO_WEBAPP
-            ),		
+            ),
             self::HTTP_FORBIDDEN => array(
-  
+
             ),
             self::HTTP_UNAUTHORIZED => array(
-    
+
             ),
             self::HTTP_NOT_FOUND => array(
-                self::FATTURATUTTO_WEBAPP . "/logs"                
+                self::FATTURATUTTO_WEBAPP . "/logs"
             )
         ];
-          
+
             // How can I add custom cURL options ? - http://docs.guzzlephp.org/en/latest/faq.html#how-can-i-add-custom-curl-options
-            
+
 //             The cURL docs further describe CURLOPT_SSLVERSION:
-//         
+//
 //             CURL_SSLVERSION_DEFAULT: The default action. This will attempt to figure out the remote SSL protocol version, i.e. either SSLv3 or TLSv1 (but not SSLv2, which became disabled by default with 7.18.1).
 //             CURL_SSLVERSION_TLSv1: Force TLSv1.x
 //             CURL_SSLVERSION_SSLv2: Force SSLv2
@@ -67,14 +67,14 @@ class SecurityTest extends RestApi_TestCase {
 
         // E' possibile effettuare il debug di curl e dei certificati installati sul server con i comandi segbuenti:
 		// openssl s_client -connect fatturatutto.it:443 -showcerts -servername app.fatturatutto.it -CAfile C:/Users/Daniele/PortableApps/MyApps/EasyPHP-Devserver-16.1/cacert.pem // OK !
-        // curl -vvI https://app.fatturatutto.it (solo da LINUX)		
+        // curl -vvI https://app.fatturatutto.it (solo da LINUX)
 		// To be able to use SNI, three conditions are required:
 		// 1) Using a version of Curl that supports it, at least 7.18.1, according to the change logs.
 		// 2) Using a version of Curl compiled against a library that supports SNI, e.g. OpenSSL 0.9.8j (depending on the compilation options some older versions).
 		// 3) Using TLS 1.0 at least (not SSLv3).
 		// More details: SNI sends the hostname inside the TLS handshake (ClientHello). The server then chooses the correct certificate based on this information. Only after the TLS connection is successfully established it will send the HTTP-Request, which contains the Host header you specified.
-            
-        $curl_options = null;        
+
+        $curl_options = null;
 		$cacert = null;
         $cert_file = false;
         if (getenv('TRAVIS')) {
@@ -83,11 +83,11 @@ class SecurityTest extends RestApi_TestCase {
 			$cacert = realpath(getenv('TRAVIS_BUILD_DIR') . '/cacert.pem');
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
                 CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1,
-                CURLOPT_SSL_VERIFYHOST => 2,	// 1 to check the existence of a common name in the SSL peer certificate. 
-												// 2 to check the existence of a common name and also verify that it matches the hostname provided. 
-												// 0 to not check the names. 
+                CURLOPT_SSL_VERIFYHOST => 2,	// 1 to check the existence of a common name in the SSL peer certificate.
+												// 2 to check the existence of a common name and also verify that it matches the hostname provided.
+												// 0 to not check the names.
 												// In production environments the value of this option should be kept at 2 (default value).
-				
+
                 CURLOPT_SSL_VERIFYPEER => true,
                 // CURLOPT_CAPATH => realpath(getenv('TRAVIS_BUILD_DIR')),
                 CURLOPT_CAINFO =>  $cacert,
@@ -95,22 +95,22 @@ class SecurityTest extends RestApi_TestCase {
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 //CURLOPT_USERPWD => $this->getConfig('application_id') . ':' . $this->getConfig('application_password'),
             );
-            
+
             self::$climate->comment('Travis os: ' . getenv('TRAVIS_OS_NAME')); // https://docs.travis-ci.com/user/ci-environment/
             self::$climate->comment('Travis php version: ' . getenv('TRAVIS_PHP_VERSION')); // https://docs.travis-ci.com/user/environment-variables/
             self::$climate->comment('Travis build dir: ' . getenv('TRAVIS_BUILD_DIR')); // https://docs.travis-ci.com/user/environment-variables/
-        
+
         }else{
-            // PER WINDOWS    
+            // PER WINDOWS
 			$user_home = getenv('userprofile');
 			$project_folder = $user_home . "/workspace_php/fatturatutto-site/public";
-            $cert_file = $project_folder . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";			
+            $cert_file = $project_folder . DIRECTORY_SEPARATOR . "2_fatturatutto.it.crt";
 			$cacert = $project_folder . DIRECTORY_SEPARATOR . 'cacert.pem';
             $curl_options = array( // http://php.net/manual/en/function.curl-setopt.php
                 CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1, // nota che CURL_SSLVERSION_SSLv3 non supporta SNI
                 CURLOPT_SSL_VERIFYHOST => 2,
                 CURLOPT_SSL_VERIFYPEER => true,
-				//CURLOPT_CAPATH => $project_folder, 
+				//CURLOPT_CAPATH => $project_folder,
                 CURLOPT_CAINFO => $cacert,
                 CURLOPT_VERBOSE => 1
                 //CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
@@ -121,14 +121,14 @@ class SecurityTest extends RestApi_TestCase {
         if(!is_file($cacert)){
             $this->fail('cacert file not found: ' . $cacert);
         }
-        self::$climate->comment('cacert file: ' . $cacert);	
-		
+        self::$climate->comment('cacert file: ' . $cacert);
+
         $cert_file = realpath($cert_file);
         if(!is_file($cert_file)){
             $this->fail('Cert file not found: ' . $cert_file);
         }
         self::$climate->comment('Cert file: ' . $cert_file);
-        
+
         foreach ($urls as $error_code => $urls) {
             $status_code = null;
             foreach ($urls as $value_uri) {
@@ -141,10 +141,10 @@ class SecurityTest extends RestApi_TestCase {
                     // GuzzleHttp\Exception\ClientException for 400-level errors
                     // GuzzleHttp\Exception\ServerException for 500-level errors
                     // GuzzleHttp\Exception\BadResponseException for both (it's their superclass)
-                    
+
                     try {
                         $response = null;
-                        
+
                         if(true){
                             $request = new Request(self::GET, $value_uri);
                             $response = self::$client->send($request, [
@@ -155,11 +155,11 @@ class SecurityTest extends RestApi_TestCase {
                                                         // @see: http://docs.guzzlephp.org/en/latest/request-options.html#verify-option
                                 'curl' => $curl_options
                              ]);
-                        
+
                         }else{
                             $response = self::$client->request('GET', $value_uri, ['verify' => $cert_file, 'curl' => $curl_options]);
                         }
-                        
+
                         // the execution continues only if there isn't any errors 4xx or 5xx
                         $status_code = $response->getStatusCode();
                         $this->assertEquals($error_code, $status_code);
@@ -176,7 +176,7 @@ class SecurityTest extends RestApi_TestCase {
                     } catch (ServerException $e) { // Is thrown for 500 level errors if the http_errors request option is set to true.
                         $this->handleException($e);
                     }
-                                       
+
                 }
             }
         }
