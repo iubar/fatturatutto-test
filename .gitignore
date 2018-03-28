@@ -65,4 +65,4 @@ composer.lock
 # IUBAR
 config.bat
 config.ini
-logs/*
+/logs
