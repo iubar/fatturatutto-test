@@ -1,9 +1,9 @@
 # NO: sudo: required
 #https://docs.travis-ci.com/user/ci-environment/
-dist: trusty # 14.04 LTS
+# dist: trusty # 14.04 LTS
 language: php
 php:
- - 5.6
+  - 7.2
 env:
   global:
     - SELENIUM_SERVER="ondemand.saucelabs.com"
@@ -26,7 +26,12 @@ before_script:
   - wget http://www.fatturatutto.it/cacert.pem
   # - curl -s http://www.fatturatutto.it/1_root_bundle.crt | sudo tee -a /etc/ssl/certs/ca-certificates.crt
   # - composer self-update
-  - composer install --prefer-source --no-interaction --dev
+  - composer require --dev jakub-onderka/php-parallel-lint
+  - composer require --dev jakub-onderka/php-console-highlighter
+  - composer install --prefer-source --no-suggest --no-progress --no-interaction 
+  - vendor/bin/parallel-lint --exclude vendor .
+  - vendor/bin/phpstan -V
+  - vendor/bin/phpstan analyse src --no-interaction --no-progress --level 0
   #
   #
   # Download and run Selenium (+ https://github.com/jarib/selenium-travis)
