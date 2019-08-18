@@ -1,6 +1,6 @@
 language: php
 php:
-- 5.5
+  - 7.2
 env:
   global:
     - SELENIUM_SERVER="localhost"
@@ -16,12 +16,19 @@ env:
 before_script:
   - php ./script/before_script.php
   # - composer self-update
-  - composer install --prefer-source --no-interaction --dev
+  - composer require --dev jakub-onderka/php-parallel-lint
+  - composer require --dev jakub-onderka/php-console-highlighter
+  - composer install --prefer-source --no-suggest --no-progress --no-interaction 
+  - vendor/bin/parallel-lint --exclude vendor .
+  - vendor/bin/phpstan -V
+  - vendor/bin/phpstan analyse src --no-interaction --no-progress --level 0
   #
   #
   # Download and run Selenium (+ https://github.com/jarib/selenium-travis)
   - "wget http://selenium-release.storage.googleapis.com/2.43/selenium-server-standalone-2.43.1.jar"
-  - "java -jar selenium-server-standalone-2.43.1.jar > /dev/null &"  
+  - "java -jar selenium-server-standalone-2.43.1.jar > /dev/null &" 
+  # DUBBIO: e chrome ? e il driver di selenoum per chrome ?
+  # Ho l'impressione che questo script non funzioni
   # Use xvfb 
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
