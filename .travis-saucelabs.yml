@@ -1,6 +1,6 @@
 language: php
 php:
-- 5.6
+  - 7.2
 env:
   global:
     - SELENIUM_SERVER="ondemand.saucelabs.com"
@@ -16,7 +16,12 @@ env:
 before_script:
   - php ./script/before_script.php
   # - composer self-update
-  - composer install --prefer-source --no-interaction --dev  
+  - composer require --dev jakub-onderka/php-parallel-lint
+  - composer require --dev jakub-onderka/php-console-highlighter
+  - composer install --prefer-source --no-suggest --no-progress --no-interaction 
+  - vendor/bin/parallel-lint --exclude vendor .
+  - vendor/bin/phpstan -V
+  - vendor/bin/phpstan analyse src --no-interaction --no-progress --level 0
 script: phpunit
 addons:
   sauce_connect: true
