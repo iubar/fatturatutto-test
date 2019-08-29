@@ -1,6 +1,6 @@
 <?php
 
-namespace Fatturatutto\E2e;
+namespace Fatturatutto\Tests\E2e;
 
 use Facebook\WebDriver\WebDriverBy;
 use Iubar\Tests\Web_TestCase;
