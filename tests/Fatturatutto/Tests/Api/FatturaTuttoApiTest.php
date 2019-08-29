@@ -1,6 +1,6 @@
 <?php
 
-namespace Fatturatutto\Api;
+namespace Fatturatutto\Tests\Api;
 
 use Iubar\Tests\SafeRestApi_TestCase;
 use Iubar\Tests\RestApi_TestCase;
