@@ -1,6 +1,6 @@
 <?php
 
-namespace Fatturatutto\Security;
+namespace Fatturatutto\Tests\Security;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
