@@ -25,7 +25,7 @@ class SecurityTest extends RestApi_TestCase {
     /**
      * Create a Client
      */
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass() : void  {
         self::init();
         // Base URI is used with relative requests
         // You can set any number of default request options.
