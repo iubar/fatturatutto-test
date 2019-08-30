@@ -116,7 +116,7 @@ class FatturatuttoTest extends Web_TestCase {
         $this->waitForClassName($login_error_class); // Text "Email o password errati"
         $incorrectData = $wd->findElement(WebDriverBy::className($login_error_class)); // Find the first element matching the class name argument.
         $this->assertNotNull($incorrectData);
-        $this->assertContains(self::MSG_LOGIN_ERROR, $incorrectData->getText());
+        $this->assertStringContainsStringIgnoringCase(self::MSG_LOGIN_ERROR, $incorrectData->getText());
 
         // 2) Real login
 
@@ -257,7 +257,7 @@ class FatturatuttoTest extends Web_TestCase {
             // wait for elenco-fatture page is ready
             $this->waitForTagWithText("h2", self::TITLE_ELENCO);    // Wait until the element is visible
             $title = $wd->findElement(WebDriverBy::tagName("h2"));  // the tag h2 'Elenco fatture'
-            $this->assertContains(self::TITLE_ELENCO, $title->getText());
+            $this->assertStringContainsStringIgnoringCase(self::TITLE_ELENCO, $title->getText());
 
             if (self::$browser != self::MARIONETTE){ // NOTE: can't read the console with MARIONETTE: https://github.com/mozilla/geckodriver/issues/144
                 $console_error = $this->countErrorsOnConsole();
@@ -386,7 +386,7 @@ class FatturatuttoTest extends Web_TestCase {
         if ($expected_title) {
             $title = $wd->getTitle();
             self::$climate->white("Current page title: " . $title);
-            $this->assertContains($expected_title, $title);
+            $this->assertStringContainsStringIgnoringCase($expected_title, $title);
         }
     }
 
@@ -405,7 +405,7 @@ class FatturatuttoTest extends Web_TestCase {
         if (self::$browser == self::PHANTOMJS) {
             $text = $elem->getAttribute("innerText");
         }
-        $this->assertContains($expected_title, $text);
+        $this->assertStringContainsStringIgnoringCase($expected_title, $text);
     }
 
     /**
