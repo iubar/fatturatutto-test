@@ -16,8 +16,7 @@ env:
     # see: https://blog.travis-ci.com/2014-07-18-per-repository-concurrency-setting/
     - BROWSER="chrome"
     - BROWSER="firefox"
-    - BROWSER="safari"
-    #- BROWSER="phantomjs"
+    # - BROWSER="safari" # php-webdriver doesn't support the w3c protocol used by Safari
 before_script:
   - php ./script/before_script.php
   # NO: - sudo apt-get -y remove libcurl4-gnutls-dev
